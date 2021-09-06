@@ -1,0 +1,991 @@
+﻿
+@{
+    ViewBag.Title = "VendorType";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+
+
+@*<script src="~/assets/js/jquery-2.1.4.min.js"></script>*@
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+@*<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+
+
+<style>
+     .hide_me {
+            display: none;
+        }
+    li[data-dtr-index="3"] {
+        display: none;
+    }
+
+
+</style>
+<style>
+    .loader {
+        display: none;
+        top: 251px;
+        position: absolute;
+        margin-left: -193px;
+        margin-bottom: 117px;
+        z-index: 99999;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        
+       // GetVendorSubType();
+       
+        Getdata1();
+   
+      //  var script = document.createElement("script");
+      //  var script1 = document.createElement("script");
+      //  var script2 = document.createElement("script");
+      //  var script3 = document.createElement("script");
+      // script.type = "text/javascript";
+      //script.src = "/assets/js/jquery.dataTables.min.js";
+      //  script1.src = "/assets/js/dataTables.colReorder.js";
+      // script2.src = "/assets/js/dataTables.responsive.js";
+      //  script3.src = "//assets/js/dataTables.rowReorder.min.js";
+      // document.getElementsByTagName("body")[0].appendChild(script);
+      //  document.getElementsByTagName("body")[0].appendChild(script1);
+      // document.getElementsByTagName("body")[0].appendChild(script2);
+      //  document.getElementsByTagName("body")[0].appendChild(script3);
+        
+
+    })
+
+ </script>     
+@*------------------------------------reset data-------------------------------------------*@
+<script>
+    function Resetdata1() {
+        $("#txtupvendortype").val("");
+    }
+</script>
+<script>
+    function Resetdata() {
+
+        $("#Vendortype").val("");
+
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Submit");
+        $("#hdvendortype").val("");
+        $("#Vendortype").focus();
+
+        var objRolePermission = {};
+        objRolePermission.Sub_To_Sub_Menu_Id = sessionStorage.getItem("sid");
+        //alert(objRolePermission.Sub_To_Sub_Menu_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/AddRolePermission",
+            data: '{objRolePermission: ' + JSON.stringify(objRolePermission) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //if (response.Is_Add == false) {
+                //    $("#btnsave").css('visibility', 'hidden');
+                //    $("#btnreset").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Edit == false) {
+                //    $("a.remove").css('visibility', 'hidden');
+                //}
+                ////alert(response.Is_Delete);
+                //if (response.Is_Delete == false) {
+                //    $("a.delete").css('visibility', 'hidden');
+                //}
+                //if (response.Is_View == false) {
+                //    $("#EmpInfo_wrapper").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Approve == false) {
+                //    $("a.approve").css('visibility', 'hidden');
+                //}
+                //$('script[src=~/assets/js/jquery.dataTables.min.js]').remove();
+                //$('script[src=/assets/js/jquery.dataTables.min.js]').remove();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnreset").click(function () {
+            Resetdata();
+        });
+        $("#btnresetupdate").click(function () {
+            Resetdata1();
+        });
+    })
+</script>
+@*-----------------------------------------Get Data------------------------------------------*@
+<script>
+    function Getdata1() {
+       // alert()
+        $("#divtbl").append(' <table id="vendor_per" class="able table-bordered table-hover" style="width:100%"> <thead> <tr><th >S. No</th><th>Vendor Type</th><th >Action</th><th class="hide_me"></th> </tr></thead><tbody></tbody></table>')
+        $("#vendor_per > tbody").html("");
+        //Call EmpDetails jsonResult Method
+       // alert();
+        $.getJSON("/Vendor/VendorTypeDetails",
+            function (json) {
+                var tr;
+               // alert(json.length);
+                //Append each row to html table  json[i].sublist
+                for (var i = 0; i < json.length; i++) {
+
+
+                    tr = $('<tr/>');
+                    tr.append("<td><label class='pos-rel'>" + (i + 1) + "</lable></td>");
+                    tr.append("<td ><label class='pos-rel'>" + json[i].Vendor_Type + "</lable></td>");
+                    var status = json[i].Approve_Status;
+                    var status1 = "";
+                    if (status == 1) {
+                        status1 = "<i class='menu-icon fa fa-check bigger-120 green'  data-toggle='tooltip' title='Approved'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-clock-o bigger-120 green' data-toggle='tooltip' title='Pending'></i>";
+                    }
+
+                    tr.append("<td ><ul class='list_main'><li><a href='javascript:void(0);' class='approve tooltip-error comn_inline grn' data-rel='tooltip'>"+ status1 +"</a></li><li><a href='javascript:void(0);' id='myAnc' class='edit tooltip-error comn_inline blu' data-rel='tooltip' title='Edit'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i></a></li><li><a href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='Delete'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+                    tr.append("<td class='hide_me'>" + json[i].Vendor_Type_Id + "</td>");
+                    $('#vendor_per').append(tr);
+
+                }
+                $('#vendor_per').DataTable({
+
+                    // responsive: true,
+                    colReorder: true,
+                     destroy: true
+                    //    "columns": [
+                    //{
+                    //    "className": 'details-control',
+                    //    "orderable": false,
+                    //    "data": null,
+                    //    "defaultContent": ''
+                    //}
+
+                    //    ],
+                    //    "order": [[1, 'asc']]
+
+                });
+            });
+
+    }
+</script>
+@*----------insert data---------------------------------------*@
+<script>
+    $(document).ready(function () {
+        
+        $("#btnsave").click(function () {
+           // alert();
+            var objVendor = {};
+           // alert();
+            objVendor.Vendor_Type = $("#Vendortype").val().charAt(0).toUpperCase() + $("#Vendortype").val().slice(1);
+           //objVendor.sublist = [{ Vendor_Sub_Type_Id: 1 }, { Vendor_Sub_Type_Id: 2 }]
+           //// alert();
+           // var list=[];
+            
+           // $("input:checkbox[name=form-field-checkbox]:checked").each(function () {
+           //     list.push({ Vendor_Sub_Type_Id: $(this).val() })
+           // });
+ 
+           // objVendor.sublist = list;
+            objVendor.Vendor_Type_Id = $("#hdvendortype").val();
+            if (objVendor.Vendor_Type == "" || objVendor.Vendor_Type == null) {
+                swal("Please enter vendor type.");
+                $("#Vendortype").focus();
+                return;
+            }
+            //if (objVendor.sublist == "" || objVendor.sublist == null) {
+            //    swal("Please select vendor sub type.");
+              
+            //    return;
+            //}
+           
+            $.ajax({
+                type: "POST",
+                url: "/Vendor/AddVendorType",
+                data: '{objVendor: ' + JSON.stringify(objVendor) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata1();
+                    Resetdata();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+            // alert();
+        });
+    })
+</script>
+<script>
+    $(document).ready(function () {
+
+        $("#btnupdatevendortype").click(function () {
+            // alert();
+            var objVendor = {};
+            // alert();
+            objVendor.Vendor_Type = $("#txtupvendortype").val().charAt(0).toUpperCase() + $("#txtupvendortype").val().slice(1);
+           
+            objVendor.Vendor_Type_Id = $("#hdvendortype").val();
+            if (objVendor.Vendor_Type == "" || objVendor.Vendor_Type == null) {
+                swal("Please enter vendor type.");
+                $("#txtupvendortype").focus();
+                return;
+            }
+           
+
+            $.ajax({
+                type: "POST",
+                url: "/Vendor/AddVendorType",
+                data: '{objVendor: ' + JSON.stringify(objVendor) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata1();
+                    Resetdata();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+            // alert();
+        });
+    })
+</script>
+@*------------------------------------edit-------------------------------------------*@
+<script>
+    $(document).on("click", "a.edit", function () {
+        //var $row = $(this).closest("tr");    // Find the row
+        //var $id = $row.find('td:eq(3)').text();
+        var currentRow = $(this).closest("tr");
+       
+            var col1 = currentRow.find("td:eq(3)").text();
+       
+            $("#hdvendortype").val(col1);
+      
+        var objVendorType = {};
+
+        objVendorType.Vendor_Type_Id = col1;
+
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/VendorTypeForEdit",
+            data: '{objVendorType: ' + JSON.stringify(objVendorType) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $("#txtupvendortype").val(response.Vendor_Type);
+                $("#dialogdivupdatevendortype").modal("show")
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+
+
+
+    });
+</script>
+@*--------------------------------------------------delete data-------------------------------------------------*@
+<script>
+    $(document).on("click", "a.delete", function (e) {
+
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(3)').text();
+
+        swal({
+            title: 'Are you sure?',
+            text: '*You want to delete this data?*',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function (value) {
+            if (value) {
+                var objVendorType = {};
+                objVendorType.Vendor_Type_Id = $id;
+                $.ajax({
+                    type: "POST",
+                    url: "/Vendor/DeleteVendorType",
+                    data: '{objVendorType: ' + JSON.stringify(objVendorType) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        Getdata1();
+                        Resetdata();
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "/assets/js/jquery.dataTables.min.js";
+                        document.getElementsByTagName("body")[0].appendChild(script);
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+                swal("*Your data is safe*");
+            }
+        });
+
+    });
+</script>
+@*--------------------------------------------------approve data-------------------------------------------------*@
+<script>
+    $(document).on("click", "a.approve", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(3)').text();
+        var objVendorType = {};
+        objVendorType.Vendor_Type_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/VendorTypeApproveStatus",
+            data: '{objVendorType: ' + JSON.stringify(objVendorType) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //$(".dataTables_length").remove();
+                //$(".dataTables_filter").remove();
+                //$(".dataTables_info").remove();
+                //$(".dataTables_paginate").remove();
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                Getdata1();
+                Resetdata();
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+@*------------------------------------------------------------------------------upload excel file-----------------------------------------*@
+<script>
+    $(function () {
+        $("#btnexcel").click(function () {
+            $('#dialogdivexcel').modal('show');
+        });
+    });
+</script>
+<script type="text/javascript">
+    $("body").on("click", "#uploadExcel", function () {
+        Resettable();
+        //Reference the FileUpload element.
+        var fileUpload = $("#fileUpload")[0];
+
+        //Validate whether File is valid Excel file.
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx)$/;
+        if (regex.test(fileUpload.value.toLowerCase())) {
+            if (typeof (FileReader) != "undefined") {
+                var reader = new FileReader();
+
+                //For Browsers other than IE.
+                if (reader.readAsBinaryString) {
+                    reader.onload = function (e) {
+                        ProcessExcel(e.target.result);
+                    };
+                    reader.readAsBinaryString(fileUpload.files[0]);
+                } else {
+                    //For IE Browser.
+                    reader.onload = function (e) {
+                        var data = "";
+                        var bytes = new Uint8Array(e.target.result);
+                        for (var i = 0; i < bytes.byteLength; i++) {
+                            data += String.fromCharCode(bytes[i]);
+                        }
+                        ProcessExcel(data);
+                    };
+                    reader.readAsArrayBuffer(fileUpload.files[0]);
+                }
+            } else {
+                alert("This browser does not support HTML5.");
+            }
+        } else {
+            alert("Please upload a valid Excel file.");
+        }
+    });
+    function ProcessExcel(data) {
+        $('#ExcelDataLoader').show();
+        var workbook = XLSX.read(data, {
+            type: 'binary'
+        });
+        var firstSheet = workbook.SheetNames[0];
+        var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[firstSheet]);
+        // $("#dvExcel").empty();
+        $("#dvExcel").append('<table id="EmpInfovendortype" class="table table-bordered table-hover"><thead><tr><th class="left_c w61_i">S. No</th> <th class="left_c edit">Vendor Type</th> <th class="w155_i">Action</th> </tr></thead><tbody></tbody> </table>')
+        $("#EmpInfovendortype > tbody").html("");
+        var count = excelRows.length;
+        for (var i = 0; i < excelRows.length; i++) {
+            var Vendor_Type= "";
+            if (excelRows[i].VendorTypeName == undefined) {
+
+                Vendor_Type = "";
+            }
+            else {
+                Vendor_Type = excelRows[i].VendorTypeName;
+
+            }
+            tr = $('<tr/>');
+            tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+            tr.append("<td class='left_c'>" + Vendor_Type + "</td>");
+
+            tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a  href='javascript:void(0);' class='deletevendortype tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+            $('#EmpInfovendortype').append(tr);
+        }
+        $('#EmpInfovendortype').DataTable();
+        $('#EmpInfovendortype').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count + " entries";
+            }
+        });
+        sessionStorage.setItem("vendor-Type-count1", count);
+        $('#ExcelDataLoader').hide();
+    };
+</script>
+<script>
+    $(document).on("click", "a.deletevendortype", function () {
+
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(0)').text();
+       
+        $row.remove().draw(false);
+     //   $row.hide();
+        var oTable = $('#EmpInfovendortype').dataTable();
+       // var aPos = oTable.fnGetPosition($row);
+        //oTable.fnDeleteRow(aPos);
+        var rowcollection = oTable.$("tr", { "page": "all" });
+
+        var count = sessionStorage.getItem("vendor-Type-count1");
+
+        sessionStorage.setItem("vendor-Type-count1", (count - 1));
+
+        var count1 = count - 1;
+
+        var table = $('#EmpInfovendortype').DataTable({
+            destroy: true,
+            rowReorder: true
+        });
+        table.on('row-reorder', function (e, diff, edit) {
+            var res = '';
+            for (var i = 0, ien = diff.length ; i < ien ; i++) {
+                res += diff[i].newData + '=';
+            }
+            res = res.substring(0, res.length - 1);
+            getVal(res);
+        });
+        $('#EmpInfovendortype').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count1 + " entries";
+            }
+        });
+        if (count <= 1) {
+            Resettable();
+        }
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveuploaddb").click(function () {
+            $('#ExcelDataLoader').show();
+            var objVendorType = {};
+            objVendorType.Vendor_Type = "";
+
+            var oTable = $('#EmpInfovendortype').dataTable();
+            var rowcollection = oTable.$("tbody>tr", { "page": "all" });
+           // alert(rowcollection.length);
+          //  return;
+            rowcollection.each(function (index, elem) {
+                
+                var row = $(elem).closest("tr");
+                //alert(row.find('td:eq(1)').text())
+                if (objVendorType.Vendor_Type == "") {
+                    objVendorType.Vendor_Type = row.find('td:eq(1)').text().charAt(0).toUpperCase() + row.find('td:eq(1)').text().slice(1);;
+                }
+                else {
+                    objVendorType.Vendor_Type = objVendorType.Vendor_Type + "," + row.find('td:eq(1)').text().charAt(0).toUpperCase() + row.find('td:eq(1)').text().slice(1);;
+                }
+            });
+
+            objVendorType.Vendor_Type_Id = 0;
+
+            var rowCount = $('#EmpInfovendortype tr').length;
+            if (rowCount <= 1) {
+                swal("please upload excel file for data upload.");
+                return;
+            }
+            if (rowCount > 1 && objVendorType.Vendor_Type == "") {
+                swal("no data in table.");
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Vendor/AddBulkVendorType",
+                data: '{objVendorType: ' + JSON.stringify(objVendorType) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata1();
+                    Resettable();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+                    $('#ExcelDataLoader').hide();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+        $("#btnresettype").click(function () {
+            Resettable();
+        });
+        $('#fileUpload').change(function (e) {
+
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+    });
+</script>
+<script>
+    function Resettable() {
+        $("#dvExcel").empty();
+        $('#spnfile').text("");
+        $('#spnfile').append('<span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span>')
+    }
+</script>
+
+
+
+
+<script>
+    //function GetVendorSubType() {
+  
+    //    $.ajax({
+    //        type: "get",
+    //        url: "/Vendor/VendorSubTypeDetails",
+    //        data: '{}',
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        success: function (response) {
+
+    //            for (var i = 0; i < response.length; i++) {
+    //                $("#divcheck").append(' <label class="inline" ><input name="form-field-checkbox" type="checkbox" class="ace input-lg" id="lblcheck' + i + '" value=' + response[i].Vendor_Sub_Type_Id + '><b class="lbl bigger-120"> ' + response[i].Vendor_Sub_Type_Name + ' </b></label>');
+    //            }
+
+    //        },
+    //        failure: function (response) {
+    //            alert(response.responseText);
+    //        },
+    //        error: function (response) {
+    //            alert(response.responseText);
+    //        }
+    //    });
+    //}
+</script>
+@*<script>
+    $(document).on("click", "a.collapse1", function () {
+        var navIndex2 = $('#myTab>li>').index();
+        //alert(navIndex2);
+        $('#myTab>li>:eq(' + navIndex2 + ')').find("ul").hide();
+
+    });
+</script>*@
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<style>
+.btn-info1 {
+    width: 97px !important;
+    padding: 1px 7px !important;
+}
+    </style>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    @*<a href='javascript:void(0);' class='collapse'>click*@
+        <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+            <a href='javascript:void(0);' class='collapse1'>
+                <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+            </a>
+        </div>
+    @*</a>*@
+</div>
+<div class="main-content">
+    <div class="main-content-inner top-padding">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#">Vendor</a>
+                </li>
+
+                <li>
+                    <a href="#">Vendor Master</a>
+                </li>
+                <li class="active">Vendor Type</li>
+            </ul><!-- /.breadcrumb -->
+
+            @*<div class="nav-search" id="nav-search">
+                <form class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </form>
+            </div>*@
+        </div>
+
+        <div class="page-content1">
+            
+
+            <div class="page-header">
+                <h1>
+                    Vendor Type
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+
+                    </small>
+                </h1>
+            </div><!-- /.page-header -->
+
+
+
+            <div class="vendor_mast">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="tabbable">
+
+
+                            <div class="tab-content tb_area">
+                                <div id="home4" class="tab-pane active">
+
+
+
+                                    <div class="row m_botm">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Vendor  Type Name <span>*</span>  </label>
+
+                                                <div class="col-sm-9">
+                                                    <input type="text" id="Vendortype" placeholder="Vendor Type Name" class="col-xs-12 col-sm-12">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @*<div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="checkboxlist" id="divcheck">
+                                                </div>
+                                            </div>
+                                        </div>*@
+                                        <input type="hidden" id="hdvendortype"/>
+                                        <div class="col-md-12">
+                                            <div class="clearfix form-actions">
+                                                <div class=" col-md-12 text-center">
+                                                    <a href="~/excelFile/vendortypemaster.xlsx">Download Template</a>
+                                                    &nbsp; &nbsp; &nbsp;
+                                                    <button class="btn btn-info" id="btnexcel" type="button" data-toggle="tooltip" style="width: auto;" title="Button for excel data">
+                                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                                        Upload Excel File
+                                                    </button>
+                                                    &nbsp; &nbsp; &nbsp;
+                                                    <button class="btn btn-info" id="btnsave" type="button">
+                                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                                        Submit
+                                                    </button>
+
+                                                    &nbsp; &nbsp; &nbsp;
+                                                    <button class="btn btn-info1" type="reset" id="btnreset">
+                                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                        Reset
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @*----------------------------------------------------popup for upload master data--------------------------------------------------------------*@
+                                <div id="dialogdivexcel" class="modal fade" style="margin-top:0px!important;overflow:auto!important">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered " style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
+                                        <div class="modal-content" style="width:100% !important;padding-bottom:22px">
+                                            <div class="modal-header">
+                                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                                <h3 class="item_hedin">Upload Excel File </h3>
+                                            </div>
+                                            <div class="modal-body">
+
+                                                <div class="row">
+
+                                                    <div class="col-md-3">Choose excel file <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                    <div class="col-sm-9">
+                                                        <div class="col-xs-8 pr-0">
+
+                                                            <label class="ace-file-input upload_fl1"><input type="file" id="fileUpload" accept=".xls,.xlsx"><span class="ace-file-container upload_fl" id="spnfile" data-title="Choose"><span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                                        </div>
+                                                        <div class="col-xs-4">
+                                                            <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                                            <input type="button" id="uploadExcel" class="btn btn-info upload-bt" value="Upload" onclick="ExportToTable()" />
+                                                            <div id="ExcelDataLoader" class="loader">
+                                                                <img src="~/Images/1.gif" height="70" width="60" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="space-6"></div>
+                                                    <div class="row" style="padding-top:45px">
+                                                        <div class="col-xs-12">
+                                                            <div class="form-horizontal">
+                                                                <div id="dvExcel"></div>
+
+                                                            </div>
+
+                                                        </div><!-- /.span -->
+                                                    </div><!-- /.row -->
+                                                </div>
+
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3"></div>
+                                                    <div class="col-md-9">
+                                                        <button class="btn btn-info" id="btnsaveuploaddb" type="button" data-toggle="tooltip" title="Button for save data">
+                                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                                            Submit
+                                                        </button>
+                                                        <button class="btn master-page-reset" id="btnresettype" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                            Reset
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="sub_tb">
+                                    @*<table id="EmpInfo" class="display responsive nowrap"> <thead> <tr><th class='w43_i'>S. No</th><th>Vendor Type</th><th class='w80_i'>Action</th><th class="hide_me"></th> </tr></thead><tbody></tbody></table>*@
+                                    <div id="divtbl">
+
+                                        @*<table id="exampleTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Race</th>
+                                                    <th>Year</th>
+                                                    <th>Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+
+                                        <div style="display:none">
+                                            <table id="detailsTable">
+                                                <thead>
+                                                    <tr>
+                                                     
+                                                        <th>Name</th>
+                                                       
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>*@
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.page-content -->
+
+        @*--------------------------------------------------------update vendor type Master-------------------------------------------------------*@
+        <div class="modal fade" id="dialogdivupdatevendortype">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <a href="#" class="close" data-dismiss="modal">×</a>
+                        <h3 class="item_hedin">Update Vendor Type </h3>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-4">Vendor Type <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                            <div class="col-md-8">
+                                <input type="text" id="txtupvendortype" style="text-transform:uppercase" placeholder="Vendor Type" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for vendor type" />
+                            </div>
+                        </div>
+                        
+
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-8">
+                                <button class="btn btn-info" id="btnupdatevendortype" type="button" data-toggle="tooltip" title="Button for update data">
+                                    <i class="ace-icon fa fa-floppy-o"></i>
+                                    Update
+                                </button>
+                                <button class="btn master-page-reset" id="btnresetupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+
+
+
+
+
+@*<style>
+    td.details-control {
+    background: url('https://cdn.rawgit.com/DataTables/DataTables/6c7ada53ebc228ea9bc28b1b216e793b1825d188/examples/resources/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('https://cdn.rawgit.com/DataTables/DataTables/6c7ada53ebc228ea9bc28b1b216e793b1825d188/examples/resources/details_close.png') no-repeat center center;
+}
+</style>*@
+@*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>
+@*<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<link href="~/assets/css/colReorder.dataTables.css" rel="stylesheet" />
+<link href="~/assets/css/responsive.dataTables.css" rel="stylesheet" />
+<script src="~/assets/js/dataTables.colReorder.js"></script>
+<script src="~/assets/js/dataTables.responsive.js"></script>
+
+<link href="~/assets/css/rowReorder.dataTables.min.css" rel="stylesheet" />
+
+
+<script>
+
+    $(document).ready(function () {
+       // GetData1();
+        //$('#pending_from').dataTable({
+        //    colReorder: {
+        //        order: [4, 3, 2, 1, 0, ]
+        //    }
+        //});
+        $('#vendor_per').dataTable({
+            colReorder: {
+                order: [0, 1, 2]
+            }
+        });
+    });
+
+
+
+</script>

@@ -1,0 +1,569 @@
+﻿@{
+    ViewBag.Title = "ProjectLoad";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<link href="~/assets/css/searchbox.css" rel="stylesheet" />
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+<style>
+    .searc_box {
+        width: 600px;
+        height: 47px;
+        border-radius: 5px !important;
+        font-size: 17px !important;
+        display: block;
+        margin: auto;
+        margin-bottom: 35px;
+    }
+    /* #txtsearch {
+        width: 600px;
+    }*/
+    .item_search_box {
+        padding: 0px 40px;
+    }
+
+    .ui-widget.ui-widget-content {
+        -webkit-box-sizing: content-box;
+        -moz-box-sizing: content-box;
+        box-sizing: content-box;
+        width: 150px;
+        box-shadow: 0 2px 4px rgba(0,0,0,.2);
+        background-color: #FFF;
+        padding: 3px;
+        background: #fff !IMPORTANT;
+        height: auto;
+        overflow: hidden;
+        overflow-y: scroll;
+    }
+</style>
+@*<script>
+
+        $(document).ready(function () {
+
+            $("#txtnumber").autocomplete({
+
+                source: function (request, response) {
+
+                    $.ajax({
+
+                        url: "/Engineering/GetProjectNumberSearch",
+
+                        type: "POST",
+
+                        dataType: "json",
+
+                        data: { prefix: request.term },
+
+                        success: function (data) {
+
+                            response($.map(data, function (item) {
+
+
+
+                                return { label: item.Search_Name, value: item.Search_Name };
+
+                            }))
+
+                        }
+
+                    })
+
+                },
+
+            });
+
+        });
+
+    </script>*@
+<script>
+    var myVar;
+    $(document).ready(function () {
+        $("#txtnumber").blur(function () {
+            // GetProjectName();
+            //  myVar = setTimeout(GetProjectCADDetail, 50);
+            //GetProjectCADDetail();
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+
+        $("#btnshow").click(function () {
+
+            GetProjectName();
+            GetProjectCADDetail();
+
+        });
+    });
+</script>
+
+<script>
+    function GetProjectName() {
+
+        var objProject = {};
+        objProject.Project_Number = $("#txtnumber").val();
+        $.ajax({
+            type: "POST",
+            url: "/Engineering/ProjectNameAccProjectNo",
+            data: '{objProject: ' + JSON.stringify(objProject) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+
+                $("#txtProjectName").val(response.Project_Name);
+                $("#hdprojectid").val(response.Project_Id);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script language="JavaScript" type="text/javascript">
+    $(function () {
+        $('.date').datepicker({
+            format: 'dd.mm.yyyy'
+        });
+    });
+</script>
+<script>
+    function GetProjectCADDetail() {
+        $("#spin").show();
+        $("#EmpInfo > tbody").html("");
+        var objProject = {};
+        objProject.Project_Id = $("#hdprojectid").val();
+        $.ajax({
+            type: "POST",
+            url: "/Engineering/ProjectCADDetailAccProjectId",
+            data: '{objProject: ' + JSON.stringify(objProject) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+
+                var tr;
+                for (var i = 0; i < response.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td style='text-align:center'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Project_Part_No + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Project_Drawing_No + "</td>");
+                    //tr.append("<td class='left_c'><input type='text' class='input' id='" + "datetimepicker" + i + "' /></td>");
+                    tr.append("<td class='left_c'><input type='date' class='form - control datePicker' placeholder='Date' /></td>");
+                    tr.append("<td class='left_c'><select id='select" + i + "'><option>Internam Programer</option><option>EPL-1</option><option>EPL-2</option><option>EPL-3</option><option>EPL-4</option><option>EPL-5</option></select></td>");
+                    tr.append("<td class='left_c' style='display:none'>" + response[i].Project_Drawing_URL + "</td>");
+
+                    tr.append("<td style='display:none'>" + response[i].Project_Detail_Id + "</td>");
+                    tr.append("<td class='lst_td'><ul class='list_main'><li><a href='javascript:void(0);' class='engineer tooltip-error comn_inline grn' data-rel='tooltip'>Load Project</a></li></ul></td>");
+                    $('#EmpInfo').append(tr);
+                }
+                $(".datePicker").datetimepicker({
+                    format: 'DD/MM/YYYY'
+                });
+                $('#EmpInfo').DataTable();
+                $("#spin").hide();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    var myVar1;
+    $(document).on("click", "a.engineer", function () {
+        $(".dataTables_length").remove();
+        $(".dataTables_filter").remove();
+        $(".dataTables_info").remove();
+        $(".dataTables_paginate").remove();
+        var $row = $(this).closest("tr");    // Find the row
+
+        var $duedate = $row.find('td:eq(3) input').val();
+        var $id = $row.find('td:eq(6)').text();
+        var $programmer = $row.find("option:selected").val();
+        var objProject = {};
+        objProject.Project_Detail_Id = $id;
+        objProject.Due_Date = $duedate;
+        objProject.Project_Programer = $programmer;
+        $.ajax({
+            type: "POST",
+            url: "/Engineering/AddEngineering",
+            data: '{objProject: ' + JSON.stringify(objProject) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                swal(response);
+                myVar1 = setTimeout(GetProjectCADDetail, 50);
+                // GetProjectCADDetail();
+
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+
+    });
+</script>
+<style>
+    .btn-show {
+        margin-left: 39px;
+        margin-top: 5px;
+        color: #fff !important;
+        background: #0893e2;
+        text-decoration: none;
+        border-color: #0893e2;
+        border: none;
+        height: 27px;
+        width: 85px;
+    }
+</style>
+<style>
+    .spinner {
+        margin: 0px auto 0;
+        width: 70px;
+        text-align: center;
+        margin: 0px auto 0;
+        width: 70px;
+        text-align: center;
+        margin-left: 0px !important;
+        margin-top: 43px !important;
+    }
+
+        .spinner > div {
+            width: 18px;
+            height: 18px;
+            background-color: #333;
+            border-radius: 100%;
+            display: inline-block;
+            -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+            animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+        }
+
+        .spinner .bounce1 {
+            -webkit-animation-delay: -0.32s;
+            animation-delay: -0.32s;
+        }
+
+        .spinner .bounce2 {
+            -webkit-animation-delay: -0.16s;
+            animation-delay: -0.16s;
+        }
+
+    @@-webkit-keyframes sk-bouncedelay {
+        0%, 80%, 100% {
+            -webkit-transform: scale(0);
+        }
+
+        40% {
+            -webkit-transform: scale(1.0);
+        }
+    }
+
+    @@keyframes sk-bouncedelay {
+        0%, 80%, 100% {
+            -webkit-transform: scale(0);
+            transform: scale(0);
+        }
+
+        40% {
+            -webkit-transform: scale(1.0);
+            transform: scale(1.0);
+        }
+    }
+
+    .wpj-head {
+        position: absolute;
+        top: 10px !important;
+        left: 20px !important;
+        margin-right: 9px !important;
+        padding-right: 11px !important;
+    }
+
+    .cls_radio1 {
+        margin-top: 5px !important;
+    }
+</style>
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+<div class="main-content">
+    <div class="main-content-inner top-padding">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs" style=" z-index: -1 !IMPORTANT;">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="/Engineering/EngineeringDashboard">Engineering</a>
+                </li>
+                <li>
+                    <a href="/Engineering/EngineeringDashboard">Project Load</a>
+                </li>
+                <li class="active">Project Detail Load</li>
+            </ul><!-- /.breadcrumb -->
+
+            <div class="nav-search" id="nav-search">
+                <div class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div><!-- /.nav-search -->
+        </div>
+        <div class="page-content1">
+            <div class="page-header">
+                <h1>
+                    Project Load
+                </h1>
+            </div><!-- /.page-header -->
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Project number </label>
+
+                        <div class="col-sm-9">
+                            <div class="autocomplete" style="width:80%;float:left">
+                                <input type="text" id="txtnumber" placeholder="project Number" class="col-xs-10 col-sm-10" autocomplete="off" />
+                            </div>
+                            <div style="width:20%;float:left">
+                                <input type="button" id="btnshow" value="show" class="btn-show">
+                            </div>
+                            <script>
+                                function autocomplete(inp, arr) {
+                                    /*the autocomplete function takes two arguments,
+                                    the text field element and an array of possible autocompleted values:*/
+                                    var currentFocus;
+                                    /*execute a function when someone writes in the text field:*/
+                                    inp.addEventListener("input", function (e) {
+                                        var a, b, i, val = this.value;
+                                        /*close any already open lists of autocompleted values*/
+                                        closeAllLists();
+                                        if (!val) { return false; }
+                                        currentFocus = -1;
+                                        /*create a DIV element that will contain the items (values):*/
+                                        a = document.createElement("DIV");
+                                        a.setAttribute("id", this.id + "autocomplete-list");
+                                        a.setAttribute("class", "autocomplete-items");
+                                        /*append the DIV element as a child of the autocomplete container:*/
+                                        this.parentNode.appendChild(a);
+                                        /*for each item in the array...*/
+                                        for (i = 0; i < arr.length; i++) {
+                                            /*check if the item starts with the same letters as the text field value:*/
+                                            if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                                                /*create a DIV element for each matching element:*/
+                                                b = document.createElement("DIV");
+                                                /*make the matching letters bold:*/
+                                                b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                                                b.innerHTML += arr[i].substr(val.length);
+                                                /*insert a input field that will hold the current array item's value:*/
+                                                b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                                                /*execute a function when someone clicks on the item value (DIV element):*/
+                                                b.addEventListener("click", function (e) {
+                                                    /*insert the value for the autocomplete text field:*/
+                                                    inp.value = this.getElementsByTagName("input")[0].value;
+                                                    /*close the list of autocompleted values,
+                                                    (or any other open lists of autocompleted values:*/
+                                                    closeAllLists();
+                                                });
+                                                a.appendChild(b);
+                                            }
+                                        }
+                                    });
+                                    /*execute a function presses a key on the keyboard:*/
+                                    inp.addEventListener("keydown", function (e) {
+                                        var x = document.getElementById(this.id + "autocomplete-list");
+                                        if (x) x = x.getElementsByTagName("div");
+                                        if (e.keyCode == 40) {
+                                            /*If the arrow DOWN key is pressed,
+                                            increase the currentFocus variable:*/
+                                            currentFocus++;
+                                            /*and and make the current item more visible:*/
+                                            addActive(x);
+                                        } else if (e.keyCode == 38) { //up
+                                            /*If the arrow UP key is pressed,
+                                            decrease the currentFocus variable:*/
+                                            currentFocus--;
+                                            /*and and make the current item more visible:*/
+                                            addActive(x);
+                                        } else if (e.keyCode == 13) {
+                                            /*If the ENTER key is pressed, prevent the form from being submitted,*/
+                                            e.preventDefault();
+                                            if (currentFocus > -1) {
+                                                /*and simulate a click on the "active" item:*/
+                                                if (x) x[currentFocus].click();
+                                            }
+                                        }
+                                    });
+                                    function addActive(x) {
+                                        /*a function to classify an item as "active":*/
+                                        if (!x) return false;
+                                        /*start by removing the "active" class on all items:*/
+                                        removeActive(x);
+                                        if (currentFocus >= x.length) currentFocus = 0;
+                                        if (currentFocus < 0) currentFocus = (x.length - 1);
+                                        /*add class "autocomplete-active":*/
+                                        x[currentFocus].classList.add("autocomplete-active");
+                                    }
+                                    function removeActive(x) {
+                                        /*a function to remove the "active" class from all autocomplete items:*/
+                                        for (var i = 0; i < x.length; i++) {
+                                            x[i].classList.remove("autocomplete-active");
+                                        }
+                                    }
+                                    function closeAllLists(elmnt) {
+                                        /*close all autocomplete lists in the document,
+                                        except the one passed as an argument:*/
+                                        var x = document.getElementsByClassName("autocomplete-items");
+                                        for (var i = 0; i < x.length; i++) {
+                                            if (elmnt != x[i] && elmnt != inp) {
+                                                x[i].parentNode.removeChild(x[i]);
+                                            }
+                                        }
+                                    }
+                                    /*execute a function when someone clicks in the document:*/
+                                    document.addEventListener("click", function (e) {
+                                        closeAllLists(e.target);
+                                    });
+                                }
+
+                            </script>
+                            <script>
+                                $(document).ready(function () {
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "/Engineering/GetProjectNumberSearch",
+                                        dataType: "json",
+                                        data: "{}",
+                                        contentType: "application/json; charset=utf-8",
+                                        success: function (data) {
+                                            var result = [];
+                                            for (var i = 0; i < data.length; i++) {
+                                                result.push(data[i].Search_Name);
+                                            }
+                                            autocomplete(document.getElementById("txtnumber"), result);
+
+                                        },
+                                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                            alert(textStatus);
+                                        }
+                                    });
+                                });
+                            </script>
+
+
+                        </div>
+                    </div>
+                    <input type="hidden" id="hdprojectid" />
+
+                </div>
+                <div class="col-xs-6">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Project Name</label>
+
+                        <div class="col-sm-9">
+                            <input type="text" id="txtProjectName" style="text-transform:capitalize" placeholder="Project Name" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Project Name" />
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="spinner" id="spin" style="margin-left: 200px;text-align:center;display:none">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </div>
+        <div class="space-6"></div>
+
+
+        <div class="row" style="padding-top:45px">
+            <div class="col-xs-12">
+                <div class="form-horizontal">
+                    <table id="EmpInfo" class="table table-bordered  table-hover">
+                        <thead>
+                            <tr>
+                                <th class="center">S. No</th>
+
+                                <th>Part No</th>
+                                <th>CAD File</th>
+                                <th>Due Date</th>
+                                <th>Programmer</th>
+                                <th style="display:none"></th>
+                                <th style="display:none"></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                </div>
+
+            </div><!-- /.span -->
+        </div><!-- /.row -->
+
+
+    </div>
+
+</div>

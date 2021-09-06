@@ -1,0 +1,251 @@
+﻿@{
+    ViewBag.Title = "EngineeringDashboard";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+<style>
+    :target {
+        border: 2px solid black;
+        background-color: #e5eecc;
+    }
+
+    #myDIV {
+        width: 100%;
+        /* margin: 50px; */
+        display: block;
+        padding: 20px;
+        height: 88px;
+        border: 1px solid #a6b4bc;
+        animation: mymove 5s infinite;
+        /* box-shadow: 0px 0px 7px 9px #e3e9ed; */
+    }
+
+
+    @@keyframes mymove {
+        80% {
+            border: 2px solid lightblue;
+        }
+    }
+
+    .page-header h1 {
+        padding: 0;
+        margin: 0 8px;
+        font-size: 24px;
+        font-weight: lighter;
+        color: #2679B5;
+        text-align: left;
+    }
+
+    a:link {
+        color: #438eb9;
+    }
+    /* visited link */
+    a:visited {
+        color: #438eb9;
+    }
+
+    /* mouse over link */
+    a:hover {
+        color: yellow;
+    }
+
+    /* selected link */
+    #myDIV .active {
+        color: #fff !important;
+        background: #438eb9;
+        text-decoration: none;
+    }
+
+    #myDIV a i {
+        font-size: 20px;
+        padding-left: 9px;
+    }
+
+    #myDIV a {
+        font-size: 18px;
+        /*padding: 3px 5px;*/
+        border-radius: 5px;
+        /* font-weight: 600; */
+        display: inline-block;
+        float: left;
+        line-height: 16px;
+        vertical-align: top;
+    }
+
+    .dropdown {
+        display: inline;
+        border: groove;
+        font-size: 20px;
+        PADDING: 5px;
+        MARGIN: 20px 10px 30px 10px;
+    }
+
+    .left_c a:hover {
+        color: #0e0ef9 !important;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $('a').click(function () {
+            $('a').removeClass("active");
+            $(this).addClass("active");
+            var project = ($(this)).text();
+            if (($(this)).text() == "Edit Project") {
+                window.location.replace("/Engineering/EditProject");
+            }
+            if (project == "Add Project") {
+                window.location.replace("/Engineering/ProjectMaster");
+            }
+
+            if (project == "Search Project") {
+               // alert(($(this)).text());
+                window.location.replace("/Engineering/ProjectSearch");
+
+            }
+        });
+        Getdata();
+    });
+</script>
+<script>
+    function Getdata() {
+        $("#EmpInfo > tbody").html("");
+        //Call EmpDetails jsonResult Method
+        // alert();
+        $.getJSON("/Engineering/ProjectCount",
+            function (json) {
+                var tr;
+
+                //Append each row to html table
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td style='text-align:center'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'><a href='javascript:void(0);' class='ProjectBy'>" + json[i].Project_By + "</a></td>");
+                    tr.append("<td class='left_c'>" + json[i].Project_Count + "</td>");
+
+
+                    $('table').append(tr);
+
+                }
+                $('#EmpInfo').DataTable();
+            });
+
+    }
+</script>
+
+<script>
+    $(document).on("click", "a.ProjectBy", function () {
+        var $row = $(this).closest("tr");    // Find the row
+        var $name = $row.find('td:eq(1)').text();
+        sessionStorage.setItem("projectBy", $name);
+        window.location.replace("/Engineering/ProjectList");
+    });
+</script>
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+<div class="main-content">
+    <div class="main-content-inner top-padding">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs" style=" z-index: -1 !IMPORTANT;">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#">Engineering</a>
+                </li>
+
+                <li>
+                    <span></span>
+                    <a href="/Engineering/EngineeringDashboard">Engineering Dashboard</a>
+                </li>
+                <li class="active">Dashboard</li>
+            </ul><!-- /.breadcrumb -->
+            @*<div class="nav-search" id="nav-search">
+                <div class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>*@<!-- /.nav-search -->
+        </div>
+        <div class="page-content1">
+
+
+            <div class="page-header">
+                <h1>
+                    Dashboard
+                </h1>
+            </div>
+            <div class="row">
+                <ul id="myDIV">
+
+                    <li> <a href="#" class="active"><i class="fa fa-plus"></i><span style="margin: 10px; font-size: 24px; font-weight: inherit;">Add Project</span></a></li>
+                    <li><a href="#"><i class="fa fa-edit"></i><span style="margin: 10px; font-size: 24px; font-weight: inherit;">Edit Project</span></a></li>
+                    <li><a href="#"><i class="fa fa-search"></i><span style="margin: 10px; font-size: 24px; font-weight: inherit;">Search Project</span></a></li>
+
+                </ul>
+            </div>
+            <div class="row" style=" padding-top: 38px;">
+                <div class="col-xs-12">
+                    <div class="form-horizontal">
+                        <table id="EmpInfo" class="table table-bordered  table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="center">S. No</th>
+                                    <th>Project By</th>
+                                    <th>No of Project</th>
+
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,1019 @@
+﻿
+@{
+    ViewBag.Title = "StandBy";
+    Layout = "~/_Layout.cshtml";
+}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<link href="~/assets/css/searchbox.css" rel="stylesheet" />
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<style>
+    .list_main .fa-eye {
+        color: #85b558 !important;
+    }
+
+    .blue_active {
+        color: #468fcc !important;
+    }
+
+    .blue_sus {
+        color: #2a8bcb !important;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        var ddlVendorcategory = $("#ddlVendorcategory");
+        ddlVendorcategory.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/VendorCategoryName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlVendorcategory.empty().append('<option selected="selected" value="All">All</option>');
+                $.each(response, function () {
+                    ddlVendorcategory.append($("<option></option>").val(this['Text']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+
+<script>
+    //var objsearchitem = {};
+    function GetVenderdata() {
+        //$("#searchitemtable").show();
+        //  document.getElementById('searchitemtable').style.visibility = 'block';
+        var objVendorRegistation = {};
+        objVendorRegistation.Contact_Person = $("#txtsortName").val();
+        objVendorRegistation.Vendor_Company_Name = $("#txtcompanyname").val();
+        objVendorRegistation.Vendor_Category_Name = $("#ddlVendorcategory").val();
+        //objVendorRegistation.Vendor_Status = $('input[name="Status"]:checked').val();
+        $.ajax({
+            type: "Post",
+            url: "/Vendor/StandbyVendorDetailsAccSearchValue",
+            data: '{objVendorRegistation: ' + JSON.stringify(objVendorRegistation) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $("#EmpInfo > tbody").html("");
+                var tr;
+                for (var i = 0; i < response.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td style='text-align:center'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Contact_Person + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Vendor_Company_Name + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Vendor_Category_Name + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Vendor_company_GST + "</td>");
+                    tr.append("<td style='display:none'>" + response[i].Vendor_Id + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Vendor_Email_ID + "</td>");
+                    var status = response[i].Vendor_Status;
+                    var status1 = "";
+                    if (status == "Active") {
+                        status1 = "<i class='menu-icon fa fa-toggle-on bigger-120 blue_active'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-pause bigger-120 blue_sus'></i>";
+                    }
+                    tr.append("<td class='lst_td'><ul class='list_main'><li><a href='javascript:void(0);'  id='myAnc' class='View tooltip-error comn_inline blu' data-rel='tooltip' title='View'><i class='menu-icon fa fa-eye red'></i></a></li></ul></td>");
+                    $('table').append(tr);
+                }
+                $('#EmpInfo').DataTable();
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+<script>
+    //var objsearchitem = {};
+    function GetTopTenVenderdata() {
+
+
+        $.ajax({
+            type: "Post",
+            url: "/Vendor/StandbyVendorTopTenForSearch",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $("#EmpInfo > tbody").html("");
+                var tr;
+                for (var i = 0; i < response.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Contact_Person + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Vendor_Company_Name + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Vendor_Category_Name + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Vendor_company_GST + "</td>");
+                    tr.append("<td style='display:none'>" + response[i].Vendor_Id + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Vendor_Email_ID + "</td>");
+                    var status = response[i].Vendor_Status;
+
+                    var status1 = "";
+                    if (status == "Active") {
+                        status1 = "<i class='menu-icon fa fa-toggle-on bigger-120 blue_active' data-toggle='tooltip' title='Active'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-pause bigger-120 blue_sus' data-toggle='tooltip' title='Suspend'></i>";
+                    }
+                    tr.append("<td class='lst_td'><ul class='list_main'><li><a href='javascript:void(0);'  id='myAnc' class='View tooltip-error comn_inline blu' data-rel='tooltip' title='View'><i class='menu-icon fa fa-eye red'></i></a></li></ul></td>");
+                    $('#EmpInfo').append(tr);
+                }
+                $('#EmpInfo').DataTable();
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+<script>
+    $(document).on("click", "a.View", function () {
+
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(5)').text();
+        var objVendorRegistation = {};
+        objVendorRegistation.Vendor_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/VendorRequestDetailsForPopup",
+            data: '{objVendorRegistation: ' + JSON.stringify(objVendorRegistation) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+
+                $("#lblcompanyname").empty();
+                if (response.Vendor_Company_Name == "") {
+                    $("#lblcompanyname").text("NA");
+                } else {
+                    $("#lblcompanyname").text(response.Vendor_Company_Name);
+                }
+                $("#lblcontactperson").empty();
+                if (response.Contact_Person == "") {
+                    $("#lblcontactperson").text("NA");
+                } else {
+                    $("#lblcontactperson").text(response.Contact_Person);
+                }
+                $("#lblcompanyaddress").empty();
+                if (response.Vendor_Company_Address == "") {
+                    $("#lblcompanyaddress").text("NA");
+                } else {
+                    $("#lblcompanyaddress").text(response.Vendor_Company_Address);
+                }
+                $("#lblcompanycity").empty();
+                if (response.City_Name == "") {
+                    $("#lblcompanycity").text("NA");
+                } else {
+                    $("#lblcompanycity").text(response.City_Name);
+                }
+                $("#lblcompanystate").empty();
+                if (response.State_Name == "") {
+                    $("#lblcompanystate").text("NA");
+                } else {
+                    $("#lblcompanystate").text(response.State_Name);
+                }
+                $("#lblcompanycountry").empty();
+                if (response.Country_Name == "") {
+                    $("#lblcompanycountry").text("NA");
+                } else {
+                    $("#lblcompanycountry").text(response.Country_Name);
+                }
+                $("#lblcompanypincode").empty();
+                if (response.Pin_Code == "") {
+                    $("#lblcompanypincode").text("NA");
+                } else {
+                    $("#lblcompanypincode").text(response.Pin_Code);
+                }
+                //$("#lblstate").text(response.State_Name);
+                //$("#lblcity").text(response.City_Name);
+                $("#lblworksample").empty();
+                if (response.Vendor_Work_Sample_Url == "") {
+                    $("#lblworksample").text("No file");
+                } else {
+                    var link = $("<a>");
+                    link.attr("href", response.Vendor_Work_Sample_Url);
+                    link.attr("title", "work sample");
+                    link.text("Download work sample file");
+                    $("#lblworksample").append(link);
+                    // $("#lblworksample").text(response.Vendor_Work_Sample_Url);
+                }
+                $("#lblcompanytelephone").empty();
+                if (response.Vendor_company_Telephone == "") {
+                    $("#lblcompanytelephone").text("NA");
+                } else {
+                    $("#lblcompanytelephone").text(response.Vendor_company_Telephone);
+                }
+                $("#lblfaxno").empty();
+                if (response.Vendor_company_FaxNo == "") {
+                    $("#lblfaxno").text("NA");
+                } else {
+                    $("#lblfaxno").text(response.Vendor_company_FaxNo);
+                }
+                $("#lblmobileno").empty();
+                if (response.Vendor_company_MobileNo == "") {
+                    $("#lblmobileno").text("NA");
+                } else {
+                    $("#lblmobileno").text(response.Vendor_company_MobileNo);
+                }
+                $("#lblaltno").empty();
+                if (response.Vendor_company_Attn == "") { } else {
+                    $("#lblaltno").text(response.Vendor_company_Attn);
+                }
+                $("#lblcompanygst").empty();
+                if (response.Vendor_company_GST == "") {
+                    $("#lblcompanygst").text("NA");
+                }
+                else {
+                    $("#lblcompanygst").text(response.Vendor_company_GST);
+                }
+                $("#lblcompanysst").empty();
+                if (response.Vendor_company_SST == "") {
+                    $("#lblcompanysst").text("NA");
+                } else {
+                    $("#lblcompanysst").text(response.Vendor_company_SST);
+                }
+                $("#lblpaymentterm").empty();
+                if (response.Payment_Term_Name == "") {
+                    $("#lblpaymentterm").text("NA")
+                } else {
+                    $("#lblpaymentterm").text(response.Payment_Term_Name);
+                }
+                $("#lblcurrency").empty();
+                if (response.Currency_Name == "") {
+                    $("#lblcurrency").text("NA")
+                } else {
+                    $("#lblcurrency").text(response.Currency_Name);
+                }
+                $("#lblcategory").empty();
+                if (response.Vendor_Category_Name == "") {
+                    $("#lblcategory").text("NA");
+                } else {
+                    $("#lblcategory").text(response.Vendor_Category_Name);
+                }
+                $("#lblregion").empty();
+                if (response.Vendor_Region == "") {
+                    $("#lblregion").text("NA");
+                } else {
+                    $("#lblregion").text(response.Vendor_Region);
+                }
+                $("#lblstatus").empty();
+
+                if (response.Vendor_Status == "") {
+                    $("#lblstatus").text("NA");
+                } else {
+                    $("#lblstatus").text(response.Vendor_Status);
+                }
+                //$("#lblsystemid").empty();
+                //if (response.Vendor_System_Id == "") {
+                //    $("#lblsystemid").text("NA");
+                //} else {
+                //    $("#lblsystemid").text(response.Vendor_System_Id);
+                //}
+                $("#lblvendorname").empty();
+                if (response.Vendor_Name == "") {
+                    $("#lblvendorname").text("NA")
+                } else {
+                    $("#lblvendorname").text(response.Vendor_Name);
+                }
+                $("#lblemail").empty();
+                if (response.Vendor_Email_ID == "") { } else {
+                    $("#lblemail").text(response.Vendor_Email_ID);
+                }
+                $("#lblvendorname1").empty();
+                if (response.Alt_Vendor_Name1 == "") {
+                    $("#lblvendorname1").text("NA");
+                } else {
+                    $("#lblvendorname1").text(response.Alt_Vendor_Name1);
+                }
+                $("#lblemail1").empty();
+                if (response.Alt_Vendor_Email1 == "") {
+                    $("#lblemail1").text("NA")
+                } else {
+                    $("#lblemail1").text(response.Alt_Vendor_Email1);
+                }
+                $("#lblvendorname2").empty();
+                if (response.Alt_Vendor_Name2 == "") {
+                    $("#lblvendorname2").text("NA");
+                } else {
+                    $("#lblvendorname2").text(response.Alt_Vendor_Name2);
+                }
+                $("#lblemail2").empty();
+                if (response.Alt_Vendor_Email2 == "") {
+                    $("#lblemail2").text("NA");
+                } else {
+                    $("#lblemail2").text(response.Alt_Vendor_Email2);
+                }
+                $("#lbltelephone1").empty();
+                if (response.Vendor_Telephone_Number_1 == "0-") {
+                    $("#lbltelephone1").text("NA");
+                } else {
+                    $("#lbltelephone1").text(response.Vendor_Telephone_Number_1);
+                }
+                //$("#lbltelephone2").empty();
+                //if (response.Vendor_Telephone_Number_2 == "0-") {
+                //    $("#lbltelephone2").text("NA");
+                //} else {
+                //    $("#lbltelephone2").text(response.Vendor_Telephone_Number_2);
+                //}
+                $("#lblvendoraddress").empty();
+                if (response.Vendor_Address == "") {
+                    $("#lblvendoraddress").text("NA");
+                } else {
+                    $("#lblvendoraddress").text(response.Vendor_Address);
+                }
+                $("#lblvendorcity").empty();
+                if (response.Vendor_City_Name == "") {
+                    $("#lblvendorcity").text("NA");
+                } else {
+                    $("#lblvendorcity").text(response.Vendor_City_Name);
+                }
+                $("#lblvendorpincode").empty();
+                if (response.Vendor_Pin_Code == "") {
+                    $("#lblvendorpincode").text("NA");
+                } else {
+                    $("#lblvendorpincode").text(response.Vendor_Pin_Code);
+                }
+                $("#lblvendorcountry").empty();
+                if (response.Vendor_Country_Name == "") {
+                    $("#lblvendorcountry").text("NA");
+                } else {
+                    $("#lblvendorcountry").text(response.Vendor_Country_Name);
+                }
+                $("#lblbankType").empty();
+                if (response.Vendor_Bank_Type == "") {
+                    $("#lblbankType").text("NA");
+                } else {
+                    $("#lblbankType").text(response.Vendor_Bank_Type);
+                }
+                $("#lblbankname").empty();
+                if (response.Vendor_Bank_Name == "") {
+                    $("#lblbankname").text("NA");
+                } else {
+                    $("#lblbankname").text(response.Vendor_Bank_Name);
+                }
+                $("#lblswiftcode").empty();
+                if (response.Vendor_Swift_Code == "") {
+                    $("#lblswiftcode").text("NA");
+                } else {
+                    $("#lblswiftcode").text(response.Vendor_Swift_Code);
+                }
+                $("#lblaccountno").empty();
+                if (response.Vendor_Account_Number == "") {
+                    $("#lblaccountno").text("NA");
+                } else {
+                    $("#lblaccountno").text(response.Vendor_Account_Number);
+                }
+                $("#lblrecivername").empty();
+                if (response.Vendor_Receiver_Name == "") {
+                    $("#lblrecivername").text("NA");
+                } else {
+                    $("#lblrecivername").text(response.Vendor_Receiver_Name);
+                }
+                $("#lblbankaddress").empty();
+                if (response.Vendor_Bank_Address == "") {
+                    $("#lblbankaddress").text("NA");
+                } else {
+                    $("#lblbankaddress").text(response.Vendor_Bank_Address);
+                }
+                $("#lblpostalcode").empty();
+                if (response.Vendor_Bank_Postal_Code == "") {
+                    $("#lblpostalcode").text("NA");
+                } else {
+                    $("#lblpostalcode").text(response.Vendor_Bank_Postal_Code);
+                }
+                $("#lblbankcity").empty();
+                if (response.Bank_City_Name == "") {
+                    $("#lblbankcity").text("NA");
+                } else {
+                    $("#lblbankcity").text(response.Bank_City_Name);
+                }
+                $("#lblbankstate").empty();
+                if (response.Bank_State_Name == "") {
+                    $("#lblbankstate").text("NA");
+                } else {
+                    $("#lblbankstate").text(response.Bank_State_Name);
+                }
+                $("#lblbankcountry").empty();
+                if (response.Bank_Country_Name == "") {
+                    $("#lblbankcountry").text("NA");
+                } else {
+                    $("#lblbankcountry").text(response.Bank_Country_Name);
+                }
+                $("#lblcontect1").empty();
+                if (response.Bank_Contact_Number_1 == "") {
+                    $("#lblcontect1").text("NA");
+                } else {
+                    $("#lblcontect1").text(response.Bank_Contact_Number_1);
+                }
+                $("#lblcontect2").empty();
+                if (response.Bank_Contact_Number_2 == "") {
+                    $("#lblcontect2").text("NA");
+                } else {
+                    $("#lblcontect2").text(response.Bank_Contact_Number_2);
+                }
+                $("#lblpaypalemail").empty();
+                if (response.Paypal_Email_Id == "") {
+                    $("#lblpaypalemail").text("NA");
+                } else {
+                    $("#lblpaypalemail").text(response.Paypal_Email_Id);
+                }
+                //$("#lblndaform").empty();
+                //if (response.NDA_Form_Url == "") {
+                //    $("#lblndaform").text("NA");
+                //} else {
+                //    $("#lblndaform").text(response.NDA_Form_Url);
+                //}
+                $("#lblndaform").empty();
+                if (response.NDA_Form_Url == "") {
+                    $("#lblndaform").text("No file");
+                } else {
+                    var link = $("<a>");
+                    link.attr("href", response.NDA_Form_Url);
+                    link.attr("title", "NDA");
+                    link.text("Download NDA file");
+                    $("#lblndaform").append(link);
+                    // $("#lblworksample").text(response.Vendor_Work_Sample_Url);
+                }
+                $("#lblform24").empty();
+                if (response.Form_24 == "") {
+                    $("#lblform24").text("No file");
+                } else {
+                    var link = $("<a>");
+                    link.attr("href", response.Form_24);
+                    link.attr("title", "form24");
+                    link.text("Download form 24 file");
+                    $("#lblform24").append(link);
+
+                }
+
+                $("#lblform48").empty();
+                if (response.Form_48 == "") {
+                    $("#lblform48").text("No file");
+                } else {
+                    var link = $("<a>");
+                    link.attr("href", response.Form_48);
+                    link.attr("title", "form48");
+                    link.text("Download form 48 file");
+                    $("#lblform48").append(link);
+
+                }
+                $("#lblform9").empty();
+                if (response.Form_9 == "") {
+                    $("#lblform9").text("No file");
+                } else {
+                    var link = $("<a>");
+                    link.attr("href", response.Form_9);
+                    link.attr("title", "form9");
+                    link.text("Download form 9 file");
+                    $("#lblform9").append(link);
+
+                }
+                $("#lblotherform").empty();
+                if (response.Other_Form == "") {
+                    $("#lblotherform").text("No file");
+                } else {
+                    var link = $("<a>");
+                    link.attr("href", response.Other_Form);
+                    link.attr("title", "otherform");
+                    link.text("Download other form file");
+                    $("#lblotherform").append(link);
+
+                }
+                var machine = response.Machine_Name.split(',');
+                var machineFunction = response.Machine_Function.split(',');
+                var machinecapability = response.Machine_Capability.split(',');
+                var tr;
+                $("#EmpInfo1 > tbody").html("");
+                $('#dialogdiv').modal('show');
+                if (machine.length > 1) {
+                    var j = 0;
+                    for (var i = 0; i < machine.length; i++) {
+                        if ((typeof machine[i] === 'undefined') && (typeof machineFunction[i] === 'undefined') && (typeof machinecapability[i] === 'undefined'))
+                        {  }
+                        else {
+                            j = j + 1;
+                            if (machine[i] == 'undefined')
+                            {
+                                machine[i] = "";
+                            }
+                            if (machineFunction[i] == 'undefined') {
+                                machineFunction[i] = "";
+                            }
+                            if (machinecapability[i] == 'undefined') {
+                                machinecapability[i] = "";
+                            }
+                            tr = $('<tr/>');
+
+                            tr.append("<td style='text-align:center'>" + (j) + "</td>");
+                            tr.append("<td class='left_c'>" + machine[i] + "</td>");
+                            tr.append("<td class='left_c'>" + machineFunction[i] + "</td>");
+                            tr.append("<td class='left_c'>" + machinecapability[i] + "</td>");
+
+                            $('#EmpInfo1').append(tr);
+                        }
+                    }
+
+                    $('#EmpInfo1').DataTable();
+                    // alert(machine.length);
+                    $("#divmachine").show();
+
+                }
+                else {
+                    $("#divmachine").hide();
+                }
+
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+
+        $("#btnreset").click(function (e) {
+            $("#txtsortName").val("");
+            $("#txtcompanyname").val("");
+            $("#txtitemcode").val("");
+            $("#ddlVendorcategory").val("All");
+        });
+    });
+</script>
+<script>
+    var myVar1;
+    $(document).ready(function () {
+        GetTopTenVenderdata();
+        $("#btnsave").click(function (e) {
+            GetVenderdata();
+        });
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "/assets/js/jquery.dataTables.min.js";
+        document.getElementsByTagName("body")[0].appendChild(script);
+    });
+</script>
+<div style="width:100%" class="m_27">
+    <div style="width:18% ; float:left" class="menu_border">
+        <div class="side_bar_main">
+
+            @{ Html.RenderAction("SideMenu", "Master");}
+
+        </div>
+
+    </div><div style="width:82% ; float:left">
+        <div class="main-content">
+            <div class="main-content-inner">
+                <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="ace-icon fa fa-home home-icon"></i>
+                            <a href="#">Vendor</a>
+                        </li>
+
+                        <li>
+                            <a href="/Vendor/Dashboard">Vendor Master</a>
+                        </li>
+                        <li class="active">Standby Vendor</li>
+                    </ul><!-- /.breadcrumb -->
+               
+                </div>
+
+
+                <div class="page-content">
+                    <div class="page-header">
+                        <h3 class="item_hedin">
+                            Stand By Vendor
+                        </h3>
+                    </div><!-- /.page-header -->
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Short Name </label>
+                                <div class="col-sm-9">
+                                    <div class="autocomplete">
+                                        <input type="text" id="txtsortName" list="browser1" style="text-transform:uppercase" onkeypress="return ((event.keyCode >= 65 && event.keyCode <= 90 || event.keyCode == 32) || (event.keyCode >= 97 && event.keyCode <= 122 || event.keyCode == 32))" placeholder="Short Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for short name" />
+                                        <datalist id="browser1"></datalist>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Company Name </label>
+                                <div class="col-sm-9">
+
+                                    <div class="autocomplete">
+                                        <input id="txtcompanyname" list="browser" type="text" style="text-transform:capitalize" onkeypress="return ((event.keyCode >= 65 &amp;&amp; event.keyCode <= 90 || event.keyCode == 32) || (event.keyCode >= 97 &amp;&amp; event.keyCode <= 122 || event.keyCode == 32))" placeholder="Company Name" class="">
+                                        <datalist id="browser"></datalist>
+                                    </div>
+
+                                    <script>
+                                        $(document).ready(function () {
+                                            var companylist = $("#browser");
+                                            var result = [];
+                                            $.ajax({
+                                                type: "POST",
+                                                url: "/Vendor/GetRecordForCompanyName",
+                                                dataType: "json",
+                                                data: "{}",
+                                                contentType: "application/json; charset=utf-8",
+                                                success: function (data) {
+
+                                                    for (var i = 0; i < data.length; i++) {
+
+                                                        companylist.append('<option value="'+ data[i].Search_Name +'"></option>');
+                                                    }
+
+                                                },
+                                                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                                    alert(textStatus);
+                                                }
+                                            });
+                                        });
+                                        //$("#txtcompanyname").autocomplete({
+                                        //    source: result
+                                        //});
+                                    </script>
+
+                                    <script>
+                                        $(document).ready(function () {
+                                            var namelist = $("#browser1");
+                                            $.ajax({
+                                                type: "POST",
+                                                url: "/Vendor/GetRecordForSortName",
+                                                dataType: "json",
+                                                data: "{}",
+                                                contentType: "application/json; charset=utf-8",
+                                                success: function (data) {
+
+                                                    for (var i = 0; i < data.length; i++) {
+                                                        namelist.append('<option value="'+ data[i].Search_Name +'"></option>');
+
+                                                    }
+
+
+                                                },
+                                                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                                    alert(textStatus);
+                                                }
+                                            });
+                                        });
+
+                                    </script>
+
+
+
+                                    @*<input type="text" id="txtcompanyname" style="text-transform:capitalize" onkeypress="return ((event.keyCode >= 65 && event.keyCode <= 90 || event.keyCode == 32) || (event.keyCode >= 97 && event.keyCode <= 122 || event.keyCode == 32))" placeholder="Company Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for uom code" />*@
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="space-4"></div>
+                    <div class="row">
+                        @*<div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Item Code </label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtitemcode" placeholder="Item Code" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for item code" />
+                                </div>
+                            </div>
+                        </div>*@
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Category </label>
+                                <div class="col-sm-9">
+                                    <select class="col-xs-10 col-sm-9" data-toggle="tooltip" id="ddlVendorcategory" title="category">
+                                        <option>All</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Access Permission </label>
+                                <div class="col-sm-9 access">
+                                    <input type="radio" id="rAll" name="Status" value="All" checked="checked">
+                                    <label for="rAll">All</label>
+                                    <input type="radio" id="ractive" name="Status" value="Active">
+                                    <label for="ractive">Active</label>
+                                    <input type="radio" id="rSuspend" name="Status" value="Suspend">
+                                    <label for="rSuspend">Suspend</label>
+
+                                </div>
+                            </div>
+                        </div>*@
+                    </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="hidden" id="hdvendorregistration" />
+                            <div class="clearfix form-actions">
+                                <div class="col-md-offset-1 col-md-9">
+                                    <button class="btn btn-info" id="btnsave" type="button" data-toggle="tooltip" title="Button for invite data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Submit
+                                    </button>
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn" id="btnreset" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <!-- PAGE CONTENT BEGINS -->
+                            <div class="row">
+                                @*-------------------------------------------------popup for view start -------------------------------------*@
+                                <div id="dialogdiv" class="modal fade" style="margin-top:0px!important;overflow:auto!important">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered " style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
+                                        <div class="modal-content" style="width:100% !important">
+                                            <div class="modal-header">
+                                                <a href="#" class="close" data-dismiss="modal">&times;</a>
+                                                <h3 class="modal-title">Vendor Request Detail</h3>
+
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="model_data">
+                                                    <div class="col-md-4">
+                                                        <label>  Company Name </label><span>:</span>
+                                                        <p id="lblcompanyname">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>  Short Name </label><span>:</span>
+                                                        <p id="lblcontactperson">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>  Address </label><span>:</span>
+                                                        <p id="lblcompanyaddress">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>  City </label><span>:</span>
+                                                        <p id="lblcompanycity">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>  State </label><span>:</span>
+                                                        <p id="lblcompanystate">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>  Country </label><span>:</span>
+                                                        <p id="lblcompanycountry">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>  Pin Code </label><span>:</span>
+                                                        <p id="lblcompanypincode">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>  Telephone Number </label><span>:</span>
+                                                        <p id="lblcompanytelephone">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>  Fax Number </label><span>:</span>
+                                                        <p id="lblfaxno">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label> Mobile Number </label><span>:</span>
+                                                        <p id="lblmobileno">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>GST Number </label><span>:</span>
+                                                        <p id="lblcompanygst">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>SST Number </label><span>:</span>
+                                                        <p id="lblcompanysst">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Payment Term </label><span>:</span>
+                                                        <p id="lblpaymentterm">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Currency</label><span>:</span>
+                                                        <p id="lblcurrency">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Category</label><span>:</span>
+                                                        <p id="lblcategory">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Region</label><span>:</span>
+                                                        <p id="lblregion">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Status</label><span>:</span>
+                                                        <p id="lblstatus">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Work Sample</label><span>:</span>
+                                                        <p id="lblworksample">  </p>
+                                                    </div>
+                                                    <div class="col-md-12" id="divmachine">
+                                                        <label>Machine</label><span>:</span>
+                                                        <div class="form-group">
+                                                            <table id="EmpInfo1" class="table table-bordered table-hover">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="center">S.No</th>
+                                                                        <th class='left_c'>Machine Name</th>
+                                                                        <th class='left_c'>Machine Function</th>
+                                                                        <th class='left_c'>Machine Capability</th>
+                                                                        <th style="display:none"></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Primary Contact Person Name</label><span>:</span>
+                                                        <p id="lblvendorname">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Primary Email Address</label><span>:</span>
+                                                        <p id="lblemail">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Telephone number 1</label><span>:</span>
+                                                        <p id="lbltelephone1">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Address</label><span>:</span>
+                                                        <p id="lblvendoraddress">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>City</label><span>:</span>
+                                                        <p id="lblvendorcity">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Country</label><span>:</span>
+                                                        <p id="lblvendorcountry">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Pin Code</label><span>:</span>
+                                                        <p id="lblvendorpincode">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Alternate Person Name 1</label><span>:</span>
+                                                        <p id="lblvendorname1">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Alternate Email1</label><span>:</span>
+                                                        <p id="lblemail1">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Alternate Person Name2</label><span>:</span>
+                                                        <p id="lblvendorname2">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Alternate Email2</label><span>:</span>
+                                                        <p id="lblemail2">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Form 24</label><span>:</span>
+                                                        <p id="lblform24">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Form 48</label><span>:</span>
+                                                        <p id="lblform48">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Form 9</label><span>:</span>
+                                                        <p id="lblform9">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Other Form </label><span>:</span>
+                                                        <p id="lblotherform">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Bank Type</label><span>:</span>
+                                                        <p id="lblbankType">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Bank Name</label><span>:</span>
+                                                        <p id="lblbankname">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Swift Code</label><span>:</span>
+                                                        <p id="lblswiftcode">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Account Number</label><span>:</span>
+                                                        <p id="lblaccountno">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Reciver Name</label><span>:</span>
+                                                        <p id="lblrecivername">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Bank Address</label><span>:</span>
+                                                        <p id="lblbankaddress">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Postal Code</label><span>:</span>
+                                                        <p id="lblpostalcode">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>City</label><span>:</span>
+                                                        <p id="lblbankcity">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>State</label><span>:</span>
+                                                        <p id="lblbankstate">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Country</label><span>:</span>
+                                                        <p id="lblbankcountry">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Contact Number 1</label><span>:</span>
+                                                        <p id="lblcontect1">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Contact Number 2</label><span>:</span>
+                                                        <p id="lblcontect2">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Paypal Email</label><span>:</span>
+                                                        <p id="lblpaypalemail">  </p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>NDA Form</label><span>:</span>
+                                                        <p id="lblndaform">  </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @*-------------------------------------------popup for view  end-------------------------------------------------------------*@
+
+
+                                <div class="col-xs-12">
+                                    <div class="form-horizontal">
+                                        <div class="table-header">
+                                            Current Record
+                                        </div>
+                                        <table id="EmpInfo" class="table table-bordered  table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th class="left_c w61_i">S. No</th>
+                                                    <th class='left_c'>Short Name</th>
+                                                    <th class='left_c'>Company Name</th>
+                                                    <th class='left_c'>Category</th>
+
+                                                    <th class='left_c'>GST</th>
+                                                    <th style="display:none"></th>
+                                                    <th class='left_c'>EMail</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+
+                                    </div>
+                                </div><!-- /.span -->
+                            </div><!-- /.row -->
+                   
+
+                        </div><!-- /.col -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

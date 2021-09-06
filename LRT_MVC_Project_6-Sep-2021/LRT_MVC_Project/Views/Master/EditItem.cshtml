@@ -1,0 +1,246 @@
+﻿
+@{
+    ViewBag.Title = "EditItem";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+@*<link rel="stylesheet" href="~/assets/css/modalpop.css">*@
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="~/assets/js/bootstrap.min.js"></script>
+<style>
+         .nav > li > a {
+    padding: 1px 15px;
+}
+     .navbar-default .navbar-brand {
+    color: #fff !important;
+}
+</style>
+<script>
+  
+    $(document).ready(function () {
+       
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "/assets/js/jquery.dataTables.min.js";
+        document.getElementsByTagName("body")[0].appendChild(script);
+        Getdata();
+       
+    })
+</script>
+<div style="font-weight:800"></div>
+<script>
+    function Getdata() {
+       // alert();
+        $("#divtbl").append('<table id="EmpInfo" class="table table-bordered  table-hover"><thead><tr> <th class="left_c w61_i">S. No</th><th class="left_c">Item Code</th><th class="left_c">Item Description</th><th class="left_c">Item Price</th><th class="left_c">Item Min Ord. Qty</th><th class="left_c">Part Number</th><th class="left_c">Item Type</th><th style="display:none;"></th><th style="display:none;"></th><th style="display:none;"></th><th class="w155_i">Action</th></tr></thead><tbody></tbody></table>')
+        $("#EmpInfo > tbody").html("");
+        //Call EmpDetails jsonResult Method
+        // alert();
+        $.getJSON("/Master/ItemDetails",
+            function (json) {
+              
+                var tr;
+
+                //Append each row to html table
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Internal_Item_Code + "</td>");
+                    if (json[i].Item_Description.length > 25) {
+                        tr.append("<td class='left_c des_cl'>" + json[i].Sort_Item_Desctiption + "<a  href='javascript:void(0);' class='more tooltip-error comn_inline more_dis' data-rel='tooltip'>more</a></td>");
+                    }
+                    else {
+                        tr.append("<td class='left_c des_cl'>" + json[i].Sort_Item_Desctiption + "</td>");
+                    }
+                    tr.append("<td class='left_c'>" + parseFloat(json[i].Item_Price).toFixed(2) + "</td>");
+                    tr.append("<td class='left_c'>" + parseFloat(json[i].Item_Min_Order_Qty).toFixed(2) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Item_Manufacturing_Part_Number + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Item_Type_Name + "</td>");
+
+                    tr.append("<td style='display:none'>" + json[i].Item_Id + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Item_Sub_Type_Id + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Item_Description + "</td>");
+                    var status = json[i].Approve_Status;
+                    var status1 = "";
+                   
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li style='display:none'><a href='javascript:void(0);' class='request tooltip-error comn_inline grn' data-rel='tooltip'>Request</a></li><li><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip' title='Edit'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i></a></li><li><a  href='javascript:void(0);' class='statuschange tooltip-error comn_inline red red_right' data-rel='tooltip' title='Item Status'><i class='<i class='fa fa - toggle - on red'></i>" + json[i].item_Status + "</a></li></ul></td>");
+                   
+                    $('table').append(tr);
+
+                }
+                $('#EmpInfo').DataTable();
+            });
+
+    }
+</script>
+<script>
+    $(document).on("click", "a.more", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $value = $row.find('td:eq(9)').text();
+        $("#lblmore").text($value);
+        $('#dialogdiv1').modal('show');
+    });
+</script>
+<script>
+    $(document).on("click", "a.remove", function () {
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(7)').text();
+        var $subid = $row.find('td:eq(8)').text();
+        //alert($id);
+        sessionStorage.setItem("sub-item-id", $subid);
+       // $.cookie("sub-item-id", $subid);
+        window.location.replace("/Master/UpdateItem/" + $id);
+
+
+    });
+</script>
+<script>
+    $(document).on("click", "a.statuschange", function () {
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(7)').text();
+        var objItemList = {};
+        objItemList.Item_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Master/StatusChangeItem",
+            data: '{objItemList: ' + JSON.stringify(objItemList) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                Getdata();
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+        <div class="main-content">
+            <div class="main-content-inner top-padding">
+                <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="ace-icon fa fa-home home-icon"></i>
+                            <a href="#">PMS Setting</a>
+                        </li>
+
+                        <li>
+                            <a href="/Master/ItemMaster">Item Master</a>
+                        </li>
+                        <li class="active"> Edit Item</li>
+                    </ul><!-- /.breadcrumb -->
+                    @*<div class="nav-search" id="nav-search">
+                <div class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>*@<!-- /.nav-search -->
+                </div>
+
+                <div class="page-content1">
+
+
+                    <div class="page-header">
+                        <h3 class="item_hedin">
+                            Edit Item
+                        </h3>
+                    </div><!-- /.page-header -->
+                    @*-------------------------------------------popup start------------------------------------------*@
+                    <div id="dialogdiv1" class="modal fade">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">×</a>
+                                    <h3 class="item_hedin">Item Description </h3>
+
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <label id="lblmore" class="col-sm-12 control-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @*-------------------------------------------popup end------------------------------------------*@
+                    <div class="row">
+                        <div class="col-xs-12">
+
+                            <div class="form-horizontal">
+                                <div class="table-header">
+                                    Current Record
+                                </div>
+                                <div id="divtbl"></div>
+
+
+                            </div>
+
+                        </div><!-- /.span -->
+                    </div>
+
+                    <a href="/Master/ItemMaster" style="font-size:20px;margin-left:20px" class="back_home"> Back to home </a>
+                </div>
+            </div>
+        </div>
+    @*</div>
+</div>*@

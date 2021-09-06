@@ -1,0 +1,427 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>LRT</title>
+   
+        <link rel="stylesheet" href="~/assets/font-awesome/4.5.0/css/font-awesome.min.css" />
+
+        <!-- page specific plugin styles -->
+        <link rel="stylesheet" href="~/assets/css/jquery-ui.custom.min.css" />
+        <link rel="stylesheet" href="~/assets/css/jquery.gritter.min.css" />
+
+        <!-- text fonts -->
+        <link rel="stylesheet" href="~/assets/css/fonts.googleapis.com.css" />
+
+        <!-- ace styles -->
+      
+
+
+        <!-- page specific plugin styles -->
+        <link rel="stylesheet" href="~/assets/css/bootstrap-duallistbox.min.css" />
+        <link rel="stylesheet" href="~/assets/css/bootstrap-multiselect.min.css" />
+        <link rel="stylesheet" href="~/assets/css/select2.min.css" />
+
+        <link rel="stylesheet" href="~/assets/css/ace-skins.min.css" />
+        <link rel="stylesheet" href="~/assets/css/ace-rtl.min.css" />
+    <style>
+        .lr_txt {
+            font-size: 24px;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            position: absolute;
+            margin-top: 1px;
+            margin-left: 5px;
+        }
+
+        .l_img {
+            margin-left: -51px;
+        }
+
+        #EmpInfo {
+            width: 100% !important;
+        }
+
+        #EmpInfo1 {
+            width: 100% !important;
+        }
+
+        @@media (min-width: 1200px) {
+            .container {
+                max-width: 1164px;
+            }
+        }
+
+        .code_cl {
+            font-weight: 700;
+        }
+    </style>
+    <style>
+        .comn_inline {
+            display: inline-block;
+            padding-left: 9px;
+            font-size: 16px;
+        }
+
+        .list_main li {
+            list-style: none;
+            display: inline-block;
+        }
+
+            .list_main li i {
+                padding-right: 3px;
+            }
+
+        .grn {
+            color: green;
+        }
+
+        .blu {
+            color: blue;
+        }
+
+        .red {
+            color: red;
+        }
+
+        .lst_td {
+            width: 410px;
+            padding: 33px 2px;
+        }
+
+        .list_main {
+            margin: 0px;
+        }
+
+        .form-actions {
+            display: block;
+            background-color: #F5F5F5;
+            border-top: none;
+            margin-bottom: 20px;
+            margin-top: 20px;
+            padding: 19px 0px 20px;
+            text-align: center;
+        }
+
+        .left_c {
+            text-align: left !important;
+        }
+
+        .gotab {
+            font-size: 20px;
+            display: none;
+        }
+
+        .hed_tit {
+            background-color: #072934;
+            color: white;
+        }
+    </style>
+    <style>
+        /*   #EmpInfo th:last-child  {        display:none;
+                                        background:
+        }*/
+        .dataTable > thead > tr > th:last-child[class*=sort]:after {
+            float: right;
+            display: inline;
+            content: "\f0dc";
+            font-family: FontAwesome;
+            font-size: 13px;
+            font-weight: 400;
+            color: #555;
+            display: none;
+        }
+    </style>
+    @*<script>
+
+            // Give $ back to prototype.js; create new alias to jQuery.
+            var $jq = jQuery.noConflict();
+
+        </script>*@
+    <style>
+        .menu_border {
+            height: 100vh;
+            border: 1px solid #ccc;
+        }
+
+        .side_bar_main {
+            height: 100%;
+            position: fixed;
+            overflow: scroll;
+        }
+
+        .fixed_menu {
+            position: fixed;
+            overflow: hidden;
+            top: 0;
+            width: 100%;
+            /* bottom: 0px;*/
+            z-index: 99;
+        }
+
+        .m_27 {
+            margin-top: 46px;
+        }
+
+        .profile {
+            position: fixed !important;
+            margin-top: auto;
+            z-index: 999999999999 !important;
+            top: 45px !important;
+            /* LEFT: 5px !important; */
+            left: auto !important;
+            right: 5px !important;
+        }
+
+        .page-header h1 {
+            padding: 0;
+            margin: 0 8px;
+            font-size: 19px;
+            font-weight: lighter;
+            color: #080707;
+            font-weight: 500;
+            color: #007ae1 !important;
+        }
+        /* #sidebar li {
+            color: #212324;
+            margin-bottom: 8px;
+            font-size: 16px;
+            border-bottom: 1px solid #cacaca;
+            color: #1963AA;
+            cursor: pointer;
+            color: #007ae1 !important;
+        }
+            #sidebar li a:hover {
+                color: #fff !important;
+                background: #007ae1 !important;
+            }*/
+        .ace-nav > li.light-blue > a:focus, .ace-nav > li.light-blue > a:hover, .ace-nav > li.open.light-blue > a {
+            background-color: transparent;
+        }
+
+        .profile {
+            position: fixed !important;
+            margin-top: auto;
+            z-index: 999999999999 !important;
+            top: 45px !important;
+            /* LEFT: 5px !important; */
+            left: auto !important;
+            right: 20px !important;
+        }
+
+        .no-padding-right {
+            padding-right: 0 !important;
+            font-size: 13px;
+            color: #1e1e1f;
+            letter-spacing: 0.3px;
+            margin-top: 3px;
+        }
+
+        .btn, .btn-default, .btn-default.focus, .btn-default:focus, .btn.focus, .btn:focus {
+            background-color: #ABBAC3 !important;
+            border-color: #ABBAC3;
+            width: 138px;
+            border-radius: 5px;
+        }
+
+        .dropdown-menu .divider {
+            height: 1px;
+            margin: 9px 0;
+            overflow: hidden;
+            background-color: #e5e5e5;
+            display: none;
+        }
+
+        .breadcrumb > li > a {
+            color: #0893e2;
+        }
+
+        input[type=email], input[type=url], input[type=search], input[type=tel], input[type=color], input[type=text], input[type=password], input[type=datetime], input[type=datetime-local], input[type=date], input[type=month], input[type=time], input[type=week], input[type=number], textarea {
+            border-radius: 0 !important;
+            color: #3e3d3d;
+            background-color: #FFF;
+            border: 1px solid #b3b0b0;
+            padding: 5px 4px 6px;
+            font-size: 12px;
+            font-family: inherit;
+            -webkit-box-shadow: none !important;
+            box-shadow: none !important;
+            -webkit-transition-duration: .1s;
+            transition-duration: .1s;
+            width: 100%;
+            border-radius: 4px !important;
+            padding: 4px 8px;
+            margin-bottom: 7px;
+        }
+
+        .btn-default.focus:hover, .btn-default:active:hover, .btn-default:focus:active, .btn-default:focus:hover, .btn-default:hover, .btn.focus:hover, .btn:active:hover, .btn:focus:active, .btn:focus:hover, .btn:hover, .open > .btn-default.dropdown-toggle, .open > .btn-default.dropdown-toggle.focus, .open > .btn-default.dropdown-toggle:active, .open > .btn-default.dropdown-toggle:focus, .open > .btn-default.dropdown-toggle:hover, .open > .btn.dropdown-toggle, .open > .btn.dropdown-toggle.focus, .open > .btn.dropdown-toggle:active, .open > .btn.dropdown-toggle:focus, .open > .btn.dropdown-toggle:hover {
+            background-color: #eb2629 !important;
+            border-color: #eb2629;
+            /* width: 139px !important; */
+            /* padding: 10px; */
+        }
+    </style>
+    <style>
+            body {
+                overflow: hidden;
+            }
+
+
+
+            /* Preloader */
+
+            #preloader {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #fff;
+                z-index: 999;
+            }
+
+        #status {
+            width: 60px;
+            height: 60px;
+            position: absolute;
+            left: 50%;
+            background-image: url('/Images/1.gif');
+            top: 50%;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-top: -40px;
+            margin-left: -10px;
+           /*// background-image: url('/1.gif');*/ /*public static readonly string PhotonApplication = ConfigurationManager.AppSettings["Application"];*/*/
+            background-size: cover;
+        }
+        </style>
+</head>
+<body class="no-skin">
+    <div id="preloader
+         ">
+        <div id="status">&nbsp;</div>
+    </div>
+
+ 
+  
+    <div id="navbar" class="navbar navbar-default fixed_menu         ace-save-state">
+        <div class="navbar-container ace-save-state" id="navbar-container">
+            <div class="navbar-header pull-left">
+                <a href="/Master/Index" class="navbar-brand">
+                    <small>
+                        <img src="~/Images/ldr_logo_24.png" />
+                        <span> Leader Range Technology</span>
+                    </small>
+                </a>
+            </div>
+
+            <div class="navbar-buttons navbar-header pull-right" role="navigation">
+                <ul class="nav ace-nav">
+
+
+                    <li class="light-blue dropdown-modal">
+                        <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                            <img class="nav-user-photo" src="~/images/user-icon-18.jpg" alt="Jason's Photo" />
+                            <span class="user-info">
+                                <small>Welcome,</small>
+                                <label id="UserId">@Common.CommonSetting.name</label>
+                            </span>
+
+                            <i class="ace-icon fa fa-caret-down"></i>
+                        </a>
+
+                        <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close profile">
+                            <li>
+                                <a href="/user/ResetPassword">
+                                    <i class="ace-icon fa fa-cog"></i>
+                                    @*Settings*@ Reset Password
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="profile.html">
+                                    <i class="ace-icon fa fa-user"></i>
+                                    Profile
+                                </a>
+                            </li>
+
+                            <li class="divider"></li>
+
+                            <li>
+                                <a href="/User/LogOut">
+                                    <i class="ace-icon fa fa-power-off"></i>
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+        <div class="main-container ace-save-state" id="main-container">
+            @RenderBody()
+
+
+
+            <script src="~/assets/js/jquery.bootstrap-duallistbox.min.js"></script>
+        <script src="~/assets/js/jquery.raty.min.js"></script>
+        <script src="~/assets/js/bootstrap-multiselect.min.js"></script>
+        <script src="~/assets/js/select2.min.js"></script>
+        <script src="~/assets/js/jquery-typeahead.js"></script>
+        <script src="~/assets/js/bootstrap.min.js"></script>
+            <link rel="stylesheet" href="~/assets/css/bootstrap.min.css" />
+            <link rel="stylesheet" href="~/assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
+            <script>
+    $(window).on('load', function () {
+        $('#status').fadeOut();
+        $('#preloader').delay(150).fadeOut('slow');
+        $('body').delay(150).css({ 'overflow': 'visible' });
+    })
+            </script>
+            </div>
+    <style>
+        .modal-content {
+            border-radius: 0;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            width: 926px !important;
+        }
+
+        .modal-lg {
+            display: flex !important;
+            width: 926px !important;
+            margin: auto !IMPORTANT;
+            min-width: 926px;
+        }
+
+        #divscrapsize input[type=checkbox] {
+            width: 13px;
+            height: 13px;
+            position: relative;
+            top: 3px;
+            padding-right: 9px;
+            margin-left: 4px;
+        }
+
+
+        .scrapsiz {
+            padding: 2px 3px 9px 6px;
+            width: auto;
+            font-size: 11px;
+            letter-spacing: 0.3px;
+        }
+
+        .btn_back {width: 183px;
+display: block;
+margin: auto;
+background: #0893e2 !IMPORTANT;
+border: none;
+margin-bottom: 13px;
+padding: 8px 10px !important;
+border-radius: 5px !IMPORTANT;}
+    </style>
+
+</body>
+</html>

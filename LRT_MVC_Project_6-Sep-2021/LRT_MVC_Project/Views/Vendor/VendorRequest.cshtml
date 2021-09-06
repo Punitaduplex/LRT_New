@@ -1,0 +1,3343 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Vendor Request</title>
+   
+    <link rel="shortcut icon" href="Images/LDR_Ico.ico" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+    <script src="~/assets/js/jquery-2.1.4.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link href="~/Template/AceAdmin/css/ace-fonts.min.css" rel="stylesheet" />
+    <link href="~/Template/AceAdmin/css/ace.min.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+    <script src="~/assets/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    @*<link href="~/assets/css/searchbox.css" rel="stylesheet" />*@
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://rawgit.com/LeshikJanz/libraries/master/Bootstrap/baguetteBox.min.css">
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/assets/js/bootstrap.min.js"></script>
+
+
+
+    <style>
+        .inputfile {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+
+        .upload-ic {
+            margin-left: 5px;
+            position: absolute;
+            z-index: 9;
+            color: #fff;
+            top: 10px;
+        }
+
+        .upload-bt {
+            padding-left: 30px;
+            width: 125px !important;
+            /* text-align: center; */
+        }
+
+        .c_file {
+            font-size: 17px;
+            margin-top: -1px;
+            color: #0893e2;
+            text-decoration: underline;
+        }
+
+        .man_fild {
+            font-size: 17px !important;
+            margin-top: 0px;
+            margin-bottom: 12px;
+            display: block;
+        }
+        /*.btn-info {
+                width: 137px;
+                padding: 3px 7px !important;
+            }*/
+        input[type=email], input[type=url], input[type=search], input[type=tel], input[type=color], input[type=text], input[type=password], input[type=datetime], input[type=datetime-local], input[type=date], input[type=month], input[type=time], input[type=week], input[type=number], textarea {
+            padding: 7px 8px;
+        }
+
+        select {
+            padding: 7px 8px;
+        }
+    </style>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f1f1f1;
+        }
+
+        #regForm {
+            background-color: #ffffff;
+            margin: 0px auto;
+            font-family: Raleway;
+            padding: 10px 40px 35px 40px;
+            width: 99%;
+            min-width: 329px;
+            height: 499px;
+        }
+
+        .active {
+            color: gray;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        /* input {
+            padding: 10px;
+            width: 100%;
+            font-size: 17px;
+            font-family: Raleway;
+            border: 1px solid #aaaaaa;
+        }*/
+
+        /* Mark input boxes that gets an error on validation: */
+        input.invalid {
+            background-color: #ffdddd;
+        }
+
+        /* Hide all steps by default: */
+        .tab {
+            display: none;
+        }
+
+        button {
+            background-color: #6FB3E0 !important;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 17px;
+            font-family: Raleway;
+            cursor: pointer;
+        }
+
+            button:hover {
+                opacity: 0.8;
+            }
+
+        #prevBtn {
+            background-color: #bbbbbb;
+        }
+
+        /* Make circles that indicate the steps of the form: */
+        .step {
+            height: 15px;
+            width: 15px;
+            margin: 0 2px;
+            background-color: #bbbbbb;
+            border: none;
+            border-radius: 50%;
+            display: inline-block;
+            opacity: 0.5;
+        }
+
+            .step.active {
+                opacity: 1;
+            }
+
+            /* Mark the steps that are finished and valid: */
+            .step.finish {
+                background-color: #438eb9;
+            }
+    </style>
+    <style>
+        .spinner {
+            margin: 0px auto 0;
+            width: 70px;
+            text-align: center;
+        }
+
+            .spinner > div {
+                width: 18px;
+                height: 18px;
+                background-color: #333;
+                border-radius: 100%;
+                display: inline-block;
+                -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+                animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+            }
+
+            .spinner .bounce1 {
+                -webkit-animation-delay: -0.32s;
+                animation-delay: -0.32s;
+            }
+
+            .spinner .bounce2 {
+                -webkit-animation-delay: -0.16s;
+                animation-delay: -0.16s;
+            }
+
+        @@-webkit-keyframes sk-bouncedelay {
+            0%, 80%, 100% {
+                -webkit-transform: scale(0)
+            }
+
+            40% {
+                -webkit-transform: scale(1.0)
+            }
+        }
+
+        @@keyframes sk-bouncedelay {
+            0%, 80%, 100% {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+
+            40% {
+                -webkit-transform: scale(1.0);
+                transform: scale(1.0);
+            }
+        }
+       select {
+    padding: 0px 8px;
+    font-family: 'Open Sans', sans-serif !important;
+    font-size: 12px;
+    padding-left: 5px !IMPORTANT;
+}
+        .I_tab{float: right;}
+        .upload-bt {
+    padding-left: 30px;
+    width: 109px !important;
+   
+    margin-left: 10px;
+}
+        .upload-ic {
+    margin-left: 5px;
+    position: absolute;
+    z-index: 9;
+    color: #fff;
+    top: 10px;
+    margin-left: 17px;
+}
+            .I_Dot {display: block;
+    width: 200px;
+    display: block;
+    margin: auto;
+    text-align: center;
+
+            }
+            button, html [type="button"], [type="reset"], [type="submit"] {
+    -webkit-appearance: button;
+    font-family: 'Open Sans', sans-serif !important;
+}
+           .ace-file-input .ace-file-container {
+    
+    font-family: 'Open Sans', sans-serif !important;
+}
+
+.upload-ic {
+    margin-left: 5px;
+    position: absolute;
+    z-index: 9;
+    color: #fff;
+    top: 9px;
+    margin-left: 16px;
+}
+.upload_fl{
+    padding-top: 5px !IMPORTANT;
+    padding-left: 7px !IMPORTANT;
+    font-size: 11px !IMPORTANT;
+    overflow: hidden !IMPORTANT;
+    position: relative !IMPORTANT;
+}
+.ace-file-input .ace-file-container .ace-file-name {
+    display: inline-block;
+    height: 28px;
+    max-width: 80%;
+    white-space: normal;
+    overflow: hidden;
+    line-height: 19px;
+    color: #888;
+    font-size: 10px;
+    vertical-align: top;
+    position: static;
+    padding-left: 25px;
+}
+
+.lable_font label {
+    margin-bottom: 11px;
+    padding-right: 14px;
+    font-family: 'Open Sans', sans-serif !important;
+    font-size: 12px;
+    position: relative;
+    top: -2px;
+}
+ select{ height: 33px;
+    padding-right: 0px;}
+ .modal-content {
+    -webkit-box-shadow: 0 5px 15px rgb(0 0 0 / 50%);
+    box-shadow: 0 5px 15px rgb(0 0 0 / 50%);
+    width: 100%;
+}
+    </style>
+    @*---------------------------------------------Add Capability detail-----------------------------------------*@
+    <script>
+    $(document).ready(function () {
+        $("#btnCapability").click(function () {
+            $("#EmpInfo > tbody").html("");
+            var tr;
+            $('#dialogdiv').modal('show');
+            
+            var machinename = localStorage.getItem("machine_name");
+            var funcationname = localStorage.getItem("function_name");
+            var capabilityname = localStorage.getItem("capability_name");
+            if (machinename != null) {
+                var mval = machinename.split(',');
+                
+            }
+            if (funcationname != null) {
+                var fval = funcationname.split(',');
+
+            }
+            if (capabilityname != null) {
+                var cval = capabilityname.split(',');
+
+            }
+            
+            for (var i = 0; i < 10; i++) {
+                tr = $('<tr/>');
+            
+                tr.append("<td style='text-align:center'>" + (i + 1) + "</td>");
+                if (machinename != null) {
+                    if ((typeof mval[i] !== "undefined")) {
+                        tr.append("<td><input value='" + mval[i] + "' type='text' id='txtname" + i + "' class='col-xs-12 col-sm-12' /></td>");
+                    }else
+                    {
+                        tr.append("<td><input type='text' id='txtname" + i + "' class='col-xs-12 col-sm-12' /></td>");
+                    }
+                } else
+                {
+                    tr.append("<td><input type='text' id='txtname" + i + "' class='col-xs-12 col-sm-12' /></td>");
+                }
+                if (funcationname != null) {
+                    if ((typeof fval[i] !== "undefined")) {
+                        tr.append("<td><input value='" + fval[i] + "' type='text' id='txtfunction" + i + "' class='col-xs-12 col-sm-12'/></td>");
+                    }
+                    else
+                    {
+                        tr.append("<td><input type='text' id='txtfunction" + i + "' class='col-xs-12 col-sm-12'/></td>");
+                    }
+                }
+                else {
+                    tr.append("<td><input type='text' id='txtfunction" + i + "' class='col-xs-12 col-sm-12'/></td>");
+                }
+                if (capabilityname != null) {
+                    if ((typeof cval[i] !== "undefined")) {
+                        tr.append("<td><input  value='" + cval[i] + "' type='text' id='txtcapability" + i + "' class='col-xs-12 col-sm-12'/></td>");
+                    }
+                    else {
+                        tr.append("<td><input type='text' id='txtcapability" + i + "' class='col-xs-12 col-sm-12'/></td>");
+                    }
+                }
+                else {
+                    tr.append("<td><input type='text' id='txtcapability" + i + "' class='col-xs-12 col-sm-12'/></td>");
+                }
+
+
+                $('table').append(tr);
+            }
+            $('#EmpInfo').DataTable();
+            localStorage.removeItem("machine_name");
+            localStorage.removeItem("function_name");
+            localStorage.removeItem("capability_name");
+             
+        });
+
+    })
+    </script>
+
+    <script>
+        $(document).ready(function () {
+           // $("#txtcompanyname").prop("disabled", true);
+            $("#txtcompanyname").focus();
+            CountryName();
+            StateName();
+            CityName();
+            $("#txtcompanyname").blur(function () {
+                myFunction();
+            })
+            $('#image-input').change(function (e) {
+                var s = e.target.files[0].name.split('.');
+                var count = s[0].length;
+                if (count > 24) {
+                    var file = s[0].slice(0, 24) + '.' + s[1];
+                    $(this).next('span').text(file);
+                }
+                else
+                {
+                    var file = s[0] + '.' + s[1];
+                    $(this).next('span').text(file);
+                }
+               
+            });
+            $('#ndafile').change(function (e) {
+                var s = e.target.files[0].name.split('.');
+                var count = s[0].length;
+                if (count > 24) {
+                    var file = s[0].slice(0, 24) + '.' + s[1];
+                    $(this).next('span').text(file);
+                }
+                else {
+                    var file = s[0] + '.' + s[1];
+                    $(this).next('span').text(file);
+                }
+
+            });
+            $('#form24file').change(function (e) {
+                var s = e.target.files[0].name.split('.');
+                var count = s[0].length;
+                if (count > 24) {
+                    var file = s[0].slice(0, 24) + '.' + s[1];
+                    $(this).next('span').text(file);
+                }
+                else {
+                    var file = s[0] + '.' + s[1];
+                    $(this).next('span').text(file);
+                }
+
+            });
+            $('#form48file').change(function (e) {
+                var s = e.target.files[0].name.split('.');
+                var count = s[0].length;
+                if (count > 24) {
+                    var file = s[0].slice(0, 24) + '.' + s[1];
+                    $(this).next('span').text(file);
+                }
+                else {
+                    var file = s[0] + '.' + s[1];
+                    $(this).next('span').text(file);
+                }
+
+            });
+            $('#form9file').change(function (e) {
+                var s = e.target.files[0].name.split('.');
+                var count = s[0].length;
+                if (count > 24) {
+                    var file = s[0].slice(0, 24) + '.' + s[1];
+                    $(this).next('span').text(file);
+                }
+                else {
+                    var file = s[0] + '.' + s[1];
+                    $(this).next('span').text(file);
+                }
+
+            });
+            $('#formotherfile').change(function (e) {
+                var s = e.target.files[0].name.split('.');
+                var count = s[0].length;
+                if (count > 24) {
+                    var file = s[0].slice(0, 24) + '.' + s[1];
+                    $(this).next('span').text(file);
+                }
+                else {
+                    var file = s[0] + '.' + s[1];
+                    $(this).next('span').text(file);
+                }
+
+            });
+            $("#btnUpload").click(function (e) {
+               // alert();
+                UploadSampleFile();
+            });
+
+            $("#btnNDAUpload").click(function (e) {
+                // alert();
+                UploadNDAFile();
+            });
+            $("#btnform24pload").click(function (e) {
+                // alert();
+                UploadForm24File();
+            });
+            $("#btnform48Upload").click(function (e) {
+                // alert();
+                UploadForm48File();
+            });
+            $("#btnform9Upload").click(function (e) {
+                // alert();
+                UploadForm9File();
+            });
+            $("#btnotherUpload").click(function (e) {
+               // alert();
+                UploadotherformFile();
+            });
+        });
+    </script>
+    @*-------------------------------------------------fill countries---------------------------------------------------*@
+    <script type="text/javascript">
+        function CountryName() {
+            var ddlcountry = $("#ddlcountry");
+            var ddlVendorCountry = $("#ddlVendorCountry");
+            var ddlBankCountry = $("#ddlBankCountry");
+            var ddlnewcountry = $("#ddlnewcountry");
+            var ddlnewsyatecountry = $("#ddlnewsyatecountry");
+            ddlcountry.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            ddlVendorCountry.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            ddlBankCountry.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            ddlnewcountry.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            ddlnewsyatecountry.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            $.ajax({
+                type: "POST",
+                url: "/Master/CountryName",
+                data: '{}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    ddlcountry.empty().append('<option selected="selected" value="0">Select country name</option>');
+                    ddlVendorCountry.empty().append('<option selected="selected" value="0">Select country name</option>');
+                    ddlBankCountry.empty().append('<option selected="selected" value="0">Select country name</option>');
+                    ddlnewcountry.empty().append('<option selected="selected" value="0">Select country name</option>');
+                    ddlnewsyatecountry.empty().append('<option selected="selected" value="0">Select country name</option>');
+                    $.each(response, function () {
+                        ddlcountry.append($("<option></option>").val(this['Value']).html(this['Text']));
+                        ddlVendorCountry.append($("<option></option>").val(this['Value']).html(this['Text']));
+                        ddlBankCountry.append($("<option></option>").val(this['Value']).html(this['Text']));
+                        ddlnewcountry.append($("<option></option>").val(this['Value']).html(this['Text']));
+                        ddlnewsyatecountry.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        };
+    </script>
+    @*-------------------------------------------------fill states---------------------------------------------------*@
+    <script type="text/javascript">
+        function StateName() {
+           
+            var ddlstate = $("#ddlstate");
+            var ddlBankState = $("#ddlBankState");
+            var ddlnewstate = $("#ddlnewstate");
+            ddlstate.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            ddlBankState.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            ddlnewstate.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            $.ajax({
+                type: "POST",
+                url: "/Master/StateName",
+                data: '{}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    ddlstate.empty().append('<option selected="selected" value="0">Select state name</option>'); 
+                    ddlBankState.empty().append('<option selected="selected" value="0">Select state name</option>');
+                    ddlnewstate.empty().append('<option selected="selected" value="0">Select state name</option>');
+                    $.each(response, function () {
+                        ddlstate.append($("<option></option>").val(this['Value']).html(this['Text']));
+                        ddlBankState.append($("<option></option>").val(this['Value']).html(this['Text']));
+                        ddlnewstate.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        };
+    </script>
+
+    @*-------------------------------------------------fill states acc country---------------------------------------------------*@
+    <script>
+        $(function () {
+            $('#ddlcountry').on("change", function () {
+                var ddlstate = $("#ddlstate");
+                $("#ddlstate option:selected").remove();
+                var objState = {};
+                objState.Country_Id = $("#ddlcountry").val();
+                ddlstate.empty();
+               
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/StateNameAccCountryId",
+                    data: '{objState: ' + JSON.stringify(objState) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        ddlstate.empty().append('<option selected="selected" value="0">Select state name</option>');
+                        $.each(response, function () {
+                            ddlstate.append($("<option></option>").val(this['Value']).html(this['Text']));
+                        });
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+    @*-------------------------------------------------fill vendor state acc country---------------------------------------------------*@
+    @*<script>
+        $(function () {
+            $('#ddlVendorCountry').on("change", function () {
+
+                var ddlVendorState = $("#ddlVendorState");
+
+                $("#ddlVendorState option:selected").remove();
+                var objState = {};
+
+                objState.Country_Id = $("#ddlVendorCountry").val();
+
+                ddlVendorState.empty();
+                //alert(objState.Country_Id);
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/StateNameAccCountryId",
+                    data: '{objState: ' + JSON.stringify(objState) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        ddlVendorState.empty().append('<option selected="selected" value="0">Select state name</option>');
+                        $.each(response, function () {
+                            ddlVendorState.append($("<option></option>").val(this['Value']).html(this['Text']));
+                        });
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            });
+        });
+    </script>*@
+    @*-------------------------------------------------fill bank state acc country---------------------------------------------------*@
+    <script>
+    $(function () {
+        $('#ddlBankCountry').on("change", function () {
+          
+            var ddlBankState = $("#ddlBankState");
+           
+            $("#ddlBankState option:selected").remove();
+            var objState = {};
+
+            objState.Country_Id = $("#ddlBankCountry").val();
+
+            ddlBankState.empty();
+            //alert(objState.Country_Id);
+            $.ajax({
+                type: "POST",
+                url: "/Master/StateNameAccCountryId",
+                data: '{objState: ' + JSON.stringify(objState) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    ddlBankState.empty().append('<option selected="selected" value="0">Select state name</option>');
+                    $.each(response, function () {
+                        ddlBankState.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+    </script>
+
+    @*-------------------------------------------------fill cities---------------------------------------------------*@
+
+    <script type="text/javascript">
+        function CityName() {
+            //  alert();
+            var ddlcity = $("#ddlcity");
+            var ddlVendorcity = $("#ddlVendorcity");
+            var ddlBankCity = $("#ddlBankCity");
+            ddlcity.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            ddlVendorcity.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            ddlBankCity.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            $.ajax({
+                type: "POST",
+                url: "/Master/CityName",
+                data: '{}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    ddlcity.empty().append('<option selected="selected" value="0">Select city name</option>');
+                    ddlVendorcity.empty().append('<option selected="selected" value="0">Select city name</option>');
+                    ddlBankCity.empty().append('<option selected="selected" value="0">Select city name</option>');
+                    $.each(response, function () {
+                        ddlcity.append($("<option></option>").val(this['Value']).html(this['Text']));
+                        ddlVendorcity.append($("<option></option>").val(this['Value']).html(this['Text']));
+                        ddlBankCity.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        };
+    </script>
+    @*-------------------------------------------------fill cities Acc state---------------------------------------------------*@
+    <script>
+        $(function () {
+            $('#ddlstate').on("change", function (e) {
+                e.preventDefault();
+                var ddlcity = $("#ddlcity");
+                $("#ddlcity option:selected").remove();
+                // var Sid = $("#ddlcountry option:selected").val();
+                var objCity = {};
+                objCity.State_Id = $("#ddlstate").val();
+                //ddlcity.empty();
+                //alert(objCity.Country_Id);
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/CityNameAccStateId",
+                    data: '{objCity: ' + JSON.stringify(objCity) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        ddlcity.empty().append('<option selected="selected" value="0">Select city name</option>');
+                        $.each(response, function () {
+                            ddlcity.append($("<option></option>").val(this['Value']).html(this['Text']));
+                        });
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+
+    @*<script>
+    $(function () {
+        $('#ddlVendorState').on("change", function (e) {
+            e.preventDefault();
+            var ddlVendorcity = $("#ddlVendorcity");
+            $("#ddlVendorcity option:selected").remove();
+            // var Sid = $("#ddlcountry option:selected").val();
+            var objCity = {};
+            objCity.State_Id = $("#ddlVendorState").val();
+          // ddlcity.empty();
+            //alert(objCity.Country_Id);
+            $.ajax({
+                type: "POST",
+                url: "/Master/CityNameAccStateId",
+                data: '{objCity: ' + JSON.stringify(objCity) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    ddlVendorcity.empty().append('<option selected="selected" value="0">Select city name</option>');
+                    $.each(response, function () {
+                        ddlVendorcity.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+    </script>*@
+
+
+
+    <script>
+    $(function () {
+        $('#ddlBankState').on("change", function (e) {
+            e.preventDefault();
+            var ddlBankCity = $("#ddlBankCity");
+            $("#ddlBankCity option:selected").remove();
+            // var Sid = $("#ddlcountry option:selected").val();
+            var objCity = {};
+            objCity.State_Id = $("#ddlBankState").val();
+            //ddlcity.empty();
+            //alert(objCity.Country_Id);
+            $.ajax({
+                type: "POST",
+                url: "/Master/CityNameAccStateId",
+                data: '{objCity: ' + JSON.stringify(objCity) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    ddlBankCity.empty().append('<option selected="selected" value="0">Select city name</option>');
+                    $.each(response, function () {
+                        ddlBankCity.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+    </script>
+    @*-------------------------------------------------fill currency---------------------------------------------------*@
+    <script type="text/javascript">
+        $(function () {
+            var ddlcurrency = $("#ddlCurrency");
+            ddlcurrency.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            $.ajax({
+                type: "POST",
+                url: "/Master/CurrencyName",
+                data: '{}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    ddlcurrency.empty().append('<option selected="selected" value="0">Select currency name</option>');
+                    $.each(response, function () {
+                        ddlcurrency.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    </script>
+    @*-------------------------------------------------fill category---------------------------------------------------*@
+    <script type="text/javascript">
+        $(function () {
+            var ddlVendorcategory = $("#ddlVendorcategory");
+            ddlVendorcategory.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            $.ajax({
+                type: "POST",
+                url: "/Vendor/VendorCategoryName",
+                data: '{}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    ddlVendorcategory.empty().append('<option selected="selected" value="0">Select category name</option>');
+                    $.each(response, function () {
+                        ddlVendorcategory.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    </script>
+    @*-------------------------------------------------fill payment---------------------------------------------------*@
+    <script type="text/javascript">
+        $(function () {
+            var ddlpayment = $("#ddlpayment");
+            ddlpayment.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            $.ajax({
+                type: "POST",
+                url: "/master/PaymentTermName",
+                data: '{}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    ddlpayment.empty().append('<option selected="selected" value="0">Select payment term</option>');
+                    $.each(response, function () {
+                        ddlpayment.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    </script>
+    @*-------------------------------------------------fill country code---------------------------------------------------*@
+    @*<script type="text/javascript">
+    $(function () {
+        //  alert();
+        var ddlcountrycode1 = $("#ddlcountrycode1");
+        var ddlcountrycode2 = $("#ddlcountrycode2");
+        ddlcountrycode1.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlcountrycode2.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/PhoneCountryCode",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlcountrycode1.empty().append('<option selected="selected" value="0">Select Country Code</option>');
+                ddlcountrycode2.empty().append('<option selected="selected" value="0">Select Country Code</option>');
+                $.each(response, function () {
+                    ddlcountrycode1.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlcountrycode2.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+    </script>*@
+    @*-------------------------------------------------fill swiftcode---------------------------------------------------*@
+    @*<script type="text/javascript">
+    $(function () {
+      
+        var ddlSwiftCode = $("#ddlSwiftCode");
+       
+        ddlSwiftCode.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/BankSwiftCode",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+              
+                ddlSwiftCode.empty().append('<option selected="selected" value="0">Select Swift Code</option>');
+                $.each(response, function () {
+                    
+                    ddlSwiftCode.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+    </script>*@
+    @*-------------------------------------------------fill bank---------------------------------------------------*@
+    <script type="text/javascript">
+    $(function () {
+        //  alert();
+        var ddlBank = $("#ddlBank");
+
+        ddlBank.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/BankName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+
+                ddlBank.empty().append('<option selected="selected" value="0">Select Bank</option>');
+                $.each(response, function () {
+
+                    ddlBank.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+    </script>
+
+
+
+    <script>
+        function Resetdata() {
+            $("#txtcompanyname").val("");
+            $("#txtSortName").val("");
+            $("#txtcompanyAddress").val("");
+            $("#txtPincode").val("");
+            $("#ddlcountry").val("0");
+            $("#ddlstate").val("0");
+            $("#ddlcity").val("0");
+            $("#txtTelephone").val("");
+            $("#txtMobileNo").val("");
+            $("#txtFaxNo").val("");
+            $("#txtAttn").val("");
+            $("#txtGST").val("");
+            $("#txtSST").val("");
+            $("#ddlpayment").val("0");
+            $("#ddlCurrency").val("0");
+            $("#ddlVendorcategory").val("0");
+
+            $("#txtsystemId").val("");
+            $("#txtName").val("");
+            $("#txtemail").val("");
+            $("#txtIdNumber").val("");
+            $("#ddlengineer").val("0");
+            $("#ddlcountrycode1").val("0");
+            $("#ddlcountrycode2").val("0");
+            $("#txtpasport").val("");
+            $("#txtTelephoneNumber1").val("");
+            $("#txtTelephoneNumber2").val("");
+            $("#txtVendorAddress").val("");
+            $("#txtVendorPinCode").val("");
+            $("#long").val("");
+            $("#lat").val("");
+            $("#ddlVendorcity").val("0");
+            $("#ddlVendorCountry").val("0");
+            $("#ddlBank").val("0");
+            $("#ddlSwiftCode").val("0");
+
+            $("#txtAccount").val("");
+            $("#txtReceiverName").val("");
+            $("#txtBankAddress").val("");
+            $("#txtPostalcode").val("");
+            $("#ddlBankCountry").val("0");
+            $("#ddlBankState").val("0");
+            $("#ddlBankCity").val("0");
+            $("#txtBankContactNumber1").val("");
+            $("#txtBankContactNumber2").val("");
+            $("#txtpaypalemail").val("");
+            $("#EmpInfo > tbody").html("");
+            $(".upload_fl").text("");
+            $(".upload_fl").append('<span class="ace-file-name" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span>');
+            document.getElementById('long').value = "80.949997";// position.coords.longitude;
+            document.getElementById('lat').value = "26.850000";
+            localStorage.removeItem("machine_name");
+            localStorage.removeItem("function_name");
+            localStorage.removeItem("capability_name");
+        }
+    </script>
+ 
+    <script>
+        function myFunction() {
+           // alert();
+            var objVendorRegistation = {};
+            objVendorRegistation.Vendor_Company_Name = $("#txtcompanyname").val();
+            if (objVendorRegistation.Vendor_Company_Name == "" || objVendorRegistation.Vendor_Company_Name == null) {
+                return;
+            }
+            //var emailReg = /^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/;
+            //var emailaddressVal = objVendor.Vendor_Email_ID;
+            //if (!emailReg.test(emailaddressVal)) {
+            //    $("#txtEmail").after(swal("Please enter valid email address."));
+            //    // $("#txtEmail").focus();
+            //    return;
+            //}
+            $("#spin").show();
+            $.ajax({
+                url: '/Vendor/VendorInvitationDetailAccCompany',
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                processData: true, // Not to process data
+                data: '{objVendorRegistation: ' + JSON.stringify(objVendorRegistation) + '}',
+                success: function (result) {
+                    var id = result.Count;
+                    if (id > 0) {
+                        $('#hdvendortype').val("Invited");
+                        //$('#hdvendortype').val("Invited");
+                        $('#hdstatustype').val("Invite");
+                        $('#txtName').val(result.Contact_Person);
+                        $('#txtemail').val(result.Vendor_Email_ID);
+                        $('#txtName').prop("disabled", true);
+                        $('#txtemail').prop("disabled", true);
+                        $("#spin").hide();
+                    }
+                    else {
+                        $('#hdvendortype').val("Submitted");
+                        $('#hdstatustype').val("Request");
+                        $('#txtName').val("");
+                        $('#txtemail').val("");
+                        $('#txtName').prop("disabled", false);
+                        $('#txtemail').prop("disabled", false);
+                        $("#spin").hide();
+                    }
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        }
+    </script>
+    <script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnadd").click(function () {
+            var machine = "";
+            var mfunction ="";
+            var mcapability ="";
+           
+
+            $('#EmpInfo tr').each(function () {
+                if (machine == ""  && mfunction == ""  && mcapability == "") {
+                    var m = $(this).find('td:eq(1) input').val();
+                    var f = $(this).find('td:eq(2) input').val();
+                    var c = $(this).find('td:eq(3) input').val();
+                   // alert(m);
+                    if (typeof m  !== "undefined") {
+                        machine = $(this).find('td:eq(1) input').val();
+                    }
+                    if (typeof f  !== "undefined") { 
+                        mfunction = $(this).find('td:eq(2) input').val();
+                    }
+                    if (typeof c  !== "undefined")
+                    {
+                        mcapability = $(this).find('td:eq(3) input').val();
+                    }
+                }
+                else {
+                    var m = $(this).find('td:eq(1) input').val();
+                    var f = $(this).find('td:eq(2) input').val();
+                    var c = $(this).find('td:eq(3) input').val();
+                    if (m != "" || f != "" || c != "") {
+                        machine = machine + "," + $(this).find('td:eq(1) input').val();
+                        mfunction = mfunction + "," + $(this).find('td:eq(2) input').val();
+                        mcapability = mcapability + "," + $(this).find('td:eq(3) input').val();
+                       
+                        
+                    }
+                }
+            });
+            localStorage.setItem("machine_name", machine);
+            localStorage.setItem("function_name", mfunction);
+            localStorage.setItem("capability_name", mcapability);
+           // alert(machine);
+            $('#hdmachine').val(machine);
+            $('#hdmachineFunction').val(mfunction);
+            $('#hdmachineCapability').val(mcapability);
+            swal("*Machine details added successfully *");
+        });
+    })
+    </script>
+    <script>
+        function UploadSampleFile() {
+            if (window.FormData !== undefined) {
+                $("#spin").show();
+                var fileUpload = $("#image-input").get(0);
+                var files = fileUpload.files;
+                var fileData = new FormData();
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append(files[i].name, files[i]);
+
+                }
+                fileData.append('Sample', "samplefile" + $("#txtcompanyname").val().split(" ").join("") + $("#txtSortName").val().split(" ").join(""));
+
+                $.ajax({
+                    url: '/Vendor/UploadSampleFileMethod',
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    success: function (result) {
+                        var f = result.split('+');
+                        $("#hdworksampaleFile").val(f[1]);
+                        var path = $("#hdworksampaleFile").val();
+                        swal(f[0]);
+                       
+                        $("#spin").hide();
+                    },
+                    error: function (err) {
+                        alert(err.statusText);
+                    }
+                });
+            } else {
+                alert("FormData is not supported.");
+            }
+        }
+    </script>
+    <script>
+    function UploadNDAFile() {
+        if (window.FormData !== undefined) {
+            $("#spin").show();
+            var fileUpload = $("#ndafile").get(0);
+            var files = fileUpload.files;
+            var fileData = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                fileData.append(files[i].name, files[i]);
+
+            }
+            fileData.append('NDA', "nda" + $("#txtcompanyname").val().split(" ").join("") + $("#txtSortName").val().split(" ").join(""));
+
+            $.ajax({
+                url: '/Vendor/UploadNDAFileMethod',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                success: function (result) {
+                    var f = result.split('+');
+                    $("#hdndaFile").val(f[1]);
+                    var path = $("#hdndaFile").val();
+                    //alert(path);
+                    swal(f[0]);
+
+                    $("#spin").hide();
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        } else {
+            alert("FormData is not supported.");
+        }
+    }
+    </script>
+    <script>
+        function UploadForm24File() {
+        if (window.FormData !== undefined) {
+            $("#spin").show();
+            var fileUpload = $("#form24file").get(0);
+            var files = fileUpload.files;
+            var fileData = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                fileData.append(files[i].name, files[i]);
+
+            }
+            fileData.append('Form24', "form24" + $("#txtcompanyname").val().split(" ").join("") + $("#txtSortName").val().split(" ").join(""));
+
+            $.ajax({
+                url: '/Vendor/UploadFormFileMethod',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                success: function (result) {
+                    var f = result.split('+');
+                    $("#hdform24File").val(f[1]);
+                    var path = $("#hdform24File").val();
+                    //alert(path);
+                    swal(f[0]);
+
+                    $("#spin").hide();
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        } else {
+            alert("FormData is not supported.");
+        }
+    }
+    </script>
+    <script>
+    function UploadForm48File() {
+        if (window.FormData !== undefined) {
+            $("#spin").show();
+            var fileUpload = $("#form48file").get(0);
+            var files = fileUpload.files;
+            var fileData = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                fileData.append(files[i].name, files[i]);
+
+            }
+            fileData.append('Form48', "form48" + $("#txtcompanyname").val().split(" ").join("") + $("#txtSortName").val().split(" ").join(""));
+
+            $.ajax({
+                url: '/Vendor/UploadFormFileMethod',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                success: function (result) {
+                    var f = result.split('+');
+                    $("#hdform48File").val(f[1]);
+                    var path = $("#hdform48File").val();
+                  //  alert(path);
+                    swal(f[0]);
+
+                    $("#spin").hide();
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        } else {
+            alert("FormData is not supported.");
+        }
+    }
+    </script>
+    <script>
+    function UploadForm9File() {
+        if (window.FormData !== undefined) {
+            $("#spin").show();
+            var fileUpload = $("#form9file").get(0);
+            var files = fileUpload.files;
+            var fileData = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                fileData.append(files[i].name, files[i]);
+
+            }
+            fileData.append('Form9', "form9" + $("#txtcompanyname").val().split(" ").join("") + $("#txtSortName").val().split(" ").join(""));
+
+            $.ajax({
+                url: '/Vendor/UploadFormFileMethod',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                success: function (result) {
+                    var f = result.split('+');
+                    $("#hdform9file").val(f[1]);
+                    var path = $("#hdform9file").val();
+                   // alert(path);
+                    swal(f[0]);
+
+                    $("#spin").hide();
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        } else {
+            alert("FormData is not supported.");
+        }
+    }
+    </script>
+    <script>
+        function UploadotherformFile() {
+           // alert();
+        if (window.FormData !== undefined) {
+            $("#spin").show();
+         
+            var fileUpload = $("#formotherfile").get(0);
+            var files = fileUpload.files;
+            var fileData = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                fileData.append(files[i].name, files[i]);
+
+            }
+            fileData.append('OtherForm', "Otherform" + $("#txtcompanyname").val().split(" ").join("") + $("#txtSortName").val().split(" ").join(""));
+
+            $.ajax({
+                url: '/Vendor/UploadFormFileMethod',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                success: function (result) {
+                    var f = result.split('+');
+                    $("#hdotherFile").val(f[1]);
+                    var path = $("#hdotherFile").val();
+                   // alert(path);
+                    swal(f[0]);
+
+                    $("#spin").hide();
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        } else {
+            alert("FormData is not supported.");
+        }
+    }
+    </script>
+
+    <style>
+        .page-header {
+    padding-bottom: 9px;
+    margin: 0px 0 12px;
+    border-bottom: 1px solid #eee;
+}.form-group>label[class*=col-] {
+    margin-bottom: 4px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+}#regForm {
+    background-color: #ffffff;
+    margin: 0px auto;
+    font-family: Raleway;
+    padding: 10px 40px 21px 40px;
+    width: 99%;
+    min-width: 329px;
+    height: auto;
+}
+ input[type=email], input[type=url], input[type=search], input[type=tel], input[type=color], input[type=text], input[type=password], input[type=datetime], input[type=datetime-local], input[type=date], input[type=month], input[type=time], input[type=week], input[type=number], textarea {
+    padding: 7px 8px;
+    font-family: 'Open Sans', sans-serif !important;
+    font-size: 12px;
+}
+.upload-bt {
+    padding-left: 30px;
+    width: 77px !important;
+    padding: 6px 0px 6px 16px;
+    font-size: 12px;
+}
+ .login-layout label, .ui-jqdialog-content .searchFilter .queryresult {
+    margin-bottom: 11px;
+    padding-right: 14px;
+}
+ .nda-c{
+     padding-top:10px;
+ }
+    </style>
+    <script type="text/javascript">
+    $(function () {
+        $("#btnsaveCountry").click(function () {
+
+            var objcountry = {};
+            objcountry.Country_Code = $("#txtcountrycode").val().toUpperCase();
+            objcountry.Country_Name = $("#txtcountryname").val().charAt(0).toUpperCase() + $("#txtcountryname").val().slice(1);
+            objcountry.Country_Id = $("#hdcountry").val();
+            if (objcountry.Country_Code == "" || objcountry.Country_Code == null) {
+                swal("Please enter country code.");
+
+                $("#txtcountrycode").focus();
+                return;
+            }
+            if (objcountry.Country_Name == "" || objcountry.Country_Name == null) {
+                swal("Please enter country name.");
+                $("#txtcountryname").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddCountry",
+                data: '{objcountry: ' + JSON.stringify(objcountry) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+
+                    swal(response);
+                    CountryName();
+
+
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $("#btnsavestate").click(function (e) {
+                e.preventDefault();
+                var objstate = {};
+                objstate.Country_Id = $("#ddlnewcountry").val();
+                objstate.State_Code = $("#txtstatecode").val().toUpperCase();
+                objstate.State_Name = $("#txtstatename").val().charAt(0).toUpperCase() + $("#txtstatename").val().slice(1);
+                objstate.GST_Code = $("#txtgstcode").val();
+                objstate.State_Id = $("#hdstatemast").val();
+                //alert(objstate.Country_Id);
+                if (objstate.Country_Id == "0" || objstate.Country_Id == null) {
+                    swal("Please select country.");
+
+                    $("#ddlnewcountry").focus();
+                    return;
+                }
+                //if (objstate.State_Code == "" || objstate.State_Code == null) {
+                //    swal("Please enter state code.");
+
+                //    $("#txtstatecode").focus();
+                //    return;
+                //}
+                if (objstate.State_Name == "" || objstate.State_Name == null) {
+                    swal("Please enter state name.");
+                    $("#txtstatename").focus();
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/AddState",
+                    data: '{objstate: ' + JSON.stringify(objstate) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+
+                        swal(response);
+                        StateName();
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            });
+        });
+
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $("#btnsavecity").click(function (e) {
+                e.preventDefault();
+                var objcity = {};
+                objcity.Country_Id = $("#ddlnewsyatecountry").val();
+                objcity.State_Id = $("#ddlnewstate").val();
+                objcity.City_Name = $("#txtcityname").val().charAt(0).toUpperCase() + $("#txtcityname").val().slice(1);
+                objcity.City_Id = $("#hdcitymast").val();
+                if (objcity.Country_Id == "0" || objcity.Country_Id == null) {
+                    swal("Please select country.");
+
+                    $("#ddlnewsyatecountry").focus();
+                    return;
+                }
+                if (objcity.State_Id == "0" || objcity.State_Id == null) {
+                    swal("Please select state.");
+
+                    $("#ddlnewstate").focus();
+                    return;
+                }
+                if (objcity.City_Name == "" || objcity.City_Name == null) {
+                    swal("Please enter city name.");
+                    $("#txtcityname").focus();
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/AddCity",
+                    data: '{objcity: ' + JSON.stringify(objcity) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        CityName();
+
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+    $(document).on("click", "a.clddlcountry", function () {
+        $('#dialogdivCountry').modal('show');
+    });
+    $(document).on("click", "a.clddlstate", function () {
+        $('#dialogdivState').modal('show');
+    });
+    $(document).on("click", "a.clddlcity", function () {
+        $('#dialogdivCity').modal('show');
+    });
+    $(document).on("click", "a.clddlcurrency", function () {
+        $('#dialogdivcurrency').modal('show');
+    });
+    $(document).on("click", "a.clddlpayment", function () {
+        $('#dialogdivpayment').modal('show');
+    });
+    $(document).on("click", "a.clddlcategory", function () {
+        $('#dialogdivcategory').modal('show');
+    });
+    </script>
+    <style>
+        .clddl_plus {
+            float: right;
+            left: 5px;
+            position: absolute !important;
+            top: 9px;
+            font-size: 13px;
+        }
+.modal-title {
+    margin: 0;
+    line-height: 1.42857143;
+    font-size: 15px !important; 
+    padding-top: 4px !important;
+}
+
+.modal-header {
+    padding: 3px 15px !important;
+    border-bottom: 1px solid #e5e5e5 !important;
+    font-size: 13px !important;
+}
+
+.modal-body label{font-size:12px !important}
+.table th {
+    vertical-align: top !important;
+    font-size: 12px !important;
+    font-weight: 500;
+}
+.table  td {
+    padding: 3px 3px;
+    text-align: center;
+    font-size: 11px !important;}
+
+.page-header h1 {
+    font-size: 19px !important;
+}
+ .back_home {
+    margin-bottom: 13px;
+}
+ .dataTables_wrapper {margin-bottom: 16px;}
+ .url_tx2 {
+    margin-left: -102px;
+}
+ .page-header h1 {
+    padding: 0;
+    margin: 0 0px;
+    font-size: 16px;
+    font-weight: lighter;
+    color: #565454 !important;
+    text-align: left;
+    font-weight: 600;
+}
+ input[type=email], input[type=url], input[type=search], input[type=tel], input[type=color], input[type=text], input[type=password], input[type=datetime], input[type=datetime-local], input[type=date], input[type=month], input[type=time], input[type=week], input[type=number], textarea {
+    padding: 7px 8px;
+    border: 1px solid #D5D5D5;
+    border-radius: 0px !important;
+    font-size: 14px;
+    text-transform: capitalize !IMPORTANT;
+    font-family: 'Open Sans', sans-serif;
+    height: 38px !important;
+}
+    /* Punita Changes  Start */
+    .form-control {
+        padding: 7px 8px !important;
+        border: 1px solid #D5D5D5 !important;
+        border-radius: 0px !important;
+        font-size: 13px !important;
+        text-transform: capitalize !IMPORTANT;
+        font-family: 'Open Sans', sans-serif;
+        height: 38px !important;
+    }
+  
+    /*End*/
+     .master-page-reset{    width: auto;
+    padding: 1px 10px !important;
+    margin-left: 15px !important}
+     .hed_tit {
+    margin-top: 3px;
+}
+     h3.item_tp {
+    padding: 0;
+    margin: 0 0px;
+    font-size: 14px;
+    font-weight: lighter;
+    color: #565454 !important;
+    text-align: left;
+    font-weight: 600;
+    padding-bottom: 15px;
+    margin-top: -9px;
+}
+     .modal-open .modal {
+    overflow-x: hidden !IMPORTANT;
+    overflow-y: auto !IMPORTANT;
+    padding: 0px !IMPORTANT;
+}
+     .modal-content {
+    max-width: 100% !important;
+}
+     .item_hedin {
+    padding: 0;
+    margin: 0 0px;
+    font-size: 14px;
+    font-weight: lighter;
+    color: #565454 !important;
+    text-align: left;
+    font-weight: 600;
+    padding-bottom: 17px;
+    margin-top: 8px;
+}
+     .modal-open .modal {
+    overflow-x: hidden !IMPORTANT;
+    overflow-y: auto !IMPORTANT;
+    padding: 0px !IMPORTANT;
+    overflow: hidden !IMPORTANT;
+}
+
+
+.modal-md{     display: flex !important;
+    overflow: hidden;}
+.btn_back {
+    width: 183px !IMPORTANT;
+    display: block !IMPORTANT;
+    margin: auto;
+    background: #0893e2 !IMPORTANT;
+    border: none;
+    margin-bottom: 13px !IMPORTANT;
+    padding: 8px 10px !important;
+    border-radius: 5px !IMPORTANT;
+}
+.modal-body label {
+    font-size: 11px !important;
+}
+.modal-dialog-centered {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    min-height: calc(100% - (.5rem * 2));
+}
+    </style>
+</head>
+
+<body class="login-layout light-login">
+    <div class="navbar navbar-default" id="navbar">
+        <div class="navbar-container container-fluid" id="navbar-container">
+            <div class="navbar-header pull-left">
+                <a href="#" class="navbar-brand">
+                    <small>
+                        <input type="image" src="~/Images/ldr_logo_24.png" />
+
+                        Leader Range Technology
+                    </small>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="main-content-inner">
+
+            <input type="hidden" id="hdvendor" />
+            <input type="hidden" id="hdvendortype" />
+            <input type="hidden" id="hdstatustype" />
+            <form id="regForm" action="#">
+                <div class="spinner" id="spin" style="margin-left: 250px;display:none">
+                    <div class="bounce1"></div>
+                    <div class="bounce2"></div>
+                    <div class="bounce3"></div>
+                </div>
+               
+                <!-- One "tab" for each step in the form: -->
+                <div class="tab">
+                    @*//-------------------------------------------------------------------add popup----------------------------------------*@
+                  
+
+
+                        @*------------------------------------------start Master data popup---------------------------------------------------*@
+                    <div class="modal fade" id="dialogdivCountry">
+                        <div class="modal-dialog modal-md modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">×</a>
+                                    <h3 class="item_hedin">Add Country </h3>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-4">Country Code (ISO 03)  <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                        <div class="col-md-8">
+                                            <input type="text" id="txtcountrycode" style="text-transform:uppercase" placeholder="Country Code" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for country code" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-4">Country Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-8">
+                                            <input type="text" id="txtcountryname" style="text-transform:capitalize" placeholder="Country Name" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for country name" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9">
+                                            <button class="btn btn-info" id="btnsaveCountry" type="button" data-toggle="tooltip" title="Button for save data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Submit
+                                            </button>
+                                            <button class="btn master-page-reset" id="btnresetCountry" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="modal fade" id="dialogdivState">
+                            <div class="modal-dialog modal-md modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <a href="#" class="close" data-dismiss="modal">×</a>
+                                        <h3 class="item_hedin">Add State </h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-3">Country <span>:</span></div>
+                                            <div class="col-md-9">
+                                                <select class="col-xs-10 col-sm-12" id="ddlnewcountry" data-toggle="tooltip" title="Select country name">
+                                                    <option>-Select Country-</option>
+
+                                                </select>
+
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3">State Code<span> : </span></div>
+                                            <div class="col-md-9">
+                                                <input type="text" id="txtstatecode" style="text-transform:uppercase" placeholder="State Code" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for state code" />
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3">State Name<span> : </span></div>
+                                            <div class="col-md-9">
+                                                <input type="text" id="txtstatename" style="text-transform:capitalize" placeholder="State Name" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for state name" />
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3"></div>
+                                            <div class="col-md-9">
+                                                <button class="btn btn-info" id="btnsavestate" type="button" data-toggle="tooltip" title="Button for save data">
+                                                    <i class="ace-icon fa fa-floppy-o"></i>
+                                                    Submit
+                                                </button>
+                                                <button class="btn master-page-reset" id="btnresetstate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                    Reset
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="dialogdivCity">
+                            <div class="modal-dialog modal-md modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <a href="#" class="close" data-dismiss="modal">×</a>
+                                        <h3 class="item_hedin">Add City </h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-3">Country <span>:</span></div>
+                                            <div class="col-md-9">
+                                                <select class="col-xs-10 col-sm-12" id="ddlnewsyatecountry" data-toggle="tooltip" title="Select country name">
+                                                    <option>-Select Country-</option>
+
+                                                </select>
+
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3">State Code<span> : </span></div>
+                                            <div class="col-md-9">
+                                                <select class="col-xs-10 col-sm-12" id="ddlnewstate" data-toggle="tooltip" title="Select state name">
+                                                    <option>-Select State-</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3">City Name<span> : </span></div>
+                                            <div class="col-md-9">
+                                                <input type="text" id="txtcityname" style="text-transform:capitalize" placeholder="City Name" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for city name" />
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3"></div>
+                                            <div class="col-md-9">
+                                                <button class="btn btn-info" id="btnsavecity" type="button" data-toggle="tooltip" title="Button for save data">
+                                                    <i class="ace-icon fa fa-floppy-o"></i>
+                                                    Submit
+                                                </button>
+                                                <button class="btn master-page-reset" id="btnresetcity" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                    Reset
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="modal fade" id="dialogdivcurrency">
+                        <div class="modal-dialog modal-md modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">×</a>
+                                    <h3 class="item_hedin">Add Currency </h3>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-3">Currency Code <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtcurrencycode" style="text-transform:uppercase" placeholder="Currency Code" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for currency code" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3">Currency Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtcurrencyname" style="text-transform:capitalize" placeholder="Currency Name" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for currency name" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3" style="padding-right:0px">International Code <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtinternationalcode" placeholder="International Code" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for international code" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3" style="padding-right:0px">International Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtinternationalname" style="text-transform:capitalize;" placeholder="International Name" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for international Name" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3">Decimal Unit<span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtdecimalunit" placeholder="Decimal Unit" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for decimal unit" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3">Currency Symbol<span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtcurrencysymbol" placeholder="Currency Symbol" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for currency symbol" />
+                                        </div>
+                                    </div>
+
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9">
+                                            <button class="btn btn-info" id="btnsavecurrency" type="button" data-toggle="tooltip" title="Button for save data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Submit
+                                            </button>
+                                            <button class="btn master-page-reset" id="btnresetcurrency" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="dialogdivpayment">
+                        <div class="modal-dialog modal-md modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">×</a>
+                                    <h3 class="item_hedin">Add Payment </h3>
+                                </div>
+                                <div class="modal-body" style="padding-left:12px">
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3" style="padding-right:0px">Payment Term Code <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtpaymenttermcode" style="text-transform:uppercase" placeholder="Payment Term Code" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for Payment Term Code" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3" style="padding-right:0px">Payment Term Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtpaymenttermname" style="text-transform:capitalize" placeholder="Payment Term Name" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for Payment Term Name" />
+                                        </div>
+                                    </div>
+
+
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3" style="padding-right:0px">Credit Days<span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtcreditdays" style="text-transform:capitalize" placeholder="Credit Days" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for Credit Days " />
+                                        </div>
+                                    </div>
+
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3" style="padding-right:0px">Tolerance Days<span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtolerance" style="text-transform:capitalize" placeholder="Tolerance Days" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for Tolerance Days" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3">Relate To <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                        <div class="col-md-9">
+
+                                            <select class="col-xs-10 col-sm-12" id="ddlrelatedto" data-toggle="tooltip" title="Select Relate To">
+                                                <option value="0">-Select Relate To-</option>
+                                                <option value="Customer">Customer</option>
+                                                <option value="Vendor">Vendor</option>
+
+                                            </select>
+
+
+                                        </div>
+                                    </div>
+
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9">
+                                            <button class="btn btn-info" id="btnsavecurrency" type="button" data-toggle="tooltip" title="Button for save data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Submit
+                                            </button>
+                                            <button class="btn master-page-reset" id="btnresetcurrency" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="dialogdivcategory">
+                        <div class="modal-dialog modal-md modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">×</a>
+                                    <h3 class="item_hedin">Vendor Cayegory</h3>
+                                </div>
+                                <div class="modal-body">
+
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3">Category Name  <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtVendorCategory" style="text-transform:capitalize" placeholder="Vendor Category Name" class="col-xs-10 col-sm-12" data-toggle="tooltip" title="Field for vendor category name" />
+                                        </div>
+                                    </div>
+
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9">
+                                            <button class="btn btn-info" id="btndatecategory" type="button" data-toggle="tooltip" title="Button for save data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Submit
+                                            </button>
+                                            <button class="btn master-page-reset" id="btnresetcategory" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        @*------------------------------------------end Master data popup---------------------------------------------------*@
+                        @*------------------------------------------------------------------end popup*@
+                    <div id="dialogdiv" class="modal fade" style="overflow:auto!important">
+                        <div class="modal-dialog modal-lg modal-dialog-centered" style="display:flex !important">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">&times;</a>
+                                    <h3 class="modal-title">Machine Detail</h3>
+                                    <input type="hidden" id="hdmachine"/>
+                                    <input type="hidden" id="hdmachineFunction" />
+                                    <input type="hidden" id="hdmachineCapability" />
+                                </div>
+
+                                <div class="modal-body">
+
+                                    <!-- PAGE CONTENT BEGINS -->
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="form-horizontal">
+                                                <table id="EmpInfo" class="table table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="center">S.No</th>
+                                                            <th>Machine Name</th>
+                                                            <th>Machine Function</th>
+                                                            <th>Machine Capability</th>
+                                                            <th style="display:none"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                            </div>
+                                        </div><!-- /.span -->
+                                    </div><!-- /.row -->
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <input type="hidden" id="hdvendordetail" />
+                                            <div class="clearfix" style=" display: block; background-color: #F5F5F5; border-top: 1px solid #E5E5E5; margin-bottom: -14px; margin-top: 6px; padding: 10px 10px 10px;padding-left: 150px;">
+                                                <div class="col-md-offset-3 col-md-9">
+                                                    <button class="btn btn-info" id="btnadd" type="button" data-toggle="tooltip" title="Button for add data">
+                                                        <i class="ace-icon fa fa-plus"></i>
+                                                        Add
+                                                    </button>
+
+                                                </div>
+                                            </div>
+                                        </div><!-- /.col -->
+                                    </div>
+                                    <div class="hr hr-18 dotted hr-double"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-header">
+                        <h3 class="man_fild">Registration Details<span>(*Mandatory Fields) </span></h3>
+                       
+                    </div>
+                    <div class="row">                      
+                    </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Company Name  <span style="color:red;font-size:14px;">*</span></label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtcompanyname" style="text-transform:capitalize" onkeypress="return ((event.keyCode >= 65 && event.keyCode <= 90 || event.keyCode == 32) || (event.keyCode >= 97 && event.keyCode <= 122 || event.keyCode == 32))" placeholder="Company Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for company name" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Short Name  <span style="color:red;font-size:14px;">*</span></label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtSortName" style="text-transform:uppercase" placeholder="Short Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for short name" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Address  <span style="color:red;font-size:14px;">*</span></label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtcompanyAddress" placeholder="Address" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for address" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Country  <span style="color:red;font-size:14px;">*</span></label>
+                                <div class="col-sm-9">
+                                    <select class="col-xs-10 col-sm-9" data-toggle="tooltip" id="ddlcountry" title="Country name">
+                                        <option>-Select Country-</option>
+
+                                    </select>@*<sup style=" top: .5em; left: .5em;"><a class="clddlcountry" data-toggle='tooltip' title='Add new country'><i class="fa fa-plus"></i></a></sup>*@
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> State  <span style="color:red;font-size:14px;">*</span></label>
+                                <div class="col-sm-9">
+                                    <select class="col-xs-10 col-sm-9" data-toggle="tooltip" id="ddlstate" title="State name">
+                                        <option>-Select State-</option>
+
+                                    </select>@*<sup style=" top: .5em; left: .5em;"><a class="clddlstate" data-toggle='tooltip' title='Add new state'><i class="fa fa-plus"></i></a></sup>*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> City  <span style="color:red;font-size:14px;">*</span></label>
+                                <div class="col-sm-9">
+                                    <select class="col-xs-10 col-sm-9" data-toggle="tooltip" id="ddlcity" title="City name">
+                                        <option>-Select City-</option>
+                                    </select>@*<sup style=" top: .5em; left: .5em;"><a class="clddlcity" data-toggle='tooltip' title='Add new city'><i class="fa fa-plus"></i></a></sup>*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Pin Code  <span style="color:red;font-size:14px;">*</span></label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtPincode" placeholder="Pin Code" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for pin code" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Telephone </label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtTelephone" placeholder="Telephone" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for telephone" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Fax Number </label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtFaxNo" placeholder="Fax Number" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for fax number" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Mobile Number  <span style="color:red;font-size:14px;">*</span></label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtMobileNo" placeholder="Mobile Number" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for mobile number" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Attn </label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtAttn" placeholder="Attn" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for attn" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> GST</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtGST" placeholder="GST" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for GST" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> SST </label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtSST" placeholder="SST" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for SST" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Payment Term  <span style="color:red;font-size:14px;">*</span></label>
+                                <div class="col-sm-9">
+                                    <select class="col-xs-10 col-sm-9" data-toggle="tooltip" id="ddlpayment" title="Payment term">
+                                        <option>-Select payment term-</option>
+
+                                    </select>@*<sup style=" top: .5em; left: .5em;"><a class="clddlpayment clddl_plus" data-toggle='tooltip' title='Add new payment'><i class="fa fa-plus"></i></a></sup>*@
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Currency  <span style="color:red;font-size:14px;">*</span></label>
+                                <div class="col-sm-9">
+                                    <select class="col-xs-10 col-sm-9" data-toggle="tooltip" id="ddlCurrency" title="Currency name">
+                                        <option>-Select Currency-</option>
+                                    </select>@*<sup style=" top: .5em; left: .5em;"><a class="clddlcurrency clddl_plus" data-toggle='tooltip' title='Add new currency'><i class="fa fa-plus"></i></a></sup>*@
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Category  <span style="color:red;font-size:14px;">*</span></label>
+                                <div class="col-sm-9">
+                                    <select class="col-xs-10 col-sm-9" data-toggle="tooltip" id="ddlVendorcategory" title="category">
+                                        <option>-Select category-</option>
+
+                                    </select>@*<sup style=" top: .5em; left: .5em;"><a class="clddlcategory clddl_plus" data-toggle='tooltip' title='Add new category'><i class="fa fa-plus"></i></a></sup>*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-4"></div>
+                    <div class="row" >
+                        <div class="col-xs-6" style="display:none">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Status </label>
+                                <div class="col-sm-9">
+                                    <input type="radio" id="ractive" name="Status" value="Active">
+                                    <label for="with">Active</label>
+                                    <input type="radio" id="rSuspend" name="Status" value="Suspend" checked="checked">
+                                    <label for="without">Suspend</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Region </label>
+                                <div class="col-sm-9">
+                                    <input type="radio" id="rLocal" name="Region" value="Local" checked="checked">
+                                    <label for="rLocal">Local</label>
+                                    <input type="radio" id="rOversea" name="Region" value="Oversea">
+                                    <label for="rOversea">Oversea</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Work Samples</label>
+
+                                <div class="col-sm-9">
+
+                                    <div style="width:100%">
+                                        <div style="width:54%;float:left">
+                                            <label class="ace-file-input upload_fl1"><input type="file" onchange="loadFile(event)" id="image-input"><span class="ace-file-container upload_fl" data-title="Choose"><span class="ace-file-name" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+
+                                            @*<input type="file" class="dimmy inputfile" id="image-input" multiple />
+                                            <label for="image-input" class="c_file">Choose a file</label>*@
+                                        </div>
+                                        <div style="width:33%;float:left">
+                                            <input type="hidden" id="hdworksampaleFile" />
+
+                                            <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                            <input type="button" id="btnUpload" class="btn btn-info upload-bt" value="Upload" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Machine Capability </label>
+
+                                <div class="col-sm-9">
+
+                                    <input type="button" id="btnCapability" class="btn btn-info" value="Capability" />
+                                    @*<input type="button" id="btnreset" value="reset"></div>*@
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Download NDA Form </label>
+
+                                <div class="col-sm-9">
+                                    <a href="~/assets/NDAForm.pdf" download="~/assets/NDAForm.pdf" class="nda-c">Download NDA Form</a>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Upload NDA</label>
+
+                                <div class="col-sm-9">
+
+                                    <div style="width:100%">
+                                        <div style="width:54%;float:left">
+                                            <label class="ace-file-input upload_fl1"><input type="file" onchange="loadFile(event)" id="ndafile"><span class="ace-file-container upload_fl" data-title="Choose"><span class="ace-file-name" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+
+
+                                        </div>
+                                        <div style="width:33%;float:left">
+                                            <input type="hidden" id="hdndaFile" />
+
+                                            <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                            <input type="button" id="btnNDAUpload" class="btn btn-info upload-bt" value="Upload" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Upload Form 24</label>
+
+                                <div class="col-sm-9">
+                                    <div style="width:100%">
+                                        <div style="width:54%;float:left">
+                                            <label class="ace-file-input upload_fl1"><input type="file" onchange="loadFile(event)" id="form24file"><span class="ace-file-container upload_fl" data-title="Choose"><span class="ace-file-name" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+
+
+                                        </div>
+                                        <div style="width:33%;float:left">
+                                            <input type="hidden" id="hdform24File" />
+
+                                            <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                            <input type="button" id="btnform24pload" class="btn btn-info upload-bt" value="Upload" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Upload Form 48</label>
+
+                                <div class="col-sm-9">
+
+                                    <div style="width:100%">
+                                        <div style="width:54%;float:left">
+                                            <label class="ace-file-input upload_fl1"><input type="file" onchange="loadFile(event)" id="form48file"><span class="ace-file-container upload_fl" data-title="Choose"><span class="ace-file-name" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+
+
+                                        </div>
+                                        <div style="width:33%;float:left">
+                                            <input type="hidden" id="hdform48File" />
+
+                                            <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                            <input type="button" id="btnform48Upload" class="btn btn-info upload-bt" value="Upload" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                     
+
+                    </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Upload Form 9</label>
+
+                                <div class="col-sm-9">
+                                    <div style="width:100%">
+                                        <div style="width:54%;float:left">
+                                            <label class="ace-file-input upload_fl1"><input type="file" onchange="loadFile(event)" id="form9file"><span class="ace-file-container upload_fl" data-title="Choose"><span class="ace-file-name" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+
+
+                                        </div>
+                                        <div style="width:33%;float:left">
+                                            <input type="hidden" id="hdform9file" />
+
+                                            <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                            <input type="button" id="btnform9Upload" class="btn btn-info upload-bt" value="Upload" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Upload Other</label>
+
+                                <div class="col-sm-9">
+
+                                    <div style="width:100%">
+                                        <div style="width:54%;float:left">
+                                            <label class="ace-file-input upload_fl1"><input type="file" onchange="loadFile(event)" id="formotherfile"><span class="ace-file-container upload_fl" data-title="Choose"><span class="ace-file-name" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+
+
+                                        </div>
+                                        <div style="width:33%;float:left">
+                                            <input type="hidden" id="hdotherFile" />
+
+                                            <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                            <input type="button" id="btnotherUpload" class="btn btn-info upload-bt" value="Upload" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                     
+
+                    </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+
+
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Location</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="long" id="long" value="" class="col-xs-10 col-sm-4">
+                                    <input type="text" style="margin-left:5px;" name="lat" id="lat" value="" class="col-xs-10 col-sm-4">
+                                    <input type="button" onclick="initialize()" value="OK" style="margin-left:5px" class="btn btn-info" />
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"></label>
+                                <div class="col-sm-9">
+                                    <div id="dvMap" style="width: 400px; height: 200px">
+                                    </div>
+                                    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsMiKqDK54UQRma7dXEFoNSEfX4Bn8f8g"></script>
+                                    <script type="text/javascript" src="https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDsMiKqDK54UQRma7dXEFoNSEfX4Bn8f8g"></script>
+                                    <script type="text/javascript">
+
+                                        function initialize() {
+
+                                            var canvas = $("#dvMap");
+
+                                            var latitude = document.getElementById('lat').value;
+                                            // alert(latitude);"26.850000"
+                                            var longitude = document.getElementById('long').value;
+                                            // "80.9541592283203"//
+                                            var latlng = new google.maps.LatLng(latitude, longitude);
+                                            var options = {
+                                                zoom: 8,
+                                                center: latlng,
+                                                mapTypeId: google.maps.MapTypeId.ROADMAP
+                                            };
+                                            var map = new google.maps.Map(canvas[0], options);
+
+                                            var marker = new google.maps.Marker({
+                                                position: new google.maps.LatLng(latitude, longitude),
+                                                draggable: true,
+                                                map: map
+                                            });
+                                            google.maps.event.addListener(marker, 'dragend', function (event) {
+                                                document.getElementById("lat").value = this.getPosition().lat();
+                                                document.getElementById("long").value = this.getPosition().lng();
+                                            });
+                                        }
+                                        var myVar;
+                                        $(function () {
+                                            // document.getElementById('long').value = "80.949997";// position.coords.longitude;
+                                            // document.getElementById('lat').value = "26.850000";// position.coords.latitude
+                                            initGeolocation();
+                                            myVar = setTimeout(initialize, 100);
+                                            //initialize();
+                                        });
+
+                                    </script>
+
+                                    <script type="text/javascript">
+                                        function initGeolocation() {
+                                            if (navigator.geolocation) {
+
+                                                // Call getCurrentPosition with success and failure callbacks
+                                                navigator.geolocation.watchPosition(success, error);
+                                                // initialize();
+                                            }
+                                            else {
+                                                alert("Sorry, your browser does not support geolocation services.");
+                                            }
+                                        }
+
+                                        function success(position) {
+                                            // alert("1");"80.949997";// "26.850000";//
+                                            document.getElementById('long').value = position.coords.longitude;
+                                            document.getElementById('lat').value = position.coords.latitude
+                                        }
+
+                                        function error(err) {
+                                            alert();
+                                            // Could not obtain location
+                                        }
+
+                                    </script>
+                                    <script>
+                                        //const demo = document.getElementById('demo');
+                                        function error(error) {
+                                            //document.getElementById('long').value = `Failed to locate. Error: ${err.message}`;
+                                            switch (error.code) {
+                                                case error.PERMISSION_DENIED:
+                                                    alert("User denied the request for Geolocation.")
+                                                    break;
+                                                case error.POSITION_UNAVAILABLE:
+                                                    alert("Location information is unavailable.")
+                                                    break;
+                                                case error.TIMEOUT:
+                                                    alert("The request to get user location timed out.")
+                                                    break;
+                                                case error.UNKNOWN_ERROR:
+                                                    alert("An unknown error occurred.")
+                                                    break;
+                                            }
+                                        }
+
+                                        function success(position) {
+                                            document.getElementById('long').value = position.coords.longitude;
+                                            document.getElementById('lat').value = position.coords.latitude
+                                        }
+
+                                        function getGeolocation() {
+                                            if (navigator.geolocation) {
+                                                document.getElementById('long').value = 'Locating…';
+                                                navigator.geolocation.watchPosition(success, error);
+                                            } else {
+                                                document.getElementById('long').value = 'Geolocation is not supported by this browser.';
+                                            }
+                                        }
+                                    </script>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    </div>
+                <div class="tab" id="divpersonal" style="padding-bottom:10px">
+                    <div class="page-header">
+                        <h4>
+                            Personal Details
+                        </h4>
+                        <div class="row">
+                          
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Name  <span style="color:red;font-size:14px;">*</span></label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="txtName" placeholder="Name" style="text-transform:capitalize" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for name" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Email  <span style="color:red;font-size:14px;">*</span></label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="txtemail" placeholder="Email" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for email" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Telephone Number 1 </label>
+                                    <div class="col-sm-9">
+                                        @*<select class="col-xs-10 col-sm-4" style="width: 139px; padding-right: 0px;margin-right: 3px;" id="ddlcountrycode1" data-toggle="tooltip" title="Select country code">
+                                            <option value="0">-Select country code-</option>
+
+                                        </select>*@
+                                        <input type="text" id="txtTelephoneNumber1" placeholder="Telephone Number 1 " class="col-xs-10 col-sm-5" data-toggle="tooltip" title="Field for telephone number 1 " />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Address </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="txtVendorAddress" placeholder="Address" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for address" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1">City  <span style="color:red;font-size:14px;">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select class="col-xs-10 col-sm-9" id="ddlVendorcity" data-toggle="tooltip" title="Select city">
+                                            <option value="0">-Select city-</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Country  <span style="color:red;font-size:14px;">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select class="col-xs-10 col-sm-9" id="ddlVendorCountry" data-toggle="tooltip" title="Select country">
+                                            <option value="0">-Select Country-</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+  
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+
+
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Pin Code </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="txtVendorPinCode" placeholder="Pin Code" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for pin code" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+
+
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Alternate Vendor Name1 </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="txtaltvendor1" placeholder="Alternate Vendor Name1" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for alternate vendor name1" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Alternate Email1 </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="txtaltemail1" placeholder="Alternate Email1" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for alternate email1" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Alternate Vendor Name2 </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="txtaltvendor2" placeholder="Alternate Vendor Name2" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for alternate vendor name2" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Alternate Email2 </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="txtaltemail2" placeholder="Alternate Email2" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for alternate email2" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                      
+                      
+                    </div>
+
+                </div>
+                <div class="tab" id="divBank">
+                    <div class="page-header">
+                        <h4>
+                            Bank Details
+                        </h4>
+                        <script>
+                            $(document).ready(function () {
+                                $('input[type=radio][name="Banktype"]').on('change', function () {
+                                //alert(this.value);
+                                if (this.value == "Bank") {
+                                    document.getElementById('divbankdetail').style.display = 'inherit';
+                                    document.getElementById('divpaypal').style.display = 'none';
+                                    // $("#divbankdetail").show();
+                                    // $("#divpaypal").hide();
+                                }
+                                else if (this.value == "PayPal") {
+                                    document.getElementById('divbankdetail').style.display = 'none';
+                                    document.getElementById('divpaypal').style.display = 'inherit';
+                                    //$("#divbankdetail").hide();
+                                    //$("#divpaypal").show();
+                                }
+                            });
+ });
+                        </script>
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+
+                                    <div class="col-sm-9" style="text-align:center;">
+                                        <input type="radio" id="rBank" name="Banktype" value="Bank" checked="checked">
+                                        <label for="rBank">Bank</label>
+                                        <input type="radio" id="rPayPal" name="Banktype" value="PayPal">
+                                        <label for="rPayPal">PayPal</label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div id="divbankdetail" class="bankdetail">
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Bank Name  <span style="color:red;font-size:14px;">*</span></label>
+                                        <div class="col-sm-9">
+                                            <select class="col-xs-10 col-sm-9" id="ddlBank" data-toggle="tooltip" title="Select bank">
+                                                <option value="0">-Select bank-</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Swift Code  <span style="color:red;font-size:14px;">*</span></label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtSwiftCode" placeholder="Swift Code/IFSC code" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for swift code or ifsc code" />
+                                            @*<select class="col-xs-10 col-sm-9" id="ddlSwiftCode" data-toggle="tooltip" title="Select swift code">
+                                                <option value="0">-Select Swift Code-</option>
+
+                                            </select>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Account Number </label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtAccount" placeholder="Account Number" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for account number" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Receiver Name</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtReceiverName" placeholder="Receiver Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for receiver name" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Bank Address</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtBankAddress" placeholder="Bank Address" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for bank address" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Postal Code</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtPostalcode" placeholder="Postal Code" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for postal code" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Country  <span style="color:red;font-size:14px;">*</span></label>
+                                        <div class="col-sm-9">
+                                            <select class="col-xs-10 col-sm-9" id="ddlBankCountry" data-toggle="tooltip" title="Select country">
+                                                <option value="0">-Select Country-</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">State  <span style="color:red;font-size:14px;">*</span></label>
+                                        <div class="col-sm-9">
+                                            <select class="col-xs-10 col-sm-9" id="ddlBankState" data-toggle="tooltip" title="Select state">
+                                                <option value="0">-Select State-</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">City  <span style="color:red;font-size:14px;">*</span></label>
+                                        <div class="col-sm-9">
+                                            <select class="col-xs-10 col-sm-9" id="ddlBankCity" data-toggle="tooltip" title="Select city">
+                                                <option value="0">-Select City-</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Bank Contact Number 1</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtBankContactNumber1" placeholder="Bank Contact Number 1" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for bank contact number 1" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Bank Contact Number 2</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtBankContactNumber2" placeholder="Bank Contact Number 2" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for bank contact number 2" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="divpaypal" class="paypal" style="display:none">
+                            <div class="row">
+
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Email <span style="color:red;font-size:14px;">*</span></label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtpaypalemail" placeholder="Email" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for email" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                          
+                        </div>
+                    </div>
+                </div>
+             
+
+
+                            <div class="space-8"></div>
+                            <div class="botm_fxa">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="I_Dot">
+                                            <span class="step"></span>
+                                            <span class="step"></span>
+                                            <span class="step"></span>
+                                            @*<span class="step"></span>*@
+                                            @*<span class="step"></span>*@
+                                            <input type="hidden" id="hditemtypeid" />
+                                            <input type="hidden" id="hdsubitemtypeid" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div style="overflow:auto;">
+                                            <div class="I_tab">
+                                                @*<a href="/Master/ItemMaster" id="ahome" class="gotab">Go to home</a>*@
+                                                <button type="button" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
+                                                <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+</form>
+
+            <script>
+    var currentTab = 0;
+    showTab(currentTab); // Display the current tab
+
+    function showTab(n) {
+       
+        var x = document.getElementsByClassName("tab");
+        x[n].style.display = "block";
+        //... and fix the Previous/Next buttons:
+        if (n == 0) {
+            document.getElementById("prevBtn").style.display = "none";
+        } else {
+            document.getElementById("prevBtn").style.display = "inline";
+        }
+        if (n == (x.length - 1)) {
+            document.getElementById("nextBtn").innerHTML = "Submit";
+        } else {
+            document.getElementById("nextBtn").innerHTML = "Next";
+        }
+        fixStepIndicator(n)
+    }
+
+    function nextPrev(n) {
+        // This function will figure out which tab to display
+        var x = document.getElementsByClassName("tab");
+        // Exit the function if any field in the current tab is invalid:
+        if (n == 1 && !validateForm()) return false;
+        // Hide the current tab:
+        x[currentTab].style.display = "none";
+        // Increase or decrease the current tab by 1:
+        currentTab = currentTab + n;
+
+        showTab(currentTab);
+    }
+
+    function validateForm() {
+        // This function deals with validation of the form fields
+        var x, y, i, valid = true;
+        x = document.getElementsByClassName("tab");
+        //alert(x.innerHTML);
+        y = x[currentTab].getElementsByTagName("input");
+      
+        //--------------------------------------------------------------------------------------------
+        var objVendorRegistation = {};
+        var email = $("#txtEmail").val();
+        objVendorRegistation.Country_Id = $("#ddlcountry").val();
+        objVendorRegistation.State_Id = $("#ddlstate").val();
+        objVendorRegistation.City_Id = $("#ddlcity").val();
+        objVendorRegistation.Pin_Code = $("#txtPincode").val();
+        objVendorRegistation.Vendor_Company_Name = $("#txtcompanyname").val().charAt(0).toUpperCase() + $("#txtcompanyname").val().slice(1);
+        objVendorRegistation.Contact_Person = $("#txtSortName").val().charAt(0).toUpperCase() + $("#txtSortName").val().slice(1);
+        var add=$("#txtcompanyAddress").val();
+        if (add == null || add == "")
+        {
+            objVendorRegistation.Vendor_Company_Address = "";
+        } else {
+            objVendorRegistation.Vendor_Company_Address = $("#txtcompanyAddress").val();
+       }
+        objVendorRegistation.Vendor_company_Telephone = $("#txtTelephone").val();
+        objVendorRegistation.Vendor_company_FaxNo = $("#txtFaxNo").val();
+        objVendorRegistation.Vendor_company_MobileNo = $("#txtMobileNo").val();
+        objVendorRegistation.Vendor_company_Attn = $("#txtAttn").val();
+        objVendorRegistation.Vendor_company_GST = $("#txtGST").val();
+        objVendorRegistation.Vendor_company_SST = $("#txtSST").val();
+        objVendorRegistation.Payment_Term_Id = $("#ddlpayment").val();
+        objVendorRegistation.Currency_Id = $("#ddlCurrency").val();
+        objVendorRegistation.Vendor_Category_Id = $("#ddlVendorcategory").val();
+
+        var e = document.getElementById("ddlVendorcategory");
+        var categoryname = e.options[e.selectedIndex].text;
+
+        //var categoryname = $("#ddlVendorcategory selected").text();
+        var status = $('input[name="Status"]:checked').val();
+        objVendorRegistation.Vendor_Status = status;
+        var region = $('input[name="Region"]:checked').val();
+        objVendorRegistation.Vendor_Region = region;
+        objVendorRegistation.Vendor_Work_Sample_Url = $("#hdworksampaleFile").val();
+       // var region = $('input[name="skill"]:checked').val();
+       // objVendorRegistation.Vendor_Skill = region;
+        objVendorRegistation.Alt_Vendor_Email2 = $("#txtaltemail2").val();
+        objVendorRegistation.Vendor_Email_ID = $("#txtemail").val();
+        objVendorRegistation.Alt_Vendor_Name1 = $("#txtaltvendor1").val();
+        objVendorRegistation.Alt_Vendor_Email1 = $("#txtaltemail1").val();
+        objVendorRegistation.Vendor_Name = $("#txtName").val().charAt(0).toUpperCase() + $("#txtName").val().slice(1);
+        objVendorRegistation.Alt_Vendor_Name2 = $("#txtaltvendor2").val();
+        objVendorRegistation.Vendor_Telephone_Number_1 =  $("#txtTelephoneNumber1").val();
+        //objVendorRegistation.Vendor_Telephone_Number_2 = $("#ddlcountrycode2").val() + "-" + $("#txtTelephoneNumber2").val();
+        objVendorRegistation.Vendor_Address = $("#txtVendorAddress").val();
+        objVendorRegistation.Vendor_City_Id = $("#ddlVendorcity").val();
+        objVendorRegistation.Vendor_Pin_Code = $("#txtVendorPinCode").val();
+        objVendorRegistation.Vendor_Country_Id = $("#ddlVendorCountry").val();
+        objVendorRegistation.Vendor_Longitude = $("#long").val();
+        objVendorRegistation.Vendor_Latitude = $("#lat").val();
+
+        var type = $('input[name="Banktype"]:checked').val();
+        objVendorRegistation.Vendor_Bank_Type = type;
+        objVendorRegistation.Vendor_Swift_Code = $("#txtSwiftCode").val();
+        objVendorRegistation.Vendor_Account_Number = $("#txtAccount").val();
+        objVendorRegistation.Vendor_Receiver_Name = $("#txtReceiverName").val();
+        objVendorRegistation.Bank_Id = $("#ddlBank").val();
+        objVendorRegistation.Vendor_Bank_Address = $("#txtBankAddress").val();
+        objVendorRegistation.Vendor_Bank_Postal_Code = $("#txtPostalcode").val();
+        objVendorRegistation.Bank_Country_Id = $("#ddlBankCountry").val();
+        objVendorRegistation.Bank_State_Id = $("#ddlBankState").val();
+        objVendorRegistation.Bank_City_Id = $("#ddlBankCity").val();
+        objVendorRegistation.Bank_Contact_Number_1 = $("#txtBankContactNumber1").val();
+        objVendorRegistation.Bank_Contact_Number_2 = $("#txtBankContactNumber2").val();
+        objVendorRegistation.Paypal_Email_Id = $("#txtpaypalemail").val();
+        objVendorRegistation.NDA_Form_Url = $("#hdndaFile").val();
+        objVendorRegistation.Machine_Name = $("#hdmachine").val();
+        objVendorRegistation.Machine_Function = $("#hdmachineFunction").val();
+        objVendorRegistation.Machine_Capability = $("#hdmachineCapability").val();
+        objVendorRegistation.Registration_Status = $("#hdstatustype").val();
+        objVendorRegistation.Request_Status = $('#hdvendortype').val();// "Submitted";
+
+        objVendorRegistation.Form_24 = $("#hdform24File").val();
+        objVendorRegistation.Form_48 = $("#hdform48File").val();
+        objVendorRegistation.Form_9 = $("#hdform9file").val();
+        objVendorRegistation.Other_Form = $("#hdotherFile").val();
+       
+       // //alert(objVendorRegistation.Registration_Status);
+      // // if (currentTab == 0) {
+            if (objVendorRegistation.Vendor_Company_Name == "" || objVendorRegistation.Vendor_Company_Name == null) {
+                swal("Please enter company name.");
+                $("#txtcompanyname").focus();
+                return;
+            }
+          
+            if (objVendorRegistation.Contact_Person == "" || objVendorRegistation.Contact_Person == null) {
+                swal("Please enter vendor short name.");
+                $("#txtSortName").focus();
+                return;
+            }
+            if (objVendorRegistation.Vendor_Company_Address == "" || objVendorRegistation.Vendor_Company_Address == null) {
+                swal("Please enter company address.");
+                $("#txtcompanyAddress").focus();
+                return;
+            }
+            if (objVendorRegistation.Country_Id == "0" || objVendorRegistation.Country_Id == null) {
+                swal("Please select company country.");
+
+                $("#ddlcountry").focus();
+                return;
+            }
+            if (objVendorRegistation.State_Id == "0" || objVendorRegistation.State_Id == null) {
+                swal("Please select company state.");
+
+                $("#ddlstate").focus();
+                return;
+            }
+            if (objVendorRegistation.City_Id == "0" || objVendorRegistation.City_Id == null) {
+                swal("Please select company city .");
+                $("#ddlcity").focus();
+                return;
+            }
+            if (objVendorRegistation.Pin_Code == "" || objVendorRegistation.Pin_Code == null) {
+                swal("Please enter pin code.");
+                $("#txtPincode").focus();
+                return;
+            }
+            if (objVendorRegistation.Vendor_company_MobileNo == "" || objVendorRegistation.Vendor_company_MobileNo == null) {
+                swal("Please enter mobile number.");
+                $("#txtMobileNo").focus();
+                return;
+            }
+            if (objVendorRegistation.Payment_Term_Id == "0" || objVendorRegistation.Payment_Term_Id == null) {
+                swal("Please select payment term.");
+
+                $("#ddlpayment").focus();
+                return;
+            }
+            if (objVendorRegistation.Currency_Id == "0" || objVendorRegistation.Currency_Id == null) {
+                swal("Please select currency.");
+
+                $("#ddlCurrency").focus();
+                return;
+            }
+            if (objVendorRegistation.Vendor_Category_Id == "0" || objVendorRegistation.Vendor_Category_Id == null) {
+                swal("Please select category.");
+                $("#ddlVendorcategory").focus();
+                return;
+            }
+        //alert(categoryname);
+        if ((categoryname == "FINISHING / TREATMENT" || categoryname == "FABRICATION") && (objVendorRegistation.Machine_Name == "" && objVendorRegistation.Machine_Function == "" && objVendorRegistation.Machine_Capability == "")) {
+            swal("Please fill machine capability detail.");
+           // $("#ddlVendorcategory").focus();
+            return;
+        }
+          
+       //// }
+            if (currentTab == 1) {
+                
+                if (objVendorRegistation.Vendor_Name == "" || objVendorRegistation.Vendor_Name == null) {
+                    swal("Please insert vendor name.");
+                    $("#txtName").focus();
+                    return;
+                }
+                if (objVendorRegistation.Vendor_Email_ID == "" || objVendorRegistation.Vendor_Email_ID == null) {
+                    swal("Please insert email.");
+                    $("#txtemail").focus();
+                    return;
+                }
+                var emailReg = /^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/;
+                var emailaddressVal = objVendorRegistation.Vendor_Email_ID;
+                if (!emailReg.test(emailaddressVal)) {
+                    $("#txtEmail").after(swal("Please enter valid email address."));
+                    // $("#txtEmail").focus();
+                    return;
+                }
+                //if (objVendorRegistation.Vendor_Eng_Level == "0" || objVendorRegistation.Vendor_Eng_Level == null) {
+                //    swal("Please select Engineer Level.");
+                //    $("#ddlengineer").focus();
+                //    return;
+                //}
+                if (objVendorRegistation.Vendor_City_Id == "0" || objVendorRegistation.Vendor_City_Id == null) {
+                    swal("Please select vendor city name.");
+                    $("#ddlVendorcity").focus();
+                    return;
+                }
+                
+                if (objVendorRegistation.Vendor_Country_Id == "0" || objVendorRegistation.Vendor_Country_Id == null) {
+                    swal("Please select vendor country name.");
+                    $("#ddlVendorCountry").focus();
+                    return;
+                }
+                //alert();
+            }
+            if (currentTab == 2) {
+                if (type == "Bank") {
+                    if (objVendorRegistation.Bank_Id == "0" || objVendorRegistation.Bank_Id == null) {
+                        swal("Please select bank name.");
+                        $("#ddlengineer").focus();
+                        return;
+                    }
+                    if (objVendorRegistation.Vendor_Swift_Code == "" || objVendorRegistation.Vendor_Swift_Code == null) {
+                        swal("Please insert swift code.");
+                        $("#txtSwiftCode").focus();
+                        return;
+                    }
+
+                    if (objVendorRegistation.Bank_Country_Id == "0" || objVendorRegistation.Bank_Country_Id == null) {
+                        swal("Please select bank country name.");
+                        $("#ddlBankCountry").focus();
+                        return;
+                    }
+                    if (objVendorRegistation.Bank_State_Id == "0" || objVendorRegistation.Bank_State_Id == null) {
+                        swal("Please select bank state name.");
+                        $("#ddlBankState").focus();
+                        return;
+                    }
+                    if (objVendorRegistation.Bank_City_Id == "0" || objVendorRegistation.Bank_City_Id == null) {
+                        swal("Please select bank city name.");
+                        $("#ddlBankCity").focus();
+                        return;
+                    }
+                    if (objVendorRegistation.Paypal_Email_Id == "" || objVendorRegistation.Paypal_Email_Id == null) {
+                       // swal("Please insert paypal email.");
+                        objVendorRegistation.Paypal_Email_Id="";
+                       // return;
+                    }
+                }
+
+                else if (type == "PayPal") {
+
+                    if (objVendorRegistation.Bank_Id == "0" || objVendorRegistation.Bank_Id == null) {
+
+                        objVendorRegistation.Bank_Id == "0"
+
+                    }
+                    if (objVendorRegistation.Swift_Code_Id == "0" || objVendorRegistation.Swift_Code_Id == null) {
+                        objVendorRegistation.Swift_Code_Id == "0"
+                    }
+
+                    if (objVendorRegistation.Bank_Country_Id == "0" || objVendorRegistation.Bank_Country_Id == null) {
+                        objVendorRegistation.Bank_Country_Id == "0"
+                    }
+                    if (objVendorRegistation.Bank_State_Id == "0" || objVendorRegistation.Bank_State_Id == null) {
+                        objVendorRegistation.Bank_State_Id == "0"
+                    }
+                    if (objVendorRegistation.Bank_City_Id == "0" || objVendorRegistation.Bank_City_Id == null) {
+                        objVendorRegistation.Bank_City_Id == "0"
+                    }
+                    if (objVendorRegistation.Paypal_Email_Id == "" || objVendorRegistation.Paypal_Email_Id == null) {
+                        swal("Please insert paypal email.");
+                        $("#txtpaypalemail").focus();
+                        return;
+                    }
+                    var emailReg1 = /^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/;
+                    var emailaddressVal1 = objVendorRegistation.Paypal_Email_Id;
+                    if (!emailReg1.test(emailaddressVal1)) {
+                        $("#txtpaypalemail").after(swal("Please enter valid paypal email address."));
+                        // $("#txtEmail").focus();
+                        return;
+                    }
+                }
+            
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/InsertVendorRegistation",
+            data: '{objVendorRegistation: ' + JSON.stringify(objVendorRegistation) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+
+                swal(response);
+
+                Resetdata();
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+        nextPrev(-1);
+        }
+        //---------------------------------------------------------------------------------------
+
+        for (i = 0; i < y.length; i++) {
+
+        }
+        if (valid) {
+            document.getElementsByClassName("step")[currentTab].className += " finish";
+        }
+        return valid; // return the valid status
+    }
+
+    function fixStepIndicator(n) {
+        // This function removes the "active" class of all steps...
+        var i, x = document.getElementsByClassName("step");
+        for (i = 0; i < x.length; i++) {
+            x[i].className = x[i].className.replace(" active", "");
+        }
+        //... and adds the "active" class on the current step:
+        x[n].className += " active";
+    }
+            </script>
+
+        </div>
+    </div>
+
+
+</body>
+
+</html>

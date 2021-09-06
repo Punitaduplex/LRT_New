@@ -1,0 +1,693 @@
+﻿
+@{
+    ViewBag.Title = "VendorInvitation";
+    Layout = "~/_Layout.cshtml";
+}
+
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<style>
+    .loader {
+           display: none;
+    top: 139px;
+    position: absolute;
+    margin-left: 364px;
+    margin-bottom: 117px;
+    z-index: 99999;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $("#txtcompanyname").focus();
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "/assets/js/jquery.dataTables.min.js";
+        document.getElementsByTagName("body")[0].appendChild(script);
+    })
+</script>
+<script type="text/javascript">
+    var input = document.getElementById("#txtcompanyname");
+    input.onkeypress = function (evt) {
+        // alert();
+        evt = evt || window.event;
+        var charCode = evt.which || evt.keyCode;
+        var charStr = String.fromCharCode(charCode);
+        if (/\d/.test(charStr)) {
+            return false;
+        }
+    };
+</script>
+@*------------------------------------reset data-------------------------------------------*@
+<script>
+    function Resetdata1() {
+        $("#txtupcompanyname").val("");
+        $("#txtupcontactperson").val("");
+        $("#txtupemailid").val("");
+    }
+</script>
+<script>
+    function Resetdata() {
+        $("#txtcompanyname").val("");
+        $("#txtcontactperson").val("");
+        $("#txtemailid").val("");
+        $("#btnsave").text("");
+        $("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Invite");
+        $("#hdvendorregistration").val("");
+        $("#txtcompanyname").focus();
+
+        var objRolePermission = {};
+        objRolePermission.Sub_To_Sub_Menu_Id = sessionStorage.getItem("sid");
+        //alert(objRolePermission.Sub_To_Sub_To_Menu_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/AddRolePermission",
+            data: '{objRolePermission: ' + JSON.stringify(objRolePermission) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //if (response.Is_Add == false) {
+                //    $("#btnsave").css('visibility', 'hidden');
+                //    $("#btnreset").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Edit == false) {
+                //    $("a.remove").css('visibility', 'hidden');
+                //}
+                ////alert(response.Is_Delete);
+                //if (response.Is_Delete == false) {
+                //    $("a.delete").css('visibility', 'hidden');
+                //}
+                //if (response.Is_View == false) {
+                //    $(".view").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Approve == false) {
+                //    $("a.approve").css('visibility', 'hidden');
+                //}
+                //$('script[src=~/assets/js/jquery.dataTables.min.js]').remove();
+                //$('script[src=/assets/js/jquery.dataTables.min.js]').remove();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnreset").click(function () {
+            Resetdata();
+        });
+        $("#btnresetupdate").click(function () {
+            Resetdata1();
+        });
+    })
+</script>
+@*------------------------------------get data-------------------------------------------*@
+<script>
+    $(document).ready(function () {
+        Getdata();
+        Resetdata();
+        $("#btnsave").click(function (e) {
+            e.preventDefault();
+            $('#ExcelDataLoader').show();
+            var objVendor = {};
+            objVendor.Vendor_Company_Name = $("#txtcompanyname").val().charAt(0).toUpperCase() + $("#txtcompanyname").val().slice(1);
+            objVendor.Vendor_Contact_Person = $("#txtcontactperson").val().charAt(0).toUpperCase() + $("#txtcontactperson").val().slice(1);
+            objVendor.Vendor_Email_ID = $("#txtemailid").val();
+            objVendor.Vendor_Invitation_Id = $("#hdvendorregistration").val();
+            // var permission = $('input[name="permision"]:checked').val();
+           // objVendor.Access_Permission = permission;
+            if (objVendor.Vendor_Company_Name == "" || objVendor.Vendor_Company_Name == null) {
+                swal("Please enter company name.");
+                $("#txtcompanyname").focus();
+                $("#ExcelDataLoader").hide();
+                return;
+            }
+            if (objVendor.Vendor_Contact_Person == "" || objVendor.Vendor_Contact_Person == null) {
+                swal("Please enter contact person name.");
+                $("#txtcontactperson").focus();
+                $("#ExcelDataLoader").hide();
+                return;
+            }
+            if (objVendor.Vendor_Email_ID == "" || objVendor.Vendor_Email_ID == null) {
+                swal("Please enter vendor email id.");
+                $("#txtemailid").focus();
+                $("#ExcelDataLoader").hide();
+                return;
+            }
+            var emailReg = /^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/;
+            var emailaddressVal = objVendor.Vendor_Email_ID;
+            if (!emailReg.test(emailaddressVal)) {
+                $("#txtemailid").after(swal("Please enter valid email address."));
+                $("#ExcelDataLoader").hide();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Vendor/AddVendorInvitation",
+                data: '{objVendor: ' + JSON.stringify(objVendor) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+                    $("#ExcelDataLoader").hide();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+        $("#btnupdateinvitation").click(function (e) {
+            e.preventDefault();
+            $("#ExcelDataLoader").show();
+            var objVendor = {};
+            objVendor.Vendor_Company_Name = $("#txtupcompanyname").val().charAt(0).toUpperCase() + $("#txtupcompanyname").val().slice(1);
+            objVendor.Vendor_Contact_Person = $("#txtupcontactperson").val().charAt(0).toUpperCase() + $("#txtupcontactperson").val().slice(1);
+            objVendor.Vendor_Email_ID = $("#txtupemailid").val().toLocaleLowerCase();
+            objVendor.Vendor_Invitation_Id = $("#hdvendorregistration").val();
+            // var permission = $('input[name="permision"]:checked').val();
+            // objVendor.Access_Permission = permission;
+            if (objVendor.Vendor_Company_Name == "" || objVendor.Vendor_Company_Name == null) {
+                swal("Please enter company name.");
+                $("#txtupcompanyname").focus();
+                $("#ExcelDataLoader").hide();
+                return;
+            }
+            if (objVendor.Vendor_Contact_Person == "" || objVendor.Vendor_Contact_Person == null) {
+                swal("Please enter contact person name.");
+                $("#txtupcontactperson").focus();
+                $("#ExcelDataLoader").hide();
+                return;
+            }
+            if (objVendor.Vendor_Email_ID == "" || objVendor.Vendor_Email_ID == null) {
+                swal("Please enter vendor email id.");
+                $("#txtupemailid").focus();
+                $("#ExcelDataLoader").hide();
+                return;
+            }
+            var emailReg = /^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/;
+            var emailaddressVal = objVendor.Vendor_Email_ID;
+            if (!emailReg.test(emailaddressVal)) {
+                $("#txtupemailid").after(swal("Please enter valid email address."));
+                $("#ExcelDataLoader").hide();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Vendor/AddVendorInvitation",
+                data: '{objVendor: ' + JSON.stringify(objVendor) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+                    $("#ExcelDataLoader").hide();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+<script>
+    function Getdata() {
+        $("#divtbl").append('<table id="EmpInfo" class="table table-bordered  table-hover"><thead><tr><th class="left_c w61_i">S. No</th><th class="left_c">Company Name</th><th class="left_c">Contact Person</th><th class="left_c">Email ID</th><th style="display:none"></th><th class="w155_i">Action</th></tr></thead> <tbody></tbody> </table>')
+        $("#EmpInfo > tbody").html("");
+        $.getJSON("/Vendor/VendorInvitationDetails",
+            function (json) {
+                var tr;
+
+                //Append each row to html table
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Vendor_Company_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Vendor_Contact_Person + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Vendor_Email_ID + "</td>");
+                    //tr.append("<td style='display:none'>" + json[i].Access_Permission + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Vendor_Invitation_Id + "</td>");
+                    var status = json[i].Approve_Status;
+                    var status1 = "";
+                    if (status == 1) {
+                        status1 = "<i class='menu-icon fa fa-check bigger-120 green' data-rel='tooltip' title='Approved'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-clock-o bigger-120 green' data-rel='tooltip' title='Pending'></i>";
+                    }
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a href='javascript:void(0);' class='approve tooltip-error comn_inline grn' data-rel='tooltip'>" + status1 + "</a></li><li ><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip'><i class='ace-icon fa fa-pencil bigger-120 edit_c' data-rel='tooltip' title='Edit'></i></a></li></ul></td>");
+                    //tr.append("<td class='lst_td'><ul class='list_main'><li><a href='' class='tooltip-error comn_inline grn' data-rel='tooltip' title='Approve by it'><i class='menu-icon fa fa-check grn'></i>Approve</a></li><li><a href='#' class='tooltip-error comn_inline blu' data-rel='tooltip' title='Edit by it'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i>Edit</a></li><li><a href='' class='tooltip-error comn_inline red' data-rel='tooltip' title='Delete by it'><i class='menu-icon fa fa-trash bigger-120 red'></i>Delete</a></li></ul></td>");<li><a  href='javascript:void(0);' class='detail tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i>Detail</a></li>
+
+                    $('table').append(tr);
+
+                }
+                $('#EmpInfo').DataTable();
+            });
+
+    };
+</script>
+@*------------------------------------approve data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.approve", function (e) {
+        e.preventDefault();
+        $("#ExcelDataLoader").show();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(4)').text();
+        var objVendor = {};
+        objVendor.Vendor_Invitation_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/VendorInvitationApproveStatus",
+            data: '{objVendor: ' + JSON.stringify(objVendor) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //$(".dataTables_length").remove();
+                //$(".dataTables_filter").remove();
+                //$(".dataTables_info").remove();
+                //$(".dataTables_paginate").remove();
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                Getdata();
+                Resetdata();
+                $("#ExcelDataLoader").hide();
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+@*<script>
+    $(document).on("click", "a.detail", function () {
+        // e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(4)').text();
+        var $company = $row.find('td:eq(1)').text();
+        $.cookie("vendor-company", $company);
+        window.location.replace("/Vendor/VendorDetail/" + $id);
+    });
+</script>*@
+
+<script type="text/javascript">
+    var input = document.getElementById("#txtcompanyname");
+    input.onkeypress = function (evt) {
+        // alert();
+        evt = evt || window.event;
+        var charCode = evt.which || evt.keyCode;
+        var charStr = String.fromCharCode(charCode);
+        if (/\d/.test(charStr)) {
+            return false;
+        }
+    };
+</script>
+
+@*<style>
+    .spinner {
+        margin: 0px auto 0;
+        width: 70px;
+        text-align: center;
+    }
+
+        .spinner > div {
+            width: 18px;
+            height: 18px;
+            background-color: #333;
+            border-radius: 100%;
+            display: inline-block;
+            -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+            animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+        }
+
+        .spinner .bounce1 {
+            -webkit-animation-delay: -0.32s;
+            animation-delay: -0.32s;
+        }
+
+        .spinner .bounce2 {
+            -webkit-animation-delay: -0.16s;
+            animation-delay: -0.16s;
+        }
+
+    @@-webkit-keyframes sk-bouncedelay {
+        0%, 80%, 100% {
+            -webkit-transform: scale(0);
+        }
+
+        40% {
+            -webkit-transform: scale(1.0);
+        }
+    }
+
+    @@keyframes sk-bouncedelay {
+        0%, 80%, 100% {
+            -webkit-transform: scale(0);
+            transform: scale(0);
+        }
+
+        40% {
+            -webkit-transform: scale(1.0);
+            transform: scale(1.0);
+        }
+    }
+</style>*@
+@*------------------------------------save data-------------------------------------------*@
+@*<script>
+    $(document).ready(function () {
+        //  alert();
+        
+    });
+</script>*@
+@*------------------------------------edit data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.remove", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $companyname = $row.find('td:eq(1)').text();
+        var $contactperson = $row.find('td:eq(2)').text();
+        var $emailid = $row.find('td:eq(3)').text();
+        $("#dialogdivupdateinvitation").modal("show");
+        var $id = $row.find('td:eq(4)').text();
+        $("#txtupcompanyname").val($companyname);
+        $("#txtupcontactperson").val($contactperson);
+        $("#txtupemailid").val($emailid);
+       
+        $("#hdvendorregistration").val($id);
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Update");
+        //$("#btnsave").css('visibility', 'visible');
+        //$("#btnreset").css('visibility', 'visible');
+    });
+</script>
+
+@*------------------------------------delete data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.delete", function (e) {
+
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(4)').text();
+        swal({
+            title: 'Are you sure?',
+            text: '*You want to delete this data?*',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function (value) {
+            if (value) {
+                var objVendor = {};
+                objVendor.Vendor_Invitation_Id = $id;
+                $.ajax({
+                    type: "POST",
+                    url: "/Vendor/DeleteVendorInvitation",
+                    data: '{objVendor: ' + JSON.stringify(objVendor) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        Getdata();
+                        Resetdata();
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "/assets/js/jquery.dataTables.min.js";
+                        document.getElementsByTagName("body")[0].appendChild(script);
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+                swal("*Your data is safe*");
+            }
+        });
+
+    });
+</script>
+
+<style>
+    .some-class {
+        float: left;
+        clear: none;
+    }
+
+    label {
+        float: left;
+        clear: none;
+        display: block;
+        padding: 0px 1em 0px 8px;
+    }
+
+    input[type=radio],
+    input.radio {
+        float: left;
+        clear: none;
+        margin: 2px 0 0 2px;
+    }
+</style>
+<script>
+    function onkeydown() {
+        var ch = String.fromCharCode(event.keyCode);
+        var filter = /[a-zA-Z]/;
+        if (!filter.test(ch)) {
+            event.returnValue = false;
+        }
+    }
+</script>
+
+<div style="width:100%" class="m_27">
+    <div style="width:18% ; float:left" class="menu_border">
+        <div class="side_bar_main">
+
+            @{ Html.RenderAction("SideMenu", "Master");}
+
+        </div>
+
+    </div><div style="width:82% ; float:left">
+        <div class="main-content">
+            <div class="main-content-inner">
+                <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="ace-icon fa fa-home home-icon"></i>
+                            <a href="#">Vendor</a>
+                        </li>
+
+                        <li>
+                            <a href="/Vendor/Dashboard">Vendor Master</a>
+                        </li>
+                        <li class="active">Vendor Invitation</li>
+                    </ul><!-- /.breadcrumb -->
+
+                    @*<div class="nav-search" id="nav-search">
+                        <div class="form-search">
+                            <span class="input-icon">
+                                <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                                <i class="ace-icon fa fa-search nav-search-icon"></i>
+                            </span>
+                        </div>
+                    </div>*@<!-- /.nav-search -->
+                </div>
+               
+                @*-----------------------------------------------update invitation---------------------------------------------------------*@
+                <div class="modal fade" id="dialogdivupdateinvitation">
+                    <div class="modal-dialog modal-md modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h3 class="item_hedin">Update Invitation</h3>
+                            </div>
+                            <div class="modal-body">
+
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">Company Name   <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtupcompanyname" style="text-transform:capitalize" onkeypress="return ((event.keyCode >= 65 && event.keyCode <= 90 || event.keyCode == 32) || (event.keyCode >= 97 && event.keyCode <= 122 || event.keyCode == 32))" placeholder="Company Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for company name" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">Contact Person   <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtupcontactperson" style="text-transform:capitalize" onkeypress="return ((event.keyCode >= 65 && event.keyCode <= 90 || event.keyCode == 32) || (event.keyCode >= 97 && event.keyCode <= 122 || event.keyCode == 32))" placeholder="Contact Person" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for contact person" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">Email Id   <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtupemailid" placeholder="Email Id" style="text-transform:lowercase !important" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for email id" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <button class="btn btn-info" id="btnupdateinvitation" type="button" data-toggle="tooltip" title="Button for update data">
+                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                            Update
+                                        </button>
+                                        <button class="btn master-page-reset" id="btnresetupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*---------------------------------------------------------------------------------------------------------------------*@
+                <div class="page-content">
+                    <div class="page-header">
+                        <h3 class="item_hedin">
+                            Vendor Invitation
+                        </h3>
+                    </div><!-- /.page-header -->
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Company Name  <span style="color:red;font-size:14px;">*</span> </label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtcompanyname" style="text-transform:capitalize" onkeypress="return ((event.keyCode >= 65 && event.keyCode <= 90 || event.keyCode == 32) || (event.keyCode >= 97 && event.keyCode <= 122 || event.keyCode == 32))" placeholder="Company Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for company name" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Contact Person  <span style="color:red;font-size:14px;">*</span> </label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtcontactperson" style="text-transform:capitalize" onkeypress="return ((event.keyCode >= 65 && event.keyCode <= 90 || event.keyCode == 32) || (event.keyCode >= 97 && event.keyCode <= 122 || event.keyCode == 32))" placeholder="Contact Person" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for contact person" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Email Id  <span style="color:red;font-size:14px;">*</span> </label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtemailid" placeholder="Email Id" style="text-transform: lowercase !important" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for email id" />
+                                   
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group" style="display:none">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Access Permission </label>
+                                <div class="col-sm-9 access" >
+                                    <input type="radio" id="rwith" name="permision" value="with access" checked="checked">
+                                    <label for="with">with access</label>
+                                    <input type="radio" id="rwithout" name="permision" value="without access">
+                                    <label for="without">without access</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-4"></div>
+                   
+                    @*<div class="spinner" id="spin" style="margin-left: 250px;display:none">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                    </div>*@
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="hidden" id="hdvendorregistration" />
+                            <div class="clearfix form-actions">
+                                <div class="col-md-offset-1 col-md-9">
+                                    <button class="btn btn-info" id="btnsave" type="button" data-toggle="tooltip" title="Button for invite data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Submit
+                                    </button><div id="ExcelDataLoader" class="loader">
+    <img src="~/Images/1.gif" height="70" width="60" />
+</div>
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn" id="btnreset" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <!-- PAGE CONTENT BEGINS -->
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="form-horizontal">
+                                        <div class="table-header">
+                                            Current Record
+                                        </div>
+                                        <div id="divtbl"></div>
+                                        
+
+                                    </div>
+                                </div><!-- /.span -->
+                            </div><!-- /.row -->
+                            <div class="hr hr-18 dotted hr-double"></div>
+                            <!-- PAGE CONTENT ENDS -->
+                        </div><!-- /.col -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,2126 @@
+﻿@{
+    ViewBag.Title = "SearchItem";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+@*<link rel="stylesheet" href="~/assets/css/modalpop.css">*@
+@*<link href="~/assets/css/searchbox.css" rel="stylesheet" />*@
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+@*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">*@
+<link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
+<link rel="stylesheet" href="https://rawgit.com/LeshikJanz/libraries/master/Bootstrap/baguetteBox.min.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link href="~/assets/css/searchbox.css" rel="stylesheet" />
+<link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+<script src="~/assets/js/bootstrap.min.js"></script>
+<style>
+    .img_box img {
+        max-width: 100%;
+    }
+
+    #SlideshowImages .item {
+        display: none !important;
+    }
+
+    #SlideshowImages .active {
+        display: block !important;
+    }
+
+    .sear_sub {
+        padding: 5px !important;
+        border-radius: 0px 0px 0px 0px !important;
+        box-shadow: 0 .3rem 0.8rem rgba(0,0,0,.15) !important;
+        margin-bottom: 15px !IMPORTANT;
+        border: 1px solid #afafaf !important;
+        border-radius: 0px !IMPORTANT;
+    }
+
+        .sear_sub h3 {
+            padding: 0px;
+            font-size: 14px;
+            margin-top: 5px;
+            margin-bottom: 3px;
+        }
+
+        .sear_sub p {
+            padding: 0px;
+            font-size: 13px;
+        }
+
+
+
+    .copy_btn:hover {
+        background: #001232 !important;
+        border-color: #001232 !important;
+    }
+
+    .searc_box {
+        width: 600px;
+        height: 47px;
+        border-radius: 5px !important;
+        font-size: 17px !important;
+        display: block;
+        margin: auto;
+        margin-bottom: 35px;
+    }
+    /* #txtsearch {
+        width: 600px;
+    }*/
+    .item_search_box {
+        padding: 0px 40px;
+    }
+
+    .copy_btn {
+        background: #0893e2 !important;
+        border-color: #0893e2 !important;
+        padding: 4px 7px;
+        font-size: 10px;
+        border-radius: 0px !important;
+        margin-bottom: 3px;
+        cursor: pointer;
+        padding: 0px 3px 0px 12px !important;
+        width: auto;
+        font-weight: 500;
+        margin-right: 4px;
+    }
+
+        .copy_btn:focus {
+            width: auto;
+        }
+
+    .view_dc {
+        width: 80px !important;
+        padding-left: 15px !important;
+    }
+
+    .ey_icon {
+        padding-left: 4px;
+        position: absolute;
+        z-index: 1;
+        color: #fff;
+        font-size: 10px;
+        top: 10px;
+    }
+
+    .copy_ic {
+        padding-left: 3px;
+        position: absolute;
+        z-index: 2;
+        color: #fff;
+        font-size: 9px;
+        top: 10px !IMPORTANT;
+    }
+
+    .botm_fxa1 {
+        background: #eff3f8;
+        padding: 11px 0px !important;
+        bottom: 0px;
+        position: fixed;
+        width: 81% !important;
+    }
+
+    .btn-default.focus:hover, .btn-default:active:hover, .btn-default:focus:active, .btn-default:focus:hover, .btn-default:hover, .btn.focus:hover, .btn:active:hover, .btn:focus:active, .btn:focus:hover, .btn:hover, .open > .btn-default.dropdown-toggle, .open > .btn-default.dropdown-toggle.focus, .open > .btn-default.dropdown-toggle:active, .open > .btn-default.dropdown-toggle:focus, .open > .btn-default.dropdown-toggle:hover, .open > .btn.dropdown-toggle, .open > .btn.dropdown-toggle.focus, .open > .btn.dropdown-toggle:active, .open > .btn.dropdown-toggle:focus, .open > .btn.dropdown-toggle:hover {
+        background-color: #0893e2 !important;
+        border-color: #0893e2 !important;
+    }
+
+    .img_box img {
+        height: auto !important;
+        margin-top: 0px;
+        height: 49px !important;
+        width: 49px !important;
+    }
+    /* .copy_btn {
+        margin-right: 2px;
+    }*/
+
+
+    .view_dc {
+        margin-left: -2px;
+    }
+
+    .sear_sub:hover {
+        transform: scale(1.1);
+    }
+
+
+    .sear_sub {
+        transition: 0.9s;
+    }
+
+    .btn-primary, .btn-primary.focus, .btn-primary:focus {
+        outline: none;
+    }
+
+    #EmpInfoalt {
+        border-bottom: none !important;
+        padding-bottom: 0px !important;
+    }
+
+    #EmpInfoalt_wrapper {
+        padding: 21px 0px;
+        background: none;
+        padding-bottom: 0px !important;
+    }
+
+    #parameter {
+        height: auto !important;
+    }
+
+    @@media screen and (min-width: 768px) {
+        .carousel-control .glyphicon-chevron-right, .carousel-control .icon-next {
+            left: -256px !important;
+        }
+    }
+</style>
+<style type="text/css" style="display: none !important;">
+    #SlideshowImages {
+        margin: 0px auto !important;
+        width: 100% !important;
+        height: auto !important;
+        padding: 0px !important;
+        box-shadow: none !important;
+        margin-bottom: 191px !important;
+    }
+
+        #SlideshowImages img {
+            width: 100%;
+            height: 219px !important;
+        }
+
+    .tz-gallery img:hover {
+        cursor: crosshair;
+    }
+</style>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    .img-zoom-container {
+        position: relative;
+    }
+
+    .img-zoom-lens {
+        position: absolute;
+        border: none;
+        width: 75px;
+        height: 75px;
+    }
+
+    .img-less-lens {
+        position: absolute;
+        width: 0px;
+        height: 0px;
+    }
+
+    .myimage {
+        margin-top: 2px;
+        position: absolute;
+        z-index: -1;
+    }
+
+
+
+    .img-zoom-result {
+        width: 631px;
+        height: 391px;
+        display: inline-block;
+        left: 318px;
+        position: absolute;
+        cursor: crosshair;
+    }
+
+    .myimage:hover .img-zoom-result {
+        display: inline-block;
+    }
+
+    .img-zoom-lens:hover .img-zoom-result {
+        display: inline-block;
+    }
+
+    .img-zoomout-lens:hover .img-zoom-result {
+        display: none;
+    }
+
+    .btn_back {
+        width: 183px;
+        display: block;
+        margin: auto;
+        background: #0893e2 !IMPORTANT;
+        border: none;
+        margin-bottom: 13px;
+        padding: 8px 10px !important;
+        border-radius: 5px !IMPORTANT;
+    }
+
+    .part_no {
+        margin-right: 3px !important;
+    }
+
+    .ey_icon {
+        padding-left: 4px !IMPORTANT;
+        position: absolute;
+        z-index: 1;
+        color: #fff;
+        font-size: 10px;
+        top: 10px !important;
+    }
+    /*  .img-zoom-result{
+    display: none;
+    } */
+    /* .myimage:hover .img-zoom-result{
+    display: block;
+    } */
+    /* .img-zoom-lens:hover .img-zoom-result{
+    display: inline-block;
+    } */
+</style>
+
+
+
+<script type="text/javascript">
+    function copyToClipboard(element) {
+        //alert($(element).text());
+        //alert($(element).text());
+        var $temp = $("<input>");
+        $("body").append($temp);
+        $temp.val($(element).text()).select();
+        document.execCommand("copy");
+        $temp.remove();
+        Getdata($(element).text());
+        swal("copied part number " + $(element).text());
+    }
+</script>
+
+<script type="text/javascript">
+    function ViewDoc(element) {
+
+        GetViewDoc(element);
+
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        // $('#EmpInfoalt').DataTable({ searching: false, paging: false, sort: false, info: false });
+    });
+</script>
+<script type="text/javascript">
+    function ViewDetail(element) {
+        // alert();
+
+        var objitemlistview = {};
+        objitemlistview.Item_Id = element;
+        $.ajax({
+            type: "POST",
+            url: "/Master/ListingItemDetails",
+            data: '{objitemlistview: ' + JSON.stringify(objitemlistview) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $("#divitemcode").text(response.Internal_Item_Code);
+                if (response.UOM_Name == "" || response.UOM_Name == null) {
+                    $("#lbluomname").text("NA");
+                }
+                else {
+                    $("#lbluomname").text(response.UOM_Name);
+                }
+
+
+                if (response.UOM_Group_Name == "" || response.UOM_Group_Name == null) {
+                    $("#lbluomgroup").text("NA");
+                }
+                else {
+                    $("#lbluomgroup").text(response.UOM_Group_Name);
+                }
+
+
+                if (response.Alt_UOM_Name == "" || response.Alt_UOM_Name == null) {
+                    $("#lblaltuomname").text("NA");
+                }
+                else {
+                    $("#lblaltuomname").text(response.Alt_UOM_Name);
+                }
+
+
+                if (response.Alt_UOM_Group_Name == "" || response.Alt_UOM_Group_Name == null) {
+                    $("#lblaltuomgroup").text("NA");
+                }
+                else {
+                    $("#lblaltuomgroup").text(response.Alt_UOM_Group_Name);
+                }
+
+
+                if (response.Valuation_Name == "" || response.Valuation_Name == null) {
+                    $("#lblvaluationName").text("NA");
+                }
+                else {
+                    $("#lblvaluationName").text(response.Valuation_Name);
+                }
+
+
+                if (response.Item_Type_Name == "" || response.Item_Type_Name == null) {
+                    $("#lblitemtype").text("NA");
+                }
+                else {
+                    $("#lblitemtype").text(response.Item_Type_Name);
+                }
+
+
+                if (response.Item_Sub_Type_Name == "" || response.Item_Sub_Type_Name == null) {
+                    $("#lblitemsubtype").text("NA");
+                }
+                else {
+                    $("#lblitemsubtype").text(response.Item_Sub_Type_Name);
+                }
+
+
+                if (response.Manage_Item_Name == "" || response.Manage_Item_Name == null) {
+                    $("#lblmanageitem").text("NA");
+                }
+                else {
+                    $("#lblmanageitem").text(response.Manage_Item_Name);
+                }
+
+
+                if (response.Material_Category_Name == "" || response.Material_Category_Name == null) {
+                    $("#lblmaterialcategory").text("NA");
+                }
+                else {
+                    $("#lblmaterialcategory").text(response.Material_Category_Name);
+                }
+
+
+                if (response.Item_Description == "" || response.Item_Description == null) {
+                    $("#lbldescription").text("NA");
+                }
+                else {
+                    $("#lbldescription").text(response.Item_Description);
+                }
+
+
+                if (response.Item_Manufacture == "" || response.Item_Manufacture == null) {
+                    $("#lblmanufacture").text("NA");
+                }
+                else {
+                    $("#lblmanufacture").text(response.Item_Manufacture);
+                }
+
+
+                if (response.Item_Brand == "" || response.Item_Brand == null) {
+                    $("#lblbrand").text("NA");
+                }
+                else {
+                    $("#lblbrand").text(response.Item_Brand);
+                }
+
+
+                if (response.Supplier_Name == "" || response.Supplier_Name == null) {
+                    $("#lblsuppliername").text("NA");
+                }
+                else {
+                    $("#lblsuppliername").text(response.Supplier_Name);
+                }
+
+
+                if (response.Item_Price == "" || response.Item_Price == null) {
+                    $("#lblprice").text("NA");
+                }
+                else {
+                    $("#lblprice").text(parseFloat(response.Item_Price).toFixed(2));
+                }
+
+
+                if (response.Item_Min_Order_Qty == "" || response.Item_Min_Order_Qty == null) {
+                    $("#lblmoq").text("NA");
+                }
+                else {
+                    $("#lblmoq").text(parseFloat(response.Item_Min_Order_Qty).toFixed(2));
+                }
+
+
+                if (response.Item_Threshold == "" || response.Item_Threshold == null) {
+                    $("#lblthreshold").text("NA");
+                }
+                else {
+                    $("#lblthreshold").text(response.Item_Threshold);
+                }
+
+
+                if (response.Item_HS_Code == "" || response.Item_HS_Code == null) {
+                    $("#lblhscode").text("NA");
+                }
+                else {
+                    $("#lblhscode").text(response.Item_HS_Code);
+                }
+
+
+                if (response.HS_Category_Name == "" || response.HS_Category_Name == null) {
+                    $("#lblhscodeName").text("NA");
+                }
+                else {
+                    $("#lblhscodeName").text(response.HS_Category_Name);
+                }
+
+
+                if (response.Item_URL_Link == "" || response.Item_URL_Link == null) {
+                    $("#lblurllnk").text("NA");
+                }
+                else {
+                    $("#lblurllnk").append('<a href=' + response.Item_URL_Link + ' target="_blank">' + response.Item_URL_Link + '</a>');
+                }
+
+
+                if (response.Item_Manufacturing_Part_Number == "" || response.Item_Manufacturing_Part_Number == null) {
+                    $("#lblmpnum").text("NA");
+                }
+                else {
+                    $("#lblmpnum").text(response.Item_Manufacturing_Part_Number);
+                }
+
+
+                if (response.Item_CoCountry_of_Origin == "" || response.Item_CoCountry_of_Origin == null) {
+                    $("#lblcco").text("NA");
+                }
+                else {
+                    $("#lblcco").text(response.Item_CoCountry_of_Origin);
+                }
+
+
+                if (response.Item_Shipping_Cost == "" || response.Item_Shipping_Cost == null) {
+                    $("#lblshipingcost").text("NA");
+                }
+                else {
+                    $("#lblshipingcost").text(parseFloat(response.Item_Shipping_Cost).toFixed(2));
+                }
+
+
+                if (response.Item_Contact_Details == "" || response.Item_Contact_Details == null) {
+                    $("#lblcontactdetail").text("NA");
+                }
+                else {
+                    $("#lblcontactdetail").text(response.Item_Contact_Details);
+                }
+
+
+                if (response.Item_EMail == "" || response.Item_EMail == null) {
+                    $("#lblemail").text("NA");
+                }
+                else {
+                    $("#lblemail").text(response.Item_EMail);
+                }
+
+
+                if (response.Item_We_Chat == "" || response.Item_We_Chat == null) {
+                    $("#lblwechat").text("NA");
+                }
+                else {
+                    $("#lblwechat").text(response.Item_We_Chat);
+                }
+
+
+                if (response.Item_WhatsApp == "" || response.Item_WhatsApp == null) {
+                    $("#lblwhatsapp").text("NA");
+                }
+                else {
+                    $("#lblwhatsapp").text(response.Item_WhatsApp);
+                }
+
+
+                if (response.item_Other_Contact_Type == "" || response.item_Other_Contact_Type == null) {
+                    $("#lblothercontacttype").text("NA");
+                }
+                else {
+                    $("#lblothercontacttype").text(response.item_Other_Contact_Type);
+                }
+
+
+                if (response.item_Status == "" || response.item_Status == null) {
+                    $("#lblstatus").text("NA");
+                }
+                else {
+                    $("#lblstatus").text(response.item_Status);
+                }
+
+
+                if (response.Item_Quantity == "" || response.Item_Quantity == null) {
+                    $("#lblqty").text("NA");
+                }
+                else {
+                    $("#lblqty").text(response.Item_Quantity);
+                }
+                if (response.Cell_Number == "" || response.Cell_Number == null) {
+                    $("#lblcellno").text("NA");
+                }
+                else {
+                    $("#lblcellno").text(response.Cell_Number);
+                }
+
+                if (response.Rack_Name == "" || response.Rack_Name == null) {
+                    $("#lblrack").text("NA/" + response.Rack_Number_Name);
+                }
+                else
+                    if (response.Rack_Number_Name == "" || response.Rack_Number_Name == null) {
+                        $("#lblrack").text(response.Rack_Name + "/NA");
+                    }
+                    else
+                        if (response.Rack_Number_Name == "" || response.Rack_Number_Name == null || response.Rack_Name == "" || response.Rack_Name == null) {
+                            $("#lblrack").text("NA");
+                        }
+                        else {
+                            $("#lblrack").text(response.Rack_Name + "/" + response.Rack_Number_Name);
+                        }
+
+                //if (response.Rack_Number_Name == "" || response.Rack_Number_Name ==null) {
+                //    $("#lblrackno").text("NA");
+                //}
+                //else {
+                //    $("#lblrackno").text(response.Rack_Number_Name);
+                //}
+
+                if (response.Store_Location_Name == "" || response.Store_Location_Name == null) {
+                    $("#lblstore").text("NA");
+                }
+                else {
+                    $("#lblstore").text(response.Store_Location_Name);
+                }
+
+                if (response.Store_Location_Code == "" || response.Store_Location_Code == null) {
+                    $("#lblstorecode").text("NA");
+                }
+                else {
+                    $("#lblstorecode").text(response.Store_Location_Code);
+                }
+
+
+                // $("#aname").text(response.Item_Name);
+                $("#parameter").empty();
+                if (response.Sub_Item_Type_Field_values == "" || response.Sub_Item_Type_Field_values == null) {
+                    $("#parameter").text("NA")
+                }
+                else {
+                    var UOM = response.Sub_Item_Type_Field_UOM.split(',');
+                    var l = UOM.length;
+                    var name = response.Sub_Item_Type_Field_values.split(',');
+                    var value = "";
+                    for (var i = 0; i < name.length; i = i + 2) {
+
+                        if (i == 0) {
+
+
+                            if (name[i] == "Length") {
+                                if (l > 1) {
+                                    value = "<span style='padding-left:2px;font-weight:800' text=" + name[i] + '</span> = ' + name[i + 1] + " " + UOM[1];
+                                }
+                                else {
+
+                                    value = "<span style='padding-left:2px;font-weight:800'>" + name[i] + '</span> = ' + name[i + 1];
+
+                                }
+                            }
+                            else {
+                                value = "<span style='padding-left:2px;font-weight:800'>" + name[i] + '</span> = ' + name[i + 1];
+
+                            }
+                        }
+                        else {
+                            if (name[i] == "Length") {
+                                if (l > 1) {
+                                    value = value + "<span style='padding-left:7px;font-weight:800'> ," + name[i] + '</span> = ' + name[i + 1] + "  " + UOM[1];
+                                }
+                                else {
+
+                                    value = value + "<span style='padding-left:7px;font-weight:800'> ," + name[i] + '</span> = ' + name[i + 1];
+                                }
+                            }
+                            else {
+                                value = value + "<span style='padding-left:7px;font-weight:800'> ," + name[i] + '</span> = ' + name[i + 1];
+
+                            }
+
+
+                        }
+                    }
+                    $("#parameter").append(value);
+                }
+
+                $("#hdqrcode").val(response.Item_QRCode_path);
+
+                document.getElementById('imgqrcode').src = response.Item_QRCode_path;
+                //alert(response.Item_Name);
+                // GetBarcode(response.Bar_Code_No);
+
+                $("#lbldesignerurl").empty();
+                if (response.Designer_URL == "" || response.Designer_URL == null) {
+                    $("#lbldesignerurl").text("NA");
+                }
+                else {
+                    //$("#lbldesignerurl").text(response.Designer_URL);
+
+                    $("#lbldesignerurl").append('<a href=' + response.Designer_URL + ' target="_blank">' + response.Designer_URL + '</a>');
+
+                }
+
+
+                $("#adatesheet").empty();
+                $("#acomplain").empty();
+                $("#acad").empty();
+                $("#aCertification").empty();
+                $("#aScrapping").empty();
+                if (response.Item_Data_Sheet_Url != "" || response.Item_Data_Sheet_Url != null) {
+
+                    var link = $("<a>");
+                    link.attr("href", response.Item_Data_Sheet_Url);
+                    link.attr("title", "Datesheet");
+                    link.text("Download datesheet file");
+                    $("#adatesheet").append(link);
+                }
+                else {
+                    $("#adatesheet").text("No file");
+                }
+
+                if (response.Item_Compliance_Url != "" || response.Item_Compliance_Url != null) {
+                    var link = $("<a>");
+                    link.attr("href", response.Item_Compliance_Url);
+                    link.attr("title", "Compliance");
+                    link.text("Download Compliance file");
+                    $("#acomplain").append(link);
+                }
+                else {
+                    $("#acomplain").text("No file");
+                }
+                if (response.item_CAD_File_Url != "" || response.item_CAD_File_Url != null) {
+                    var link = $("<a>");
+                    link.attr("href", response.item_CAD_File_Url);
+                    link.attr("download", response.item_CAD_File_Url);
+                    link.attr("title", "CAD");
+                    link.text("Download CAD file");
+                    $("#acad").append(link);
+                }
+                else {
+                    $("#acad").text("No file");
+                }
+                if (response.Item_Certification_Url != "" || response.Item_Certification_Url != null) {
+                    var link = $("<a>");
+                    link.attr("href", response.Item_Certification_Url);
+                    link.attr("title", "Certification");
+                    link.text("Download Certificate file");
+                    $("#aCertification").append(link);
+                }
+                else {
+                    $("#aCertification").text("No file");
+                }
+                if (response.Item_Scrapping_from_WebUrl != "" || response.Item_Scrapping_from_WebUrl != null) {
+                    var link = $("<a>");
+                    link.attr("href", response.Item_Scrapping_from_WebUrl);
+                    link.attr("title", "Scrapping");
+                    link.text("Download Scrapping file");
+                    $("#aScrapping").append(link);
+                }
+                else {
+                    $("#aScrapping").text("No file");
+                }
+                $("#olimg").empty();
+                $("#SlideshowImages").empty();
+                $("#baguetteBox-slider").empty();
+                var imagepathstr = response.Item_Images_Url;
+                if (imagepathstr == "" || imagepathstr == null) {
+                    var img = ("<div class='item active' id='divimgi'><a class='lightbox' href='javascript:void(0);'><div class='img-zoom - container'><img id='myimage" + k + "' src='/Images/no-image-icon-6.png' class='sname' width='300' height='240'></a></div>");
+                    $("#SlideshowImages").append(img);
+                    $("#divimgcount").hide();
+                    $("#an").hide();
+                    $("#ap").hide();
+
+                }
+                else {
+                    $("#hdzoom").val(response.Item_Images_Url);
+                    var path = imagepathstr.split(',');
+
+                    if (path != "" || path != null) {
+                        $("#hdt").val(1);
+                        for (var j = 0; j < path.length; j++) {
+                            $("#divimgcount").text("1 of " + path.length);
+                            if (j == 0) {
+                                $("#olimg").append("<li data-target='#carousel-default' data-slide-to=" + j + " class='active'><span>" + j + " </span></li>");
+                            }
+                            else {
+                                $("#olimg").append("<li data-target='#carousel-default' data-slide-to=" + j + " class=''><a><span>" + j + " </span></a></li>");
+                            }
+                        }
+                        for (var k = 0; k < path.length; k++) {
+                            if (k == 0) {
+                                // var img=  "<div class='item active'><a class='lightbox' href='javascript:void(0);'><img id='imgs" + k + "' width='150' height='180' src=" + path[k] + "  alt='Bridge'></a></div>";
+                                var img = ("<div class='item active' id='divimg" + i + "'><a class='lightbox' href='javascript:void(0);'><div class='img-zoom - container'><img id='myimage" + k + "' src=" + path[k] + " class='sname' width='300' height='240'><div id='myresult" + k + "' class='img-zoom-result'></div></div></a></div>");
+                            }
+                            else {
+                                var img = ("<div class='item' id='divimg" + i + "'><a class='lightbox' href='#'><div class='img-zoom-container'><img id='myimage" + k + "' src=" + path[k] + "  width='300' height='240'><div id='myresult" + k + "' class='img-zoom-result'></div></div></a></div>");
+                                //var img = "<div class='item'><a class='lightbox' href='#'><img id='imgs" + k + "' width='150' height='180' src=" + path[k] + "  alt='Bridge'></a></div>";
+                            }
+                            $("#SlideshowImages").append(img);
+                            $("#divimgcount").show();
+                            $("#an").show();
+                            $("#ap").show();
+                        }
+                    }
+
+                    else {
+                        var img = ("<div class='item active' id='divimgi'><a class='lightbox' href='javascript:void(0);'><div class='img-zoom - container'><img id='myimage" + k + "' src='/Images/no-image-icon-6.png' class='sname' width='300' height='240'></a></div>");
+                        $("#SlideshowImages").append(img);
+                        $("#divimgcount").hide();
+                        $("#an").hide();
+                        $("#ap").hide();
+                    }
+                }
+                // alert();
+                $('#dialogdivView').modal('show');
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+      
+        var objItem = {};
+        objItem.Item_Id = element;
+        $.ajax({
+            type: "POST",
+            url: "/Master/ItemAltDetailsForUpdate",
+            data: '{objItem: ' + JSON.stringify(objItem) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (json) {
+                //alert(json.length);
+                if (json.length > 0) {
+                    $("#divtbl").show();
+                    $("#txtNoOfRows").val(json.length);
+                    $("#divrow").show();
+                    $('input:radio[name="permision"][value="Yes"]').prop('checked', true);
+                    $("#EmpInfoalt > tbody").html("");
+                    var row = $("#txtNoOfRows").val();
+                    $("#altrow").show();
+                    var tr;
+                    for (var i = 0; i < json.length; i++) {
+                        tr = $('<tr/>');
+                        tr.append("<td>" + (i + 1) + "</td>");
+
+                        tr.append("<td>" + json[i].Alt_Manufacturing_Part_Number + "</td>");
+                        tr.append("<td>" + json[i].Alt_Item_Brand + "</td>");
+                        tr.append("<td><a href=http://www." + json[i].Alt_Item_Url + " target='_blank'>" + json[i].Alt_Item_Url + "</a></td>");
+                        // tr.append("<td><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></td>");
+                        $('#EmpInfoalt').append(tr);
+                    }
+                    $('#EmpInfoalt').DataTable();
+
+                }
+                else {
+                    $("#divtbl").hide();
+                }
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $("#SlideshowImages").mouseover(function () {
+            var activediv = $('.item').filter('.active');
+            currentIndex = activediv.index(); //$('div.active').index();
+            // ("#myresult" + currentIndex).show();
+            imageZoom("myimage" + currentIndex, "myresult" + currentIndex);
+        });
+        $("#SlideshowImages").mouseout(function () {
+            result = document.getElementById("myresult" + currentIndex);
+            result.style.backgroundImage = null;
+            result.style.backgroundSize = (img.width * 1 / 2) + "px " + (img.height * 1 / 2) + "px";
+            var elements = document.getElementsByClassName("img-zoom-container").remove();
+            // $(".img-zoom - container").removeClass();
+        });
+    });
+</script>
+
+<script>
+    function imageZoom(imgID, resultID) {
+        // alert(imgID);
+        var img, lens, result, cx, cy;
+        img = document.getElementById(imgID);
+        result = document.getElementById(resultID);
+        /*create lens:*/
+        lens = document.createElement("DIV");
+
+        lens.setAttribute("class", "img-zoom-lens");
+        /*insert lens:*/
+        img.parentElement.insertBefore(lens, img);
+        // alert(imgID);
+        /*calculate the ratio between result DIV and lens:*/
+        cx = result.offsetWidth / lens.offsetWidth;
+        cy = result.offsetHeight / lens.offsetHeight;
+        /*set background properties for the result DIV:*/
+
+
+        result.style.backgroundImage = "url('" + img.src + "')";
+        result.style.backgroundSize = (img.width * cx) + "px " + (img.height * cy) + "px";
+
+        /*execute a function when someone moves the cursor over the image, or the lens:*/
+        lens.addEventListener("mousemove", moveLens);
+        img.addEventListener("mousemove", moveLens);
+        /*and also for touch screens:*/
+        lens.addEventListener("touchmove", moveLens);
+        img.addEventListener("touchmove", moveLens);
+
+        function moveLens(e) {
+            var pos, x, y;
+            /*prevent any other actions that may occur when moving over the image:*/
+            e.preventDefault();
+            /*get the cursor's x and y positions:*/
+            pos = getCursorPos(e);
+            /*calculate the position of the lens:*/
+            x = pos.x - (lens.offsetWidth / 2);
+            y = pos.y - (lens.offsetHeight / 2);
+
+            if (x > img.width - lens.offsetWidth) { x = img.width - lens.offsetWidth; }
+            if (x < 0) { x = 0; }
+            if (y > img.height - lens.offsetHeight) { y = img.height - lens.offsetHeight; }
+            if (y < 0) { y = 0; }
+
+            lens.style.left = x + "px";
+            lens.style.top = y + "px";
+
+            result.style.backgroundPosition = "-" + (x * cx) + "px -" + (y * cy) + "px";
+        }
+
+        function getCursorPos(e) {
+            var a, x = 0, y = 0;
+            e = e || window.event;
+            /*get the x and y positions of the image:*/
+            a = img.getBoundingClientRect();
+            /*calculate the cursor's x and y coordinates, relative to the image:*/
+            x = e.pageX - a.left;
+            y = e.pageY - a.top;
+            /*consider any page scrolling:*/
+            x = x - window.pageXOffset;
+            y = y - window.pageYOffset;
+            return { x: x, y: y };
+        }
+
+    }
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#next-button").click(function (e) {
+            //alert();
+            var z = parseInt($("#hdt").val());
+            var val1 = (z - 100);
+            var z = $("#hdzoom").val().split(',');
+            var c = (-100) * z.length;
+            //alert(c);
+
+            if (c < val1) {
+                $("#hdt").val(val1);
+                $("#baguetteBox-slider").attr("style", "transform: translate3d(" + val1 + "%, 0px, 0px);");
+                $("#baguetteBox-slider").attr("class", "");
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#previous-button").click(function (e) {
+            var z = parseInt($("#hdt").val());
+            var val1 = (z + 100);
+            // alert(val1);
+
+            if (val1 <= 0) {
+                $("#hdt").val(val1);
+                $("#baguetteBox-slider").attr("style", "transform: translate3d(" + val1 + "%, 0px, 0px);");
+                $("#baguetteBox-slider").attr("class", "");
+            }
+        });
+    });
+</script>
+<style>
+    .search_btn {
+        padding: 3px 7px;
+        text-align: right;
+    }
+
+    .btn_back {
+        width: 183px;
+        display: block;
+        margin: auto;
+        background: #0893e2 !IMPORTANT;
+        border: none;
+        margin-bottom: 13px;
+        padding: 8px 10px !important;
+        border-radius: 5px !IMPORTANT;
+    }
+
+
+
+    .copy_btn {
+        background: #0893e2 !important;
+        border-color: #0893e2 !important;
+        padding: 4px 7px;
+        font-size: 10px;
+        border-radius: 3px;
+        margin-bottom: 3px;
+        cursor: pointer;
+        padding: 0px 6px;
+        width: auto;
+        font-weight: 500;
+    }
+
+    .item_search_box {
+        padding: 0px 40px;
+    }
+
+    .copy_btn {
+        background: #0893e2 !important;
+        border-color: #0893e2 !important;
+        padding: 4px 7px;
+        font-size: 10px;
+        border-radius: 0px !important;
+        margin-bottom: 3px;
+        cursor: pointer;
+        padding: 0px 3px 0px 12px !important;
+        width: auto;
+        font-weight: 500;
+        margin-right: 4px;
+    }
+
+        .copy_btn:focus {
+            width: auto;
+        }
+
+    .view_dc {
+        width: 80px !important;
+        padding-left: 15px !important;
+    }
+
+    .ey_icon {
+        padding-left: 4px;
+        position: absolute;
+        z-index: 1;
+        color: #fff;
+        font-size: 10px;
+        top: 10px;
+    }
+
+    .copy_ic {
+        padding-left: 3px;
+        position: absolute;
+        z-index: 2;
+        color: #fff;
+        font-size: 9px;
+        top: 10px !IMPORTANT;
+    }
+
+    #dialogdivView {
+        z-index: 99999;
+        margin-top: 0px;
+        overflow: auto !IMPORTANT;
+        max-width: 100%;
+    }
+
+        #dialogdivView .modal-lg {
+            display: flex !important;
+            width: 1007px !important;
+        }
+
+    .search_btn .btn {
+        font-size: 11px !important;
+        max-width: 95px !important;
+    }
+
+    .ey_icon {
+        top: 10px !important;
+        margin-left: 3px;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $("#searchitemtable").hide();
+        var baseUrl = (window.location).href;
+        var value = baseUrl.substring(baseUrl.lastIndexOf('/') + 1);
+        // alert(value);
+        $("#dvsearchitem").empty();
+        var checkCookie = sessionStorage.getItem("nav-item1");
+        if (checkCookie == "" || checkCookie == null) {
+            //var checkCookie1 = $.cookie("item-type-id");
+            var checkCookie1 = sessionStorage.getItem("item-type-id");
+
+            var checkCookiename = sessionStorage.getItem("nav-item-type-name");
+            $("#txtsearch").val(checkCookiename);
+            $("#dvsearchitem").empty();
+            var objItem = {};
+            objItem.Item_Type_Id = checkCookie1;
+            $.ajax({
+                type: "POST",
+                url: "/Master/ItemDetailsForSarch",
+                data: '{objItem: ' + JSON.stringify(objItem) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    if (response.length > 0) {
+                        var i = 0;
+
+                        var n = 1;
+                        while (i < response.length) {
+                            for (var j = i; j < i + 4; j++) {
+                                if (n == 1 & j < response.length) {
+                                    if (response[j].Item_Images_Url != "") {
+                                        var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                    }
+                                    else {
+                                        var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                    }
+                                    // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                    $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub blue-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12 " ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                }
+                                else
+                                    if (n == 2 & j < response.length) {
+                                        if (response[j].Item_Images_Url != "") {
+                                            var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                        }
+                                        else {
+                                            var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                        }
+                                        // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                        $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub green-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                    }
+                                    else
+                                        if (n == 3 & j < response.length) {
+                                            if (response[j].Item_Images_Url != "") {
+                                                var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                            }
+                                            else {
+                                                var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                            }
+                                            // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                            $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub violet-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                        }
+                                        else
+                                            if (n == 4 & j < response.length) {
+                                                if (response[j].Item_Images_Url != "") {
+                                                    var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                                }
+                                                else {
+                                                    var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                                }
+                                                // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                                $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub red-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                            }
+                                            else
+                                                if (n == 5 & j < response.length) {
+                                                    if (response[j].Item_Images_Url != "") {
+                                                        var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                                    }
+                                                    else {
+                                                        var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                                    }
+                                                    // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                                    $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub yellow-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                                }
+                                n = n + 1;
+                                if (((j + 1) % 5) == 0) {
+                                    //alert(n);
+                                    n = 1;
+                                }
+                            }
+                            i = i + 4;
+                        }
+                    }
+                    else {
+                        var img = '<img src="/Images/no-data.png" style="margin-left: 40%;" />';
+                        $("#dvsearchitem").append(img);
+                        $("#dvsearchitem").append("<div class='no_data_found'>No data found</div>");
+                    }
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
+        else {
+            $("#dvsearchitem").empty();
+            var objItem = {};
+            objItem.Item_Search_Value = checkCookie;
+            $("#txtsearch").val(checkCookie);
+            $.ajax({
+                type: "POST",
+                url: "/Master/ItemDetailsForSearchAccSearchValue",
+                data: '{objItem: ' + JSON.stringify(objItem) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.length > 0) {
+                        var i = 0;
+
+                        var n = 1;
+                        while (i < response.length) {
+                            for (var j = i; j < i + 4; j++) {
+                                if (n == 1 & j < response.length) {
+                                    if (response[j].Item_Images_Url != "") {
+                                        var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                    }
+                                    else {
+                                        var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                    }
+                                    // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                    $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub blue-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12 " ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                }
+                                else
+                                    if (n == 2 & j < response.length) {
+                                        if (response[j].Item_Images_Url != "") {
+                                            var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                        }
+                                        else {
+                                            var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                        }
+                                        // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                        $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub green-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                    }
+                                    else
+                                        if (n == 3 & j < response.length) {
+                                            if (response[j].Item_Images_Url != "") {
+                                                var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                            }
+                                            else {
+                                                var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                            }
+                                            // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                            $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub violet-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                        }
+                                        else
+                                            if (n == 4 & j < response.length) {
+                                                if (response[j].Item_Images_Url != "") {
+                                                    var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                                }
+                                                else {
+                                                    var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                                }
+                                                // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                                $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub red-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                            }
+                                            else
+                                                if (n == 5 & j < response.length) {
+                                                    if (response[j].Item_Images_Url != "") {
+                                                        var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                                    }
+                                                    else {
+                                                        var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                                    }
+                                                    // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                                    $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub yellow-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                                }
+                                n = n + 1;
+                                if (((j + 1) % 5) == 0) {
+                                    //alert(n);
+                                    n = 1;
+                                }
+                            }
+                            i = i + 4;
+                        }
+                    }
+                    else {
+                        var img = '<img src="/Images/no-data.png" style="margin-left: 40%;" />';
+                        $("#dvsearchitem").append(img);
+                        $("#dvsearchitem").append("<div class='no_data_found'>No data found</div>");
+                    }
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
+
+    });
+</script>
+
+<script>
+    function Getdata() {
+        $("#EmpInfo > tbody").html("");
+        //Call EmpDetails jsonResult Method
+        // alert();
+        $.getJSON("/Master/ViewDocDialog",
+            function (json) {
+                var tr;
+                //Append each row to html table
+                for (var i = 0; i < json.length; i++) {
+                }
+                $('#EmpInfo').DataTable();
+            });
+    }
+</script>
+<script type="text/javascript">
+    function openTab(th) {
+        alert(th.name);
+        window.open(th.name, '_blank');
+    }
+</script>
+
+<script>
+    var objsearchitem = {};
+    function GetViewDoc(element) {
+
+        $("#searchitemtable").show();
+        var objsearchitemid = {};
+        objsearchitemid.Item_Id = element;
+        $("#dialogdiv").html("");
+        $.ajax({
+            type: "Post",
+            url: "/Master/ViewDocItem",
+            data: '{objsearchitemid: ' + JSON.stringify(objsearchitemid) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var certval = "";
+                var dateval = "";
+                var compval = "";
+                for (var i = 0; i < response.length; i++) {
+                    var cert = response[i].Item_Certification_Url;
+                    var date = response[i].Item_Certification_Url;
+                    var comp = response[i].Item_Certification_Url;
+                    if (cert == "") {
+                        certval = '<a class="btn btn - primary btn - sm copy_btn btn_back" style="width: auto; display: block; margin: auto; margin - bottom: 11px; ">No Certification File</a>';
+                    }
+                    else {
+                        certval = '<a class="btn btn - primary btn - sm copy_btn btn_back" style="width: auto; display: block; margin: auto; margin - bottom: 11px; " href="https://docs.google.com/gview?url=https://testing2.leaderrange.co' + response[i].Item_Certification_Url + '" target="_blank"><i class="fa fa-download"> </i> Certification</a>';
+                    }
+                    if (date == "") {
+                        dateval = '<a class="btn btn - primary btn - sm copy_btn btn_back" style="width: auto; display: block; margin: auto; margin - bottom: 11px; ">No Datasheet File</a>';
+                    }
+                    else {
+                        dateval = '<a href="https://docs.google.com/gview?url=https://testing2.leaderrange.co' + response[i].Item_Data_Sheet_Url + '" target="_blank" style="width: auto;display:block;margin: auto;margin-bottom:11px;" class="btn btn-primary btn-sm copy_btn btn_back"><i class="fa fa-download"> </i> Datasheet</a>';
+                        //dateval = '<a class="btn btn - primary btn - sm copy_btn btn_back" style="width: auto; display: block; margin: auto; margin - bottom: 11px; href="https://docs.google.com/gview?url=https://testing2.leaderrange.co' + response[i].Item_Data_Sheet_Url + '" target="_blank" ><i class="fa fa-download"> </i> Datasheet</a>';
+                    }
+                    if (comp == "") {
+                        compval = '<a class="btn btn - primary btn - sm copy_btn btn_back" style="width: auto; display: block; margin: auto; margin - bottom: 11px; ">No Compliance File</a>';
+                    }
+                    else {
+                        compval = '<a class="btn btn-primary btn-sm copy_btn btn_back" style="width: auto;display:block;margin: auto;margin-bottom:11px;" href="https://docs.google.com/gview?url=https://testing2.leaderrange.co' + response[i].Item_Compliance_Url + '" target="_blank"> <i class="fa fa-download"> </i>  Compliance</a>';
+                    }
+                    // alert(response[i].Item_Compliance_Url);
+                    // $("#dialogdiv").append('<div class="row"><div class="col-xs-12"><a href="' + response[i].Item_Certification_Url + '" target="_blank" style="width:200px" class="btn btn-primary btn-sm copy_btn">Download Certification</a></div><div class="col-xs-12"><a href="' + response[i].Item_Data_Sheet_Url + '" target="_blank" style="width:200px" class="btn btn-primary btn-sm copy_btn">Download Datasheet</a></div><div class="col-xs-12"><a href="' + response[i].Item_Compliance_Url + '" target="_blank" style="width:200px" class="btn btn-primary btn-sm copy_btn">Download Compliance</a></div></div>');
+                    $("#dialogdiv").append('<div class="row"><div class="col-xs-12">' + certval + '</div><div class="col-xs-12">' + dateval + '</div><div class="col-xs-12">' + compval + '</div></div>');
+                }
+
+                $('#dialogdiv11').modal('show');
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+        // }
+        //});
+    };
+</script>
+
+<script>
+    $(document).ready(function () {
+        // alert("Enter pressed");
+        $('#txtsearch').on('keypress', function (event) {
+            //alert();
+            if (event.keyCode == 13) {
+                $("#dvsearchitem").empty();
+                var objItem = {};
+                objItem.Item_Search_Value = $("#txtsearch").val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/ItemDetailsForSearchAccSearchValue",
+                    data: '{objItem: ' + JSON.stringify(objItem) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+
+                        if (response.length > 0) {
+                            var i = 0;
+                            $("#dvsearchitem").empty();
+                            var n = 1;
+                            // alert(response.length);
+                            while (i < response.length) {
+                                // alert(i);
+                                for (var j = i; j < i + 4; j++) {
+                                    if (n == 1 & j < response.length) {
+                                        if (response[j].Item_Images_Url != "") {
+                                            var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                        }
+                                        else {
+                                            var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                        }
+                                        // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                        $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub blue-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12 " ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                    }
+                                    else
+                                        if (n == 2 & j < response.length) {
+                                            if (response[j].Item_Images_Url != "") {
+                                                var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                            }
+                                            else {
+                                                var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                            }
+                                            // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                            $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub green-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                        }
+                                        else
+                                            if (n == 3 & j < response.length) {
+                                                if (response[j].Item_Images_Url != "") {
+                                                    var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                                }
+                                                else {
+                                                    var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                                }
+                                                // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                                $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub violet-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                            }
+                                            else
+                                                if (n == 4 & j < response.length) {
+                                                    if (response[j].Item_Images_Url != "") {
+                                                        var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                                    }
+                                                    else {
+                                                        var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                                    }
+                                                    // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                                    $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub red-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                                }
+                                                else
+                                                    if (n == 5 & j < response.length) {
+                                                        if (response[j].Item_Images_Url != "") {
+                                                            var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                                        }
+                                                        else {
+                                                            var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                                        }
+                                                        // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                                        $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub yellow-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                                    }
+                                    n = n + 1;
+                                    if (((j + 1) % 5) == 0) {
+                                        //alert(n);
+                                        n = 1;
+                                    }
+                                }
+                                i = i + 4;
+                            }
+                        }
+                        else {
+                            var img = '<img src="/Images/no-data.png" style="margin-left: 40%;" />';
+                            $("#dvsearchitem").append(img);
+                            $("#dvsearchitem").append("<div class='no_data_found'>No data found</div>");
+                        }
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+@*<script>
+        $('.ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close').click(function () {
+            $('#dialogdiv').dialog('close');
+            return false;
+        });
+    </script>*@
+
+@*<script type="text/javascript">
+        $(function () {
+            $('#dialogdiv').dialog({
+                autoOpen: false,
+                width: 255,
+                resizable: false,
+                modal: true,
+                title: "View Details",
+                close: true
+            });
+
+            $('#Button1').click(function () {
+                $('#dialogdiv').dialog('open');
+                return false;
+            });
+        });
+    </script>*@
+<script>
+    function GetItemDetail() {
+        var edValue = document.getElementById("txtsearch");
+        var s = edValue.value;
+        //alert(s);
+
+
+        var objItem = {};
+        objItem.Item_Search_Value = s;
+
+        $.ajax({
+            type: "POST",
+            url: "/Master/ItemDetailsAccSarchValue",
+            data: '{objItem: ' + JSON.stringify(objItem) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (response.length > 0) {
+                    var i = 0;
+                    $("#dvsearchitem").empty();
+                    var n = 1;
+                    //  alert(response.length);
+                    while (i < response.length) {
+                        // alert(i);
+                        for (var j = i; j < i + 4; j++) {
+                            if (n == 1 & j < response.length) {
+                                if (response[j].Item_Images_Url != "") {
+                                    var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                }
+                                else {
+                                    var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                }
+                                // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub blue-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12 " ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                            }
+                            else
+                                if (n == 2 & j < response.length) {
+                                    if (response[j].Item_Images_Url != "") {
+                                        var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                    }
+                                    else {
+                                        var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                    }
+                                    // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                    $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub green-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                }
+                                else
+                                    if (n == 3 & j < response.length) {
+                                        if (response[j].Item_Images_Url != "") {
+                                            var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                        }
+                                        else {
+                                            var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                        }
+                                        // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                        $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub violet-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                    }
+                                    else
+                                        if (n == 4 & j < response.length) {
+                                            if (response[j].Item_Images_Url != "") {
+                                                var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                            }
+                                            else {
+                                                var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                            }
+                                            // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                            $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub red-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                        }
+                                        else
+                                            if (n == 5 & j < response.length) {
+                                                if (response[j].Item_Images_Url != "") {
+                                                    var img = '<img src="' + response[j].Item_Images_Url + '" style="height: 57px; " />';
+                                                }
+                                                else {
+                                                    var img = '<img src="/Images/no-image-icon-6.png" style="height: 57px; " />';
+                                                }
+                                                // $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub"><div class="row"><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[i].Item_Id + '</span><div class="img_box" style="width:80px;height:90px;"><img src="' + response[i].Item_Images_Url + '" style="height:90px;" /></div></div><div class="col-md-3 col-lg-9 col-12" style="padding-left:5px"> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[i].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[i].Item_Id + ')"><h3> ' + response[i].Item_Description + ' </h3></a><p id="p1' + response[i].Item_Id + '"> ' + response[i].Internal_Item_Code + '</p> <i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[i].Item_Id + ')" value="  Part No"> &nbsp; <a href="' + response[i].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a></div></div></div></div>');
+                                                $("#dvsearchitem").append('<div class="col-md-3 col-lg-3 col-12"><div class="sear_sub yellow-cl"><div class="row "><div class="col-md-3 col-lg-3 col-12" ><span id="itemid" style="display:none">' + response[j].Item_Id + '</span><div class="img_box" style="width:80px;height:57px;">' + img + '</div></div><div class="col-md-9 col-lg-9 col-12" style="padding-left:5px"><a onclick="ViewDetail(' + response[j].Item_Id + ')"><h3> ' + response[j].Item_Description + ' </h3></a><p id="p1' + response[j].Item_Id + '"> ' + response[j].Internal_Item_Code + '</p><p>' + response[j].Item_Quantity + '</p> </div><div class="col-md-12 col-lg-12 col-12" style="padding-left:5px"><div class="search_btn"><i class="fa fa-copy copy_ic"></i> <input type="button" class="btn btn-primary btn-sm copy_btn part_no" onclick="copyToClipboard(p1' + response[j].Item_Id + ')" value="Part No"><a href="' + response[j].item_CAD_File_Url + '" target="_blank" class="btn btn-primary btn-sm copy_btn"> <i class="fa fa-download"></i> CAD</a> <i  class="fa fa-eye ey_icon"></i> <input  type="button " onclick="ViewDoc(' + response[j].Item_Id + ')" class="btn btn-primary btn-sm copy_btn view_dc" value="Documents"></div></div></div></div></div>');
+                                            }
+                            n = n + 1;
+                            if (((j + 1) % 5) == 0) {
+                                //alert(n);
+                                n = 1;
+                            }
+                        }
+                        i = i + 4;
+                    }
+                }
+                else {
+                    $("#dvsearchitem").empty();
+                    var img = '<img src="/Images/no-data.png" style="margin-left: 40%;" />';
+                    $("#dvsearchitem").append(img);
+                    $("#dvsearchitem").append("<div class='no_data_found'>No data found</div>");
+                }
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        $('.carousel').carousel({
+            interval: false,
+        });
+    });
+</script>
+<style>
+    .table-header1 {
+        background-color: #307ECC;
+        color: #FFF;
+        font-size: 13px;
+        line-height: 26px;
+        padding-left: 12px;
+        margin-bottom: 1px;
+        display: inline-block;
+        padding: 0px 13px;
+        margin-bottom: 9px;
+        display: block;
+    }
+
+    .margin_tp {
+        margin-top: -54px;
+        position: absolute;
+    }
+
+    .img-zoom-result {
+        padding-bottom: 29px;
+    }
+
+    .img-zoom-result {
+        width: 631px;
+        height: 261px !IMPORTANT;
+    }
+
+    #SlideshowImages {
+        margin-bottom: 25px !important;
+    }
+
+    .m_00 {
+        margin-bottom: 0px !important;
+    }
+
+    #divimgcount {
+        width: 120px;
+        margin-top: -55px !important;
+    }
+
+    .margin_tp {
+        margin-top: -54px;
+        position: absolute;
+    }
+
+    #EmpInfoalt tr td:last-child {
+        color: #0893e2;
+        text-decoration: underline;
+        cursor: pointer;
+        border-bottom: 1px solid #ddd;
+    }
+</style>
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+<div class="main-content">
+    <div class="main-content-inner top-padding">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs" >
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#">PMS Setting</a>
+                </li>
+
+                <li>
+                    <a href="/Master/ItemMaster">Item Master</a>
+                </li>
+                <li class="active">Search Item</li>
+            </ul><!-- /.breadcrumb -->
+            @*<div class="nav-search" id="nav-search">
+                <div class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>*@<!-- /.nav-search -->
+        </div>
+
+        <div class="page-content1">
+            <div class="page-header">
+                <h1>
+                    Search Item
+                </h1>
+            </div><!-- /.page-header -->
+
+            <div class="row">
+                <div class="col-xs-8 col-xs-offset-2">
+                    @*<p> Search:</p>*@
+                    <div>
+                        <input type="text" id="txtsearch" name="search" oninput="GetItemDetail()" class="searchbox" placeholder="item code\description\ part number\ item category wise,\item sub category">
+                    </div>
+                </div>
+            </div>
+            <div class="space-12"></div>
+
+            <div class="container">
+                <div class="item_search_box">
+                    <div class="row" id="dvsearchitem">
+
+                    </div>
+                    <div id="dialogdiv11" class="modal fade">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">&times;</a>
+                                    <h3>Document Detail</h3>
+
+                                </div>
+                                <div class="modal-body">
+                                    <div id="dialogdiv">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+
+                </div>
+            </div>
+            <div class="botm_fxa1">
+                @*------------------------------------------------popup-----------------------------------------------*@
+                <div id="dialogdivView" class="modal fade" style="margin-top:0px!important">
+                    <div class="modal-dialog modal-lg modal-dialog-centered" style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
+                        <div class="modal-content" style="width:100% !important;padding-bottom:22px">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">&times;</a>
+                                <h3 class="item_hedin m_00">Item Detail (<span id="divitemcode" class="code_cl"></span>)</h3>
+
+                            </div>
+                            <div class="modal-body">
+
+
+
+                                <div class="model_data row">
+                                    <div class="d_blk cc_cursor">
+
+                                        <div class="table-header1 cc_cursor">
+                                            Design
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>  Status     </label><span>:</span>
+                                        <p id="lblstatus" style="font-weight:800 !important;"></p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>  Item Type </label><span>:</span>
+                                        <p id="lblitemtype"> </p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>  Item Sub Type </label><span>:</span>
+                                        <p id="lblitemsubtype">  </p>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>  Description </label><span>:</span>
+                                        <p class="url_tx1 model_l_p" id="lbldescription"> </p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>  Part Number  </label><span>:</span>
+                                        <p id="lblmpnum">  </p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>  Manufacture </label><span>:</span>
+                                        <p id="lblmanufacture"></p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>  Brand </label><span>:</span>
+                                        <p id="lblbrand"> </p>
+                                    </div>
+                                    <div class="col-xs-12 tbl_sort" id="divtbl">
+                                        <label>  Alternate values </label><span>:</span>
+                                        <div class="form-group">
+                                            <table id="EmpInfoalt" class="table table-bordered  table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="center">S. No</th>
+                                                        <th>Part No</th>
+                                                        <th>Brand</th>
+                                                        <th>URL</th>
+                                                        <th style="display:none"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>  Data Sheet     </label><span>:</span>
+                                        <p id="adatesheet"> </p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>  Compliance    </label><span>:</span>
+                                        <p id="acomplain"></p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>  Certification     </label><span>:</span>
+                                        <p id="aCertification">  </p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>  CAD File    </label><span>:</span>
+                                        <p id="acad"></p>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label>  Scrapping  </label><span>:</span>
+                                        <p id="aScrapping">  </p>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>   Parameters  </label><span>:</span>
+                                        <p id="parameter" class="model_l_p">  </p>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label>  URL </label><span>:</span>
+                                        <p class="url_tx1 model_l_p" id="lbldesignerurl"> </p>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>   QRCode </label><span>:</span>
+                                        <input type="hidden" id="hdqrcode" />
+                                        <span class="qr_img" style="margin-left:8px">
+                                            <img id="imgqrcode" />
+                                        </span> @*<input type="button" id="btnshow" value="Scan QR Code"  class="btn btn-default"/>*@
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="col-md-4">
+
+
+
+                                            <section class="carousel-default">
+                                                <div id="carousel-default" class="carousel slide" data-interval="false" data-ride="carousel">
+                                                    <ol id="olimg" class="carousel-indicators"></ol>
+                                                    <div id="SlideshowImages" class=" tz-gallery" role="listbox">
+
+                                                    </div>
+                                                    <a class="left carousel-control" href="#carousel-default" role="button" id="ap" data-slide="prev" onclick="prev();">
+                                                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+                                                    <a class="right carousel-control" href="#carousel-default" role="button" id="an" data-slide="next" onclick="next();">
+                                                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                                        <span id="spnnext" class="sr-only">Next</span>
+                                                    </a> <div id="divimgcount"></div>
+                                                </div>
+                                            </section>
+                                            <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.8.1/baguetteBox.min.js"></script>
+                                            <script>
+                                                    function next() {
+                                                        var i = parseInt($("#hdt").val());
+                                                        var z = $("#hdzoom").val().split(',');
+                                                        // alert(z.length);
+                                                        if (i < z.length) {
+                                                            i = (i + 1);
+                                                            // alert(i);
+                                                        }
+                                                        else {
+                                                            i = 1;
+                                                        }
+                                                        $("#divimg" + (i - 1)).addClass("active");
+                                                        $("#divimg" + (i - 2)).removeClass("active");
+                                                        $("#divimgcount").text(i + " of " + z.length);
+                                                        $("#hdt").val(i);
+                                                        //alert(i);
+                                                    }
+                                            </script>
+                                            <script>
+                                                    function prev() {
+                                                        var i = parseInt($("#hdt").val())
+                                                        var z = $("#hdzoom").val().split(',');
+                                                        if (i > 1) {
+                                                            i = (i - 1);
+                                                        }
+                                                        else {
+                                                            i = z.length;
+                                                        }
+                                                        //$("#divimg" + (i - 2)).addClass("active");
+                                                        //$("#divimg" + (i - 3)).removeClass("active");
+                                                        $("#divimgcount").text(i + " of " + z.length);
+                                                        $("#hdt").val(i);
+                                                        // alert(i);
+                                                    }
+                                            </script>
+                                            <script>
+                                                    baguetteBox.run('.tz-gallery');
+                                            </script>
+
+                                            <style>
+                                                .tz-gallery img {
+                                                    width: 100%;
+                                                    border-radius: 0px;
+                                                }
+
+                                                .carousel-default a {
+                                                    color: #f5f5f5 !important;
+                                                    text-decoration: underline;
+                                                }
+
+                                                button {
+                                                    background-color: #0000 !important;
+                                                    color: #ffffff !important;
+                                                }
+
+                                                .full-image {
+                                                    padding: 50px;
+                                                }
+
+                                                #dialogdivView {
+                                                    overflow: hidden;
+                                                }
+
+                                                #divimgcount {
+                                                    width: 120px;
+                                                    margin-top: -218px;
+                                                    position: absolute;
+                                                    left: 72px;
+                                                    color: #fff;
+                                                    font-size: 15px;
+                                                }
+                                            </style>
+                                            @*<input type="button" id="btnzoom" value="Zoom" />*@
+                                        </div>
+                                    </div>
+
+
+                                    <div class="d_blk cc_cursor">
+
+                                        <div class="table-header1 cc_cursor">
+                                            Buyer
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label>  Unit Group </label><span>:</span>
+                                            <p id="lbluomgroup">  </p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  Measurement unit </label><span>:</span>
+                                            <p id="lbluomname"></p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>Alternate  Measurement unit </label><span>:</span>
+                                            <p id="lblaltuomname"></p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>Alternate  Unit Group </label><span>:</span>
+                                            <p id="lblaltuomgroup">  </p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  Supplier Name </label><span>:</span>
+                                            <p id="lblsuppliername">  </p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  Item Price  </label><span>:</span>
+                                            <p id="lblprice"></p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  Min. Order Qty </label><span>:</span>
+                                            <p id="lblmoq"> </p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  Threshold  </label><span>:</span>
+                                            <p id="lblthreshold"> </p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  HS category  </label><span>:</span>
+                                            <p id="lblhscodeName">  </p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  HS Code  </label><span>:</span>
+                                            <p id="lblhscode">  </p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  Co-Country Origin  </label><span>:</span>
+                                            <p id="lblcco">  </p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  Shipping Cost  </label><span>:</span>
+                                            <p id="lblshipingcost"></p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  Contact Details  </label><span>:</span>
+                                            <p id="lblcontactdetail"></p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  E-Mail  </label><span>:</span>
+                                            <p id="lblemail">  </p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  We Chat  </label><span>:</span>
+                                            <p id="lblwechat">   </p>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label>  WhatsApp No.    </label><span>:</span>
+                                            <p id="lblwhatsapp"></p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  Other Contact     </label><span>:</span>
+                                            <p id="lblothercontacttype"> </p>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <label>  URL Link  </label><span>:</span>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <div class="url_tx url_tx2" id="lblurllnk">
+                                                        @*<a href="#"> </a>*@
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-12">
+                                            <div class="d_blk cc_cursor">
+
+                                                <div class="table-header1 cc_cursor">
+                                                    Store
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label>  Valuation Type </label><span>:</span>
+                                            <p id="lblvaluationName"></p>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label>  Manage Item </label><span>:</span>
+                                            <p id="lblmanageitem">  </p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  Quantity  </label><span>:</span>
+                                            <p id="lblqty">  </p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  Store Location </label><span>:</span>
+                                            <p id="lblstore">  </p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  Rack/Bin </label><span>:</span>
+                                            <p id="lblrack">  </p>
+                                            @*<label>  Bin Number </label><span>:</span>*@
+                                            @*<p id="lblrackno">  </p>*@
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>  Cell Number </label><span>:</span>
+                                            <p id="lblcellno">  </p>
+                                        </div>
+                                        @*<div class="col-md-4">
+            <label>  Bin Number </label><span>:</span>
+            <p id="lblrackno">  </p>
+        </div>*@
+
+
+
+
+                                        <style>
+                                            .model_l_p {
+                                                width: 85% !important;
+                                            }
+                                        </style>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="/Master/ItemMaster" style="font-size:20px;margin-left:20px" class="back_home">Back to home</a>
+        </div>
+    </div>
+</div>
+<style>
+    .img-zoom-result {
+        width: 590px;
+    }
+
+    .carousel-control .glyphicon-chevron-right, .carousel-control .icon-next {
+        right: 50%;
+        margin-right: -10px !important;
+        left: -238px !important;
+    }
+</style>

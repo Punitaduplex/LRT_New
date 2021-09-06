@@ -1,0 +1,299 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/_Layout.cshtml";
+}
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+<script src="~/assets/js/jquery-ui.custom.min.js"></script>
+<link href=http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css
+      rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/assets/css/graph.css">
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="~/assets/js/canvasjs.min.js"></script>
+<link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+<script src="~/assets/js/bootstrap.min.js"></script>
+
+
+<style>
+    #piechart g {
+        margin-top: 500px !important;
+    }
+
+    g {
+        margin-top: 500px !important;
+    }
+
+    .heading_tile {
+        text-align: center;
+        font-size: 15px;
+        top: 25px;
+        z-index: 99;
+        width: 100%;
+        font-weight: 600;
+        position: absolute;
+    }
+
+    #chart_wrap {
+        position: relative;
+        padding-bottom: 100%;
+        height: 0;
+        overflow: hidden;
+        border: 1px solid #ccc;
+        margin-top: 31px;
+        margin-top: 9px;
+    }
+
+    #piechart {
+        position: absolute;
+        top: 0px !important;
+        left: 0;
+        width: 100%;
+        height: 533px;
+        padding-left: 0px;
+        margin-top: 0px !important;
+        margin-bottom: 19px;
+    }
+
+    .chartContainer {
+        margin-top: 25px;
+    }
+
+    .canvasjs-chart-canvas {
+        max-width: 480px !important;
+        width: auto !IMPORTANT;
+        height: auto !important;
+    }
+
+    @@media screen and (max-width:1350px) {
+        #piechart {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 533px;
+            padding-left: 0px;
+            margin-top: -81px;
+            margin-bottom: 19px;
+        }
+    }
+
+    @@media screen and (max-width:1200px) {
+        #piechart {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 533px;
+            padding-left: 0px;
+            margin-top: -81px;
+            margin-bottom: 19px;
+        }
+    }
+</style>
+
+
+<script>
+   
+    $(document).ready(function () {
+        Barchar();
+        paichart();
+    });
+</script>
+<script type="text/javascript">
+    //function barchar() {
+    function Barchar() {
+        var dataPoints = [];
+        $.getJSON("/Vendor/VendorStatuschart",
+            function (json) {
+                // alert(json.length);
+                for (var i = 0; i < json.length; i++) {
+                    dataPoints.push({ label: json[i].Label1, y: json[i].Count });
+                }
+                var chart = new CanvasJS.Chart("chartContainer", {
+                    animationEnabled: true,
+                    title: {
+                        text: ""
+                    },
+                    data: [
+                        {
+                            type: "pie",
+                            dataPoints: dataPoints,
+                        }
+                    ]
+                });
+                chart.render();
+            });
+    }
+    // }
+</script>
+<script>
+    function paichart() {
+
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+
+
+            $.getJSON("/Vendor/VendorApprovalStatuschart",
+                function (json) {
+                    var panding = json.Pending_Count;
+                    var Approved = json.Approved_Count;
+                    // alert(panding);
+                    var data = google.visualization.arrayToDataTable([
+                        ['Language', 'Rating'],
+                        ['Pending', panding],
+                        ['Approved', Approved],
+                    ]);
+
+                    var options = {
+
+                        width: 'auto',
+                        height: 'auto',
+                        title: '', legend: {
+                            position: 'bottom',
+                            labels: {
+                                fontColor: "black",
+                                boxWidth: 20,
+                                padding: 10,
+                                bottom: -140
+                            }
+                        }
+                        //y='273.05',
+                    };
+                    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+                    chart.draw(data, options);
+                });
+
+
+        }
+    }
+</script>
+<style>
+    .widget-box {
+    padding: 0;
+    box-shadow: none!important;
+    margin: 3px 0;
+    /* border-right: 1px solid #ddd; */
+    border: none!important;
+}
+    .widget-header-small {
+    min-height: 31px;
+    padding-left: 10px;
+    border: none!important;
+}
+
+.widget-box {
+    padding: 0;
+    box-shadow: none!important;
+    margin: 3px 0;
+    border: none!important;
+}
+.chartContainer {
+    margin-top: 25px;
+    width: auto !IMPORTANT;
+    height: 250px !important;
+    border-right: 1px solid #ddd;
+    margin-right: -19px;
+}
+
+</style>
+<div style="width:100%" class="m_27">
+    <div style="width:18% ; float:left" class="menu_border">
+        <div class="side_bar_main">
+
+            @{ Html.RenderAction("SideMenu", "Master");}
+
+        </div>
+
+    </div>
+    <div style="width:82% ; float:left">
+        <div class="main-content">
+            <div class="main-content-inner">
+                <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                    <input type="hidden" id="hdhed" />
+                    <ul class="breadcrumb" id="ulhed">
+                        <li>
+                            <i class="ace-icon fa fa-home home-icon"></i>
+                            <a href="#">Vendor</a>
+                        </li>
+
+                        <li>
+                            <span></span>
+                            <a href="/Vendor/Dashboard">Vendor Master</a>
+                        </li>
+                        <li class="active"><span id="lblitemdes">Dashboard</span></li>
+                        @*<li class="active " id="lisubdec" style="display:none"><a href='javascript:void(0);' class="subv"><span id="lblsubdes">Sub Item Type</span></a></li>
+                        <li class="active" id="liitmdec" style="display:none"><a><span id="lblitmdes">Add Item</span></a></li>*@
+                    </ul><!-- /.breadcrumb -->
+
+
+                </div>
+                <div class="page-content">
+                    <h3 class="item_hedin">Dashboard</h3>
+                    <ul id="myDIV">
+
+                        <li> <a href="/Vendor/VendorInvitation"><i class="fa fa-plus"></i><span style="margin: 10px; font-size: 24px; font-weight: inherit;">Vendor Invitation</span></a></li>
+                        <li> <a href="/Vendor/VendorRequestDetail"><i class="fa fa-list"></i><span style="margin: 10px; font-size: 24px; font-weight: inherit;">Registered Vendor</span></a></li>
+                        @*<li><a href="#"><i class="fa fa-edit"></i><span style="margin: 10px; font-size: 24px; font-weight: inherit;">Edit Items</span></a></li>*@
+                        <li><a href="/Vendor/ApprovedVendor"><i class="fa fa-list"></i><span style="margin: 10px; font-size: 24px; font-weight: inherit;">Approved Vendor</span></a></li>
+                        <li><a href="/Vendor/Standby"><i class="fa fa-list"></i><span style="margin: 10px; font-size: 24px; font-weight: inherit;">Standby Vendor</span></a></li>
+                    </ul>
+                    <div class="chart-gf">
+                        <div class="row ">
+                            <div class="col-xs-6">
+                                <!-- PAGE CONTENT BEGINS -->
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+
+                                        <div class="widget-box">
+                                            <div class="widget-header widget-header-flat widget-header-small">
+                                                <h5 class="widget-title">
+                                                    @*<i class="ace-icon fa fa-signal"></i>*@
+                                                    Vendor Status
+                                                </h5>
+
+
+                                            </div>
+                                            <div id="chartContainer" class="chartContainer" style="height: 370px; width: 100%;"></div>
+                                            @*<div id="chart-container" class="colm-chart"></div>*@
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <!-- PAGE CONTENT BEGINS -->
+                                <div class="form-group">
+                                    <div class="widget-box b-n">
+                                        <div class="widget-header widget-header-flat widget-header-small pie_type">
+                                            <h5 class="widget-title">
+                                                @*<i class="ace-icon fa fa-signal"></i>*@
+                                                Approval Status
+                                            </h5>
+
+
+                                        </div>
+                                        <div class="col-sm-12">
+
+                                            <div id="chart_wra">
+                                                <div id="piechart"></div>
+                                            </div>
+                                            @*<p class="heading_tile">  Item Status Over Pending And Approved</p>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>   
+        
+</div>

@@ -1,0 +1,3106 @@
+﻿@{
+    ViewBag.Title = "BranchMaster";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+
+
+
+
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+@*<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<link rel="stylesheet" href="~/assets/css/modalpop.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+
+
+<style>
+    .loader {
+        display: none;
+        top: 251px;
+        position: absolute;
+        margin-left: -193px;
+        margin-bottom: 117px;
+        z-index: 99999;
+    }
+</style>
+@*--------------------------------------------------------Branch Master tab----------------------------------------------------*@
+<script>
+    $(document).ready(function () {
+
+        $("#txtbranchcode").focus();
+        GetBranchdata();
+        GetAdddata();
+        Resetadddata();
+        CountryName();
+        StateName();
+        CityName();
+        CurrencyName();
+        LangaugeName();
+        $("#ddlbranchname").focus();
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "/assets/js/jquery.dataTables.min.js";
+        document.getElementsByTagName("body")[0].appendChild(script);
+    })
+</script>
+
+@*--------------------------------------------------------fill currency----------------------------------------------------*@
+<script type="text/javascript">
+    function CurrencyName() {
+        var ddlcurrency = $("#ddlcurrency");
+        var ddlcurrency1 = $("#ddlcurrency1");
+        var ddlupcurrency = $("#ddlupcurrency");
+        ddlcurrency.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlcurrency1.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlupcurrency.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/CurrencyName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlcurrency.empty().append('<option selected="selected" value="0">Select currency name</option>');
+                ddlcurrency1.empty().append('<option selected="selected" value="0">Select currency name</option>');
+                ddlupcurrency.empty().append('<option selected="selected" value="0">Select currency name</option>');
+                $.each(response, function () {
+                    ddlcurrency.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlcurrency1.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlupcurrency.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+
+<script type="text/javascript">
+    function LangaugeName() {
+        var ddllanguage = $("#ddllanguage");
+        var ddllanguage1 = $("#ddllanguage1");
+        var ddluplanguage = $("#ddluplanguage");
+        ddllanguage.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddllanguage1.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddluplanguage.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/LanguageName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddllanguage.empty().append('<option selected="selected" value="0">Select language name</option>');
+                ddllanguage1.empty().append('<option selected="selected" value="0">Select language name</option>');
+                ddluplanguage.empty().append('<option selected="selected" value="0">Select language name</option>');
+                $.each(response, function () {
+                    ddllanguage.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddllanguage1.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddluplanguage.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+@*--------------------------------------------------------reset data----------------------------------------------------*@
+<script>
+    function Resetdata1() {
+        $("#txtupbranchcode").val("");
+        $("#txtupbranchname").val("");
+        $("#ddluplanguage").val(0);
+        $("#txtupgstno").val("");
+        $("#ddlupsstno").val("0");
+        $("#ddlupisplant").val("0");
+        $("#ddlupcurrency").val("0");
+        $("#ddlupiswarehouse").val("0");
+    }
+</script>
+<script>
+    function Resetdata() {
+        $("#txtbranchcode").val("");
+        $("#txtbranchname").val("");
+        $("#ddllanguage").val(0);
+        $("#txtgstno").val("");
+        $("#ddlsstno").val("0");
+        $("#ddlisplant").val("0");
+        $("#ddlcurrency").val("0");
+        $("#ddliswarehouse").val("0");
+
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Submit");
+        $("#hdbranch").val("");
+        $("#txtbranchcode").focus();
+
+        var objRolePermission = {};
+        objRolePermission.Sub_To_Sub_Menu_Id = sessionStorage.getItem("sid");
+        //alert(objRolePermission.Sub_To_Sub_To_Menu_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/AddRolePermission",
+            data: '{objRolePermission: ' + JSON.stringify(objRolePermission) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //if (response.Is_Add == false) {
+                //    $("#btnsave").css('visibility', 'hidden');
+                //    $("#btnreset").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Edit == false) {
+                //    $("a.remove").css('visibility', 'hidden');
+                //}
+                ////alert(response.Is_Delete);
+                //if (response.Is_Delete == false) {
+                //    $("a.delete").css('visibility', 'hidden');
+                //}
+                //if (response.Is_View == false) {
+                //    $("#EmpInfo_wrapper").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Approve == false) {
+                //    $("a.approve").css('visibility', 'hidden');
+                //}
+                //$('script[src=~/assets/js/jquery.dataTables.min.js]').remove();
+                //$('script[src=/assets/js/jquery.dataTables.min.js]').remove();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnreset").click(function () {
+            Resetdata();
+        });
+        $("#btnresetupdate").click(function () {
+            Resetdata1();
+        });
+    })
+</script>
+@*--------------------------------------------------------get data----------------------------------------------------*@
+<script>
+    var myVar;
+    $(document).ready(function () {
+        Getdata();
+        myVar = setTimeout(Resetdata, 50);
+        //Resetdata();
+        //Resetdata();
+    });
+</script>
+<script>
+    function Getdata() {
+        $("#divtbl").append('<table id="EmpInfo" class="table table-bordered  table-hover"> <thead><tr> <th class="left_c w61_i">S. No</th><th>Branch Code</th><th class="left_c">Branch Name</th><th class="left_c">Currency</th> <th class="left_c">Language</th> <th class="left_c">GST Number</th><th class="left_c">SST Number</th><th class="left_c">Is Plant</th><th class="left_c">Is Warehouse</th><th style="display:none"></th><th style="display:none"></th> <th style="display:none"></th><th class="w155_i">Action</th></tr></thead> <tbody></tbody></table>')
+        $("#EmpInfo > tbody").html("");
+        $.getJSON("/Master/BranchMasterDetails",
+            function (json) {
+                var tr;
+
+                //Append each row to html table
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Branch_Code + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Branch_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Currency_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Language_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].GST_Number + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].SST_Number + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Is_Plant + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Is_Warehouse + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Branch_Id + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Currency_Id + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Language_Id + "</td>");
+                    var status = json[i].Approve_Status;
+                    var status1 = "";
+                    if (status == 1) {
+                        status1 = "<i class='menu-icon fa fa-check bigger-120 green'  data-toggle='tooltip' title='Approved'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-clock-o bigger-120 green' data-toggle='tooltip' title='Pending'></i>";
+                    }
+
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a href='javascript:void(0);' class='approve tooltip-error comn_inline grn' data-rel='tooltip' >" + status1 + "</a></li><li><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip' title='Edit'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i></a></li><li><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='Delete'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+                    $('#EmpInfo').append(tr);
+
+                }
+                $('#EmpInfo').DataTable();
+            });
+
+    };
+</script>
+@*--------------------------------------------------------approve data----------------------------------------------------*@
+<script>
+    $(document).on("click", "a.approve", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(9)').text();
+        var objBranch = {};
+        objBranch.Branch_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Master/BranchMasterApproveStatus",
+            data: '{objBranch: ' + JSON.stringify(objBranch) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //$(".dataTables_length").remove();
+                //$(".dataTables_filter").remove();
+                //$(".dataTables_info").remove();
+                //  $(".dataTables_paginate").remove();
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                Getdata();
+                GetAdddata();
+                Resetdata();
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+@*--------------------------------------------------------save data----------------------------------------------------*@
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnsave").click(function (e) {
+            e.preventDefault();
+            var objBranch = {};
+            objBranch.Branch_Code = $("#txtbranchcode").val().toUpperCase();
+            objBranch.Branch_Name = $("#txtbranchname").val().charAt(0).toUpperCase() + $("#txtbranchname").val().slice(1);
+            objBranch.Currency_Id = $("#ddlcurrency").val();
+            objBranch.Language_Id = $("#ddllanguage").val();
+            objBranch.GST_Number = $("#txtgstno").val();
+            objBranch.SST_Number = $("#ddlsstno").val();
+            objBranch.Is_Plant = $("#ddlisplant").val();
+            objBranch.Is_Warehouse = $("#ddliswarehouse").val();
+            objBranch.Branch_Id = $("#hdbranch").val();
+
+            if (objBranch.Branch_Code == "" || objBranch.Branch_Code == null) {
+                swal("Please enter branch code.");
+
+                $("#txtbranchcode").focus();
+                return;
+            }
+            //alert();
+            if (objBranch.Branch_Name == "" || objBranch.Branch_Name == null) {
+                swal("Please enter branch name.");
+                $("#txtbranchname").focus();
+                return;
+            }
+            if (objBranch.Currency_Id == 0 || objBranch.Currency_Id == null) {
+                swal("Please select currency name.");
+                $("#ddlcurrency").focus();
+                return;
+            }
+            if (objBranch.SST_Number == 0 || objBranch.SST_Number == null) {
+                swal("Please select sst number.");
+                $("#ddlsstno").focus();
+                return;
+            }
+            if (objBranch.Is_Plant == 0 || objBranch.Is_Plant == null) {
+                swal("Please select plant.");
+                $("#ddlisplant").focus();
+                return;
+            }
+            if (objBranch.Is_Warehouse == 0 || objBranch.Is_Warehouse == null) {
+                swal("Please select warehouse.");
+                $("#ddliswarehouse").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddBranchMaster",
+                data: '{objBranch: ' + JSON.stringify(objBranch) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    GetAdddata();
+                    Resetdata();
+                    GetBranchdata();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                    //GetBranchdata();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnupdateBranch").click(function (e) {
+            e.preventDefault();
+            var objBranch = {};
+            objBranch.Branch_Code = $("#txtupbranchcode").val().charAt(0).toUpperCase() + $("#txtupbranchcode").val().slice(1);
+            objBranch.Branch_Name = $("#txtupbranchname").val().charAt(0).toUpperCase() + $("#txtupbranchname").val().slice(1);
+            objBranch.Currency_Id = $("#ddlupcurrency").val();
+            objBranch.Language_Id = $("#ddluplanguage").val();
+            objBranch.GST_Number = $("#txtupgstno").val().charAt(0).toUpperCase() + $("#txtupgstno").val().slice(1);
+            objBranch.SST_Number = $("#ddlupsstno").val();
+            objBranch.Is_Plant = $("#ddlupisplant").val();
+            objBranch.Is_Warehouse = $("#ddlupiswarehouse").val();
+            objBranch.Branch_Id = $("#hdbranch").val();
+            if (objBranch.Branch_Code == "" || objBranch.Branch_Code == null) {
+                swal("Please enter Branch Code.");
+                return;
+                $("#txtupbranchcode").focus();
+
+            }
+            if (objBranch.Branch_Name == "" || objBranch.Branch_Name == null) {
+                swal("Please enter Branch Name");
+                $("#txtupbranchname").focus();
+                return;
+            }
+
+            if (objBranch.Currency_Id == 0 || objBranch.Currency_Id == null) {
+                swal("Please enter Currency Name");
+                $("#ddlupcurrency").focus();
+                return;
+            }
+
+            if (objBranch.Language_Id == 0 || objBranch.Language_Id == null) {
+                swal("Please enter Language  Name");
+                $("#ddluplanguage").focus();
+                return;
+            }
+
+            if (objBranch.GST_Number == "" || objBranch.GST_Number == null) {
+                swal("Please enter GST Number ");
+                $("#txtupgstno").focus();
+                return;
+            }
+
+            if (objBranch.SST_Number == "" || objBranch.SST_Number == null) {
+                swal("Please enter SST Number");
+                $("#ddlupsstno").focus();
+                return;
+            }
+
+            if (objBranch.Is_Plant == 0 || objBranch.Is_Plant == null) {
+                swal("Please enter Plant Name");
+                $("#ddlupisplant").focus();
+                return;
+            }
+
+            if (objBranch.Is_Warehouse == 0 || objBranch.Is_Warehouse == null) {
+                swal("Please enter Warehouse");
+                $("#ddlupiswarehouse").focus();
+                return;
+            }
+
+
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddBranchMaster",
+                data: '{objBranch: ' + JSON.stringify(objBranch) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata1();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+@*--------------------------------------------------------edit data----------------------------------------------------*@
+<script>
+    $(document).on("click", "a.remove", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $code = $row.find('td:eq(1)').text();
+        var $name = $row.find('td:eq(2)').text();
+        var $language = $row.find('td:eq(11)').text();
+        var $gstno = $row.find('td:eq(5)').text();
+        var $sstno = $row.find('td:eq(6)').text();
+        var $plant = $row.find('td:eq(7)').text();
+        var $warehouse = $row.find('td:eq(8)').text()
+        var $currencyid = $row.find('td:eq(10)').text();
+        var $id = $row.find('td:eq(9)').text()
+        $("#dialogdivupdateBranchBasisDetail").modal("show");
+        $("#txtupbranchcode").val($code);
+        $("#txtupbranchname").val($name);
+        $("#ddluplanguage").val($language);
+
+        $("#txtupgstno").val($gstno);
+        $("#ddlupsstno").val($sstno);
+        // alert($plant);
+        $("#ddlupisplant").val($plant);
+
+        $("#ddlupcurrency").val($currencyid);
+
+        $("#ddlupiswarehouse").val($warehouse);
+        $("#hdbranch").val($id);
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Update");
+    });
+</script>
+@*--------------------------------------------------------delete data----------------------------------------------------*@
+<script>
+    $(document).on("click", "a.delete", function (e) {
+
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(9)').text();
+
+        swal({
+            title: 'Are you sure?',
+            text: '*You want to delete this data?*',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function (value) {
+            if (value) {
+                var objBranch = {};
+                objBranch.Branch_Id = $id;
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/DeleteBranchMaster",
+                    data: '{objBranch: ' + JSON.stringify(objBranch) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        Getdata();
+                        GetAdddata();
+                        GetBranchdata();
+                        Resetdata();
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "/assets/js/jquery.dataTables.min.js";
+                        document.getElementsByTagName("body")[0].appendChild(script);
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+                swal("*Your data is safe*");
+            }
+        });
+
+    });
+</script>
+
+@*//----------------------------------------------------------Branch Address Tab------------------------------------------------------------------*@
+
+@*//----------------------------------------------------------fill ddl------------------------------------------------------------------*@
+<script type="text/javascript">
+    function CountryName() {
+        var ddlcountry = $("#ddlcountry");
+        var ddlnewcountry = $("#ddlnewcountry");
+        var ddlnewsyatecountry = $("#ddlnewsyatecountry");
+        ddlcountry.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlnewcountry.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlnewsyatecountry.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/CountryName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlcountry.empty().append('<option selected="selected" value="0">Select country name</option>');
+                ddlnewcountry.empty().append('<option selected="selected" value="0">Select country name</option>');
+                ddlnewsyatecountry.empty().append('<option selected="selected" value="0">Select country name</option>');
+                $.each(response, function () {
+                    ddlcountry.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlnewcountry.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlnewsyatecountry.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+<script type="text/javascript">
+    function StateName() {
+        //  alert();
+        var ddlstate = $("#ddlstate");
+        var ddlnewstate = $("#ddlnewstate");
+        ddlstate.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlnewstate.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/StateName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlstate.empty().append('<option selected="selected" value="0">Select state name</option>');
+                ddlnewstate.empty().append('<option selected="selected" value="0">Select state name</option>');
+                $.each(response, function () {
+                    ddlstate.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlnewstate.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+<script>
+    $(function () {
+        $('#ddlcountry').on("change", function (e) {
+            e.preventDefault();
+            var ddlstate = $("#ddlstate");
+            $("#ddlstate option:selected").remove();
+            // var Sid = $("#ddlcountry option:selected").val();
+            var objState = {};
+
+            objState.Country_Id = $("#ddlcountry").val();
+
+            ddlstate.empty();
+            //alert(objState.Country_Id);
+            $.ajax({
+                type: "POST",
+                url: "/Master/StateNameAccCountryId",
+                data: '{objState: ' + JSON.stringify(objState) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    ddlstate.empty().append('<option selected="selected" value="0">Select state name</option>');
+                    $.each(response, function () {
+                        ddlstate.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script>
+    $(function () {
+        $('#ddlnewsyatecountry').on("change", function (e) {
+            e.preventDefault();
+            var ddlnewstate = $("#ddlnewstate");
+            $("#ddlnewstate option:selected").remove();
+            // var Sid = $("#ddlcountry option:selected").val();
+            var objState = {};
+
+            objState.Country_Id = $("#ddlnewsyatecountry").val();
+
+            ddlnewstate.empty();
+            //alert(objState.Country_Id);
+            $.ajax({
+                type: "POST",
+                url: "/Master/StateNameAccCountryId",
+                data: '{objState: ' + JSON.stringify(objState) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    ddlnewstate.empty().append('<option selected="selected" value="0">Select state name</option>');
+                    $.each(response, function () {
+                        ddlnewstate.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script type="text/javascript">
+    function CityName() {
+        //  alert();
+        var ddlcity = $("#ddlcity");
+        ddlcity.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/CityName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlcity.empty().append('<option selected="selected" value="0">Select city name</option>');
+                $.each(response, function () {
+                    ddlcity.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+
+<script>
+    $(function () {
+        $('#ddlstate').on("change", function () {
+            var ddlcity = $("#ddlcity");
+            $("#ddlcity option:selected").remove();
+            // var Sid = $("#ddlcountry option:selected").val();
+            var objCity = {};
+            objCity.State_Id = $("#ddlstate").val();
+            //ddlcity.empty();
+            //alert(objCity.Country_Id);
+            $.ajax({
+                type: "POST",
+                url: "/Master/CityNameAccStateId",
+                data: '{objCity: ' + JSON.stringify(objCity) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    ddlcity.empty().append('<option selected="selected" value="0">Select city name</option>');
+                    $.each(response, function () {
+                        ddlcity.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script>
+    function GetBranchdata() {
+        var ddlbranchname = $("#ddlbranchname");
+        ddlbranchname.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/BranchName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlbranchname.empty().append('<option selected="selected" value="0">Select branch name</option>');
+                $.each(response, function () {
+                    ddlbranchname.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+
+@*//----------------------------------------------------------reset data------------------------------------------------------------------*@
+
+<script>
+    function Resetadddata() {
+        $('#ddlbranchname').val(0);
+        $('#txtcontactperson').val("");
+        $('#txthouseno').val("");
+        $('#txtstreet1').val("");
+
+        $('#txtstreet2').val("");
+        $('#txtlandmark').val("");
+        $('#ddlcountry').val(0);
+        $('#ddlstate').val(0);
+        $('#ddlcity').val(0);
+
+        $('#txtpinno').val("");
+        $('#txtmobileno').val("");
+        $('#txtaltmobile').val("");
+        $('#txtteliphoneno').val("");
+        $('#txtphoneno').val("");
+        $('#txtaltphoneno').val("");
+        $('#txtwebsite').val("");;
+        $("#btnaddsave").text("");
+        $("#btnaddsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Submit");
+        $("#hdbranchadd").val("");
+        $("#ddlbranchname").focus();
+
+
+        var objRolePermission = {};
+        objRolePermission.Sub_To_Sub_Menu_Id = sessionStorage.getItem("sid");
+        //alert(objRolePermission.Sub_To_Sub_To_Menu_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/AddRolePermission",
+            data: '{objRolePermission: ' + JSON.stringify(objRolePermission) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //if (response.Is_Add == false) {
+                //    $("#btnaddsave").css('visibility', 'hidden');
+                //    $("#btnaddreset").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Edit == false) {
+                //    $("a.editadd").css('visibility', 'hidden');
+                //}
+                ////alert(response.Is_Delete);
+                //if (response.Is_Delete == false) {
+                //    $("a.deleteadd").css('visibility', 'hidden');
+                //}
+                //if (response.Is_View == false) {
+                //    $("#EmpInfo1_wrapper").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Approve == false) {
+                //    $("a.approveadd").css('visibility', 'hidden');
+                //}
+                //$('script[src=~/assets/js/jquery.dataTables.min.js]').remove();
+                //$('script[src=/assets/js/jquery.dataTables.min.js]').remove();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+
+@*//----------------------------------------------------------save data------------------------------------------------------------------*@
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnaddsave").click(function (e) {
+            e.preventDefault();
+            var objBranchAddress = {};
+            objBranchAddress.Branch_Id = $("#ddlbranchname").val();
+            objBranchAddress.Contact_Person = $("#txtcontactperson").val().charAt(0).toUpperCase() + $("#txtcontactperson").val().slice(1);
+            objBranchAddress.House_No = $("#txthouseno").val();
+            objBranchAddress.Street_1 = $("#txtstreet1").val();
+            objBranchAddress.Street_2 = $("#txtstreet2").val();
+            objBranchAddress.Landmark = $("#txtlandmark").val();
+            objBranchAddress.Country_Id = $("#ddlcountry").val();
+            objBranchAddress.State_Id = $("#ddlstate").val();
+            objBranchAddress.City_Id = $("#ddlcity").val();
+            objBranchAddress.Pin_code = $("#txtpinno").val();
+            objBranchAddress.Mobile_Number = $("#txtmobileno").val();
+            objBranchAddress.Alt_Mobile_Number = $("#txtaltmobile").val();
+            objBranchAddress.Telephone_Extension = $("#txtteliphoneno").val();
+            objBranchAddress.Landline_Number = $("#txtphoneno").val();
+            objBranchAddress.Alt_Landline_Number = $("#txtaltphoneno").val();
+            objBranchAddress.Website = $("#txtwebsite").val();
+            //objBranchAddress.Is_Warehouse = $("#ddliswarehouse").val();
+            objBranchAddress.Branch_Add_Id = $("#hdbranchadd").val();
+
+            if (objBranchAddress.Branch_Id == 0 || objBranchAddress.Branch_Id == null) {
+                swal("Please select branch name.");
+                $("#txtcontactperson").focus();
+                return;
+            }
+            if (objBranchAddress.Contact_Person == "" || objBranchAddress.Contact_Person == null) {
+                swal("Please enter contact person name.");
+
+                $("#txtbranchcode").focus();
+                return;
+            }
+            //alert();
+            if (objBranchAddress.Country_Id == 0 || objBranchAddress.Country_Id == null) {
+                swal("Please select country name.");
+                $("#ddlcountry").focus();
+                return;
+            }
+
+            if (objBranchAddress.State_Id == 0 || objBranchAddress.State_Id == null) {
+                swal("Please select state name.");
+                $("#ddlstate").focus();
+                return;
+            }
+            if (objBranchAddress.City_Id == 0 || objBranchAddress.City_Id == null) {
+                swal("Please select city name.");
+                $("#ddlcity").focus();
+                return;
+            }
+            //if (objBranch.Is_Warehouse == 0 || objBranch.Is_Warehouse == null) {
+            //    swal("Please select warehouse.");
+            //    $("#ddliswarehouse").focus();
+            //    return;
+            //}
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddBranchAddressMaster",
+                data: '{objBranchAddress: ' + JSON.stringify(objBranchAddress) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    GetAdddata();
+                    Resetadddata();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+@*//----------------------------------------------------------get data------------------------------------------------------------------*@
+<script>
+    function GetAdddata() {
+        $("#divtbladd").append(' <table id="EmpInfo1" class="table1 table-bordered  table-hover"><thead><tr><th class="left_c w61_i">S. No</th><th class="left_c">Branch </th><th class="left_c">Contact Person</th><th class="left_c">House No/Building No/Name</th> <th class="left_c">Country </th> <th class="left_c">State</th><th class="left_c">City</th><th class="left_c">Pin code</th><th class="left_c">Mobile Number</th><th style="display:none"></th class="w155_i"><th>Action</th></tr></thead><tbody></tbody></table>')
+        $("#EmpInfo1 > tbody").html("");
+        $.getJSON("/Master/BranchAddressDetails",
+            function (json) {
+                var tr;
+
+                //Append each row to html table
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Branch_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Contact_Person + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].House_No + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Country_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].State_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].City_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Pin_code + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Mobile_Number + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Branch_Add_Id + "</td>");
+                    var status = json[i].Approve_Status;
+                    var status1 = "";
+                    if (status == 1) {
+                        status1 = "<i class='menu-icon fa fa-check bigger-120 green'  data-toggle='tooltip' title='Approved'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-clock-o bigger-120 green' data-toggle='tooltip' title='Pending'></i>";
+                    }
+
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a href='javascript:void(0);' class='viewadd tooltip-error comn_inline red' data-rel='tooltip' title='View'><i class='menu-icon fa fa-eye red'></i></a></li><li><a href='javascript:void(0);' class='approveadd tooltip-error comn_inline grn' data-rel='tooltip'>" + status1 + "</a></li><li><a href='javascript:void(0);'  id='myAnc' class='editadd tooltip-error comn_inline blu' data-rel='tooltip' title='Edit'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i></a></li><li><a  href='javascript:void(0);' class='deleteadd tooltip-error comn_inline red' data-rel='tooltip' title='Delete'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+                    $('#EmpInfo1').append(tr);
+
+                }
+                $('#EmpInfo1').DataTable();
+            });
+
+    };
+</script>
+
+@*//----------------------------------------------------------edit data------------------------------------------------------------------*@
+<script>
+    $(document).on("click", "a.viewadd", function () {
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(9)').text();
+        var objBranchAddress = {};
+        objBranchAddress.Branch_Add_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Master/BranchMasterAddressView",
+            data: '{objBranchAddress: ' + JSON.stringify(objBranchAddress) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $("#lblbranchname").text(response.Branch_Name);
+                $("#lblcontactperson").text(response.Contact_Person);
+                $("#lblhouseno").text(response.House_No);
+                $("#lblstreet1").text(response.Street_1);
+                $("#lblstreet2").text(response.Street_2);
+                $("#lbllandmark").text(response.Landmark);
+                $("#lblcountry").text(response.Country_Name);
+                $("#lblstate").text(response.State_Name);
+                $("#lblcity").text(response.City_Name);
+                $("#lblpincode").text(response.Pin_code);
+                $("#lblmobileno").text(response.Mobile_Number);
+                $("#lblalternatemobileno").text(response.Alt_Mobile_Number);
+                $("#lbltelphoneno").text(response.Telephone_Extension);
+                $("#lblphoneno").text(response.Landline_Number);
+                $("#lblalternatephoneno").text(response.Alt_Landline_Number);
+                $("#lblwebsite").text(response.Website);
+                $('#dialogdiv').modal('show');
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+<script>
+    $(document).on("click", "a.editadd", function () {
+        var $row = $(this).closest("tr");    // Find the row
+
+        var $id = $row.find('td:eq(9)').text();
+        //  alert($id);
+        $("#hdbranchadd").val($id);
+        $("#btnaddsave").text("");
+        $("#btnaddsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Update");
+        var objBranchAddress = {};
+        objBranchAddress.Branch_Add_Id = $id;
+
+        $.ajax({
+            url: '/Master/BranchAddressDetailsForEdit',
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            processData: true, // Not to process data
+            data: '{objBranchAddress: ' + JSON.stringify(objBranchAddress) + '}',
+            success: function (result) {
+                $('#ddlbranchname').val(result.Branch_Id);
+                $('#txtcontactperson').val(result.Contact_Person);
+                $('#txthouseno').val(result.House_No);
+                $('#txtstreet1').val(result.Street_1);
+
+                $('#txtstreet2').val(result.Street_2);
+                $('#txtlandmark').val(result.Landmark);
+                $('#ddlcountry').val(result.Country_Id);
+                $('#ddlstate').val(result.State_Id);
+                $('#ddlcity').val(result.City_Id);
+
+                $('#txtpinno').val(result.Pin_code);
+                $('#txtmobileno').val(result.Mobile_Number);
+                $('#txtaltmobile').val(result.Alt_Mobile_Number);
+                $('#txtteliphoneno').val(result.Telephone_Extension);
+                $('#txtphoneno').val(result.Landline_Number);
+                $('#txtaltphoneno').val(result.Alt_Landline_Number);
+                $('#txtwebsite').val(result.Website);
+                $("#btnaddsave").css('visibility', 'visible');
+                $("#btnaddreset").css('visibility', 'visible');
+            },
+            error: function (err) {
+                alert(err.statusText);
+            }
+        });
+
+    });
+</script>
+@*//----------------------------------------------------------approve data------------------------------------------------------------------*@
+<script>
+    $(document).on("click", "a.approveadd", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(9)').text();
+        var objBranchAddress = {};
+        objBranchAddress.Branch_Add_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Master/BranchAddressApproveStatus",
+            data: '{objBranchAddress: ' + JSON.stringify(objBranchAddress) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //$(".dataTables_length").remove();
+                //$(".dataTables_filter").remove();
+                //$(".dataTables_info").remove();
+                //$(".dataTables_paginate").remove();
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                Getdata();
+                GetAdddata();
+                Resetadddata();
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+
+@*//----------------------------------------------------------delete data------------------------------------------------------------------*@
+<script>
+    $(document).on("click", "a.deleteadd", function (e) {
+
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(9)').text();
+
+        swal({
+            title: 'Are you sure?',
+            text: '*You want to delete this data?*',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function (value) {
+            if (value) {
+                var objBranchAddress = {};
+                objBranchAddress.Branch_Add_Id = $id;
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/DeleteBranchAddressMaster",
+                    data: '{objBranchAddress: ' + JSON.stringify(objBranchAddress) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        Getdata();
+                        GetAdddata();
+                        Resetadddata();
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "/assets/js/jquery.dataTables.min.js";
+                        document.getElementsByTagName("body")[0].appendChild(script);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+                swal("*Your data is safe*");
+            }
+        });
+
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnaddreset").click(function () {
+            Resetadddata();
+        });
+    })
+</script>
+@*----------------------------------------------------------- add master data--------------------------------------------------------*@
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveCountry").click(function () {
+
+            var objcountry = {};
+            objcountry.Country_Code = $("#txtcountrycode").val().toUpperCase();
+            objcountry.Country_Name = $("#txtcountryname").val().charAt(0).toUpperCase() + $("#txtcountryname").val().slice(1);
+            objcountry.Country_Id = $("#hdcountry").val();
+            if (objcountry.Country_Code == "" || objcountry.Country_Code == null) {
+                swal("Please enter country code.");
+
+                $("#txtcountrycode").focus();
+                return;
+            }
+            if (objcountry.Country_Name == "" || objcountry.Country_Name == null) {
+                swal("Please enter country name.");
+                $("#txtcountryname").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddCountry",
+                data: '{objcountry: ' + JSON.stringify(objcountry) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+
+                    swal(response);
+                    CountryName();
+                    ResetCountry();
+
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsavestate").click(function (e) {
+            e.preventDefault();
+            var objstate = {};
+            objstate.Country_Id = $("#ddlnewcountry").val();
+            objstate.State_Code = $("#txtstatecode").val().toUpperCase();
+            objstate.State_Name = $("#txtstatename").val().charAt(0).toUpperCase() + $("#txtstatename").val().slice(1);
+            objstate.GST_Code = $("#txtgstcode").val();
+            objstate.State_Id = $("#hdstatemast").val();
+            //alert(objstate.Country_Id);
+            if (objstate.Country_Id == "0" || objstate.Country_Id == null) {
+                swal("Please select country.");
+
+                $("#ddlnewcountry").focus();
+                return;
+            }
+            //if (objstate.State_Code == "" || objstate.State_Code == null) {
+            //    swal("Please enter state code.");
+
+            //    $("#txtstatecode").focus();
+            //    return;
+            //}
+            if (objstate.State_Name == "" || objstate.State_Name == null) {
+                swal("Please enter state name.");
+                $("#txtstatename").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddState",
+                data: '{objstate: ' + JSON.stringify(objstate) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    swal(response);
+                    StateName();
+                    ResetState();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsavecity").click(function (e) {
+            e.preventDefault();
+            var objcity = {};
+            objcity.Country_Id = $("#ddlnewsyatecountry").val();
+            objcity.State_Id = $("#ddlnewstate").val();
+            objcity.City_Name = $("#txtcityname").val().charAt(0).toUpperCase() + $("#txtcityname").val().slice(1);
+            objcity.City_Id = $("#hdcitymast").val();
+            if (objcity.Country_Id == "0" || objcity.Country_Id == null) {
+                swal("Please select country.");
+
+                $("#ddlnewsyatecountry").focus();
+                return;
+            }
+            if (objcity.State_Id == "0" || objcity.State_Id == null) {
+                swal("Please select state.");
+
+                $("#ddlnewstate").focus();
+                return;
+            }
+            if (objcity.City_Name == "" || objcity.City_Name == null) {
+                swal("Please enter city name.");
+                $("#txtcityname").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddCity",
+                data: '{objcity: ' + JSON.stringify(objcity) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    swal(response);
+                    CityName();
+                    ResetCity();
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnsavecurrency").click(function (e) {
+            e.preventDefault();
+            var objcurrency = {};
+            objcurrency.Currency_Code = $("#txtcurrencycode").val().toUpperCase();
+            objcurrency.Currency_Name = $("#txtcurrencyname").val().charAt(0).toUpperCase() + $("#txtcurrencyname").val().slice(1);
+            objcurrency.International_Code = $("#txtinternationalcode").val();
+            objcurrency.International_Name = $("#txtinternationalname").val().charAt(0).toUpperCase() + $("#txtinternationalname").val().slice(1);
+            objcurrency.Decimal_Unit = $("#txtdecimalunit").val();
+            objcurrency.Currency_Symbol = $("#txtcurrencysymbol").val();
+            objcurrency.Currency_Id = $("#hdcurrency").val();
+            //  alert();
+            if (objcurrency.Currency_Code == "" || objcurrency.Currency_Code == null) {
+                swal("Please enter currency code.");
+                return;
+                $("#txtcurrencycode").focus();
+
+            }
+            if (objcurrency.Currency_Name == "" || objcurrency.Currency_Name == null) {
+                swal("Please enter currency name.");
+                $("#txtcurrencyname").focus();
+                return;
+            }
+            if (objcurrency.International_Code == "" || objcurrency.International_Code == null) {
+                swal("Please enter international code.");
+
+                $("#txtcurrencycode").focus();
+                return;
+            }
+            if (objcurrency.International_Name == "" || objcurrency.International_Name == null) {
+                swal("Please enter international name.");
+                $("#txtcurrencyname").focus();
+                return;
+            }
+            //if (objcurrency.Decimal_Unit == "" || objcurrency.Decimal_Unit == null) {
+            //    swal("Please enter decimal unit.");
+            //    $("#txtdecimalunit").focus();
+            //    return;
+            //}
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddCurrency",
+                data: '{objcurrency: ' + JSON.stringify(objcurrency) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    swal(response);
+                    CurrencyName();
+                    ResetCurrency();
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsavelanguage").click(function (e) {
+            e.preventDefault();
+            var objLanguage = {};
+            objLanguage.Language_Name = $("#txtLanguageName").val().toUpperCase();
+            //objDepartment.Department_Description = $("#txtdepartmentdescription").val();
+            // alert();
+            objLanguage.Language_Id = $("#hdlanguage").val();
+            if (objLanguage.Language_Name == "" || objLanguage.Language_Name == null) {
+                swal("Please enter language name");
+                $("#txtLanguageName").focus();
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddLanguage",
+                data: '{objLanguage: ' + JSON.stringify(objLanguage) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    swal(response);
+                    LangaugeName();
+                    ResetLanguage();
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnsaveBranch1").click(function (e) {
+            e.preventDefault();
+            var objBranch = {};
+            objBranch.Branch_Code = $("#txtbranchcode1").val().toUpperCase();
+            objBranch.Branch_Name = $("#txtbranchname1").val().charAt(0).toUpperCase() + $("#txtbranchname1").val().slice(1);
+            objBranch.Currency_Id = $("#ddlcurrency1").val();
+            objBranch.Language_Id = $("#ddllanguage1").val();
+            objBranch.GST_Number = $("#txtgstno1").val();
+            objBranch.SST_Number = $("#ddlsstno1").val();
+            objBranch.Is_Plant = $("#ddlisplant1").val();
+            objBranch.Is_Warehouse = $("#ddliswarehouse1").val();
+            objBranch.Branch_Id = 0;
+
+            if (objBranch.Branch_Code == "" || objBranch.Branch_Code == null) {
+                swal("Please enter branch code.");
+
+                $("#txtbranchcode1").focus();
+                return;
+            }
+            //alert();
+            if (objBranch.Branch_Name == "" || objBranch.Branch_Name == null) {
+                swal("Please enter branch name.");
+                $("#txtbranchname1").focus();
+                return;
+            }
+            if (objBranch.Currency_Id == 0 || objBranch.Currency_Id == null) {
+                swal("Please select currency name.");
+                $("#ddlcurrency1").focus();
+                return;
+            }
+            if (objBranch.Language_Id == 0 || objBranch.Language_Id == null) {
+                swal("ddllanguage1 select language name.");
+                $("#ddlcurrency1").focus();
+                return;
+            }
+            if (objBranch.SST_Number == 0 || objBranch.SST_Number == null) {
+                swal("Please select sst number.");
+                $("#ddlsstno1").focus();
+                return;
+            }
+            if (objBranch.Is_Plant == 0 || objBranch.Is_Plant == null) {
+                swal("Please select plant.");
+                $("#ddlisplant1").focus();
+                return;
+            }
+            if (objBranch.Is_Warehouse == 0 || objBranch.Is_Warehouse == null) {
+                swal("Please select warehouse.");
+                $("#ddliswarehouse1").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddBranchMaster",
+                data: '{objBranch: ' + JSON.stringify(objBranch) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    swal(response);
+                    GetBranchdata();
+                    ResetBranch();
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+<script>
+    function ResetBranch() {
+        $("#ddlcurrency1").val(0);
+        $("#ddllanguage1").val(0);
+
+        $("#txtbranchcode1").val("");
+        $("#txtbranchname1").val("");
+        $("#txtgstno1").val("");
+        $("#ddlsstno1").val(0);
+        $("#ddlisplant1").val(0);
+        $("#ddliswarehouse1").val(0);
+    }
+    function ResetCountry() {
+        //$("#ddlnewsyatecountry").val(0);
+        $("#txtcountrycode").val("");
+        $("#txtcountryname").val("");
+    }
+    function ResetState() {
+        $("#ddlnewcountry").val(0);
+        $("#txtstatecode").val("");
+        $("#txtstatename").val("");
+    }
+    function ResetCity() {
+        $("#ddlnewsyatecountry").val(0);
+        $("#ddlnewstate").val(0);
+        $("#txtcityname").val("");
+    }
+    function ResetCurrency() {
+        $("#txtcurrencycode").val("");
+        $("#txtcurrencyname").val("");
+        $("#txtinternationalcode").val("");
+        $("#txtinternationalname").val("");
+        $("#txtdecimalunit").val("");
+        $("#txtcurrencysymbol").val("");
+    }
+    function ResetLanguage() {
+
+        $("#txtLanguageName").val("");
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $("#btnresetcity").click(function (e) {
+            ResetCity();
+        });
+        $("#btnresetBranch1").click(function (e) {
+            ResetBranch();
+        });
+        $("#btnresetstate").click(function (e) {
+            ResetState();
+        });
+        $("#btnresetCountry").click(function (e) {
+            ResetCountry();
+        });
+        $("#btnresetcurrency").click(function (e) {
+            ResetCurrency();
+        });
+        $("#btnresetlanguage").click(function (e) {
+            ResetLanguage();
+        });
+    });
+</script>
+<script>
+    $(document).on("click", "a.clddlcountry", function () {
+        $('#dialogdivCountry').modal('show');
+    });
+    $(document).on("click", "a.clddlstate", function () {
+        $('#dialogdivState').modal('show');
+    });
+    $(document).on("click", "a.clddlcity", function () {
+        $('#dialogdivCity').modal('show');
+    });
+    $(document).on("click", "a.clddlcurrency", function () {
+        $('#dialogdivcurrency').modal('show');
+    });
+    $(document).on("click", "a.clddllanguage", function () {
+        $('#dialogdivlanguage').modal('show');
+    });
+    $(document).on("click", "a.clddlbranch", function () {
+        $('#dialogdivBranch').modal('show');
+    });
+</script>
+@*------------------------------------------------------------------------------upload excel file-----------------------------------------*@
+<script>
+    $(function () {
+        $("#btnexcel").click(function () {
+            $('#dialogdivexcel').modal('show');
+        });
+    });
+</script>
+<script type="text/javascript">
+    $("body").on("click", "#uploadExcel", function () {
+        Resettable();
+        //Reference the FileUpload element.
+        var fileUpload = $("#fileUpload")[0];
+
+        //Validate whether File is valid Excel file.
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx)$/;
+        if (regex.test(fileUpload.value.toLowerCase())) {
+            if (typeof (FileReader) != "undefined") {
+                var reader = new FileReader();
+
+                //For Browsers other than IE.
+                if (reader.readAsBinaryString) {
+                    reader.onload = function (e) {
+                        ProcessExcel(e.target.result);
+                    };
+                    reader.readAsBinaryString(fileUpload.files[0]);
+                } else {
+                    //For IE Browser.
+                    reader.onload = function (e) {
+                        var data = "";
+                        var bytes = new Uint8Array(e.target.result);
+                        for (var i = 0; i < bytes.byteLength; i++) {
+                            data += String.fromCharCode(bytes[i]);
+                        }
+                        ProcessExcel(data);
+                    };
+                    reader.readAsArrayBuffer(fileUpload.files[0]);
+                }
+            } else {
+                alert("This browser does not support HTML5.");
+            }
+        } else {
+            alert("Please upload a valid Excel file.");
+        }
+    });
+    function ProcessExcel(data) {
+        $('#ExcelDataLoader').show();
+        var workbook = XLSX.read(data, {
+            type: 'binary'
+        });
+        var firstSheet = workbook.SheetNames[0];
+        var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[firstSheet]);
+        // $("#dvExcel").empty();
+        $("#dvExcel").append('<table id="EmpInfobranch" class="table table-bordered table-hover"><thead><tr><th class="left_c w61_i">S. No</th> <th class="left_c">Branch Code</th> <th class="left_c">Branch Name</th><th class="left_c">Currency</th> <th class="left_c">Language</th><th class="left_c">GST Number</th><th class="left_c">SST Number</th><th class="left_c">Is Plant </th><th class="left_c">Is Warehouse</th><th class="w155_i">Action</th> </tr></thead><tbody></tbody> </table>')
+        $("#EmpInfobranch > tbody").html("");
+        var count = excelRows.length;
+        for (var i = 0; i < excelRows.length; i++) {
+            var Branch_Code = "";
+            var Branch_Name = "";
+            var C_Currency = "";
+            var L_Language = "";
+            var GST_Number = "";
+            var SST_Number = "";
+            var Is_Plant = "";
+            var Is_Warehouse = ""
+            // alert(excelRows[i].SSTNumber)
+            if (excelRows[i].BranchCode == undefined) {
+                Branch_Code = "";
+            }
+            else {
+                Branch_Code = excelRows[i].BranchCode;
+            }
+
+            if (excelRows[i].BranchName == undefined) {
+                Branch_Name = "";
+            }
+            else {
+                Branch_Name = excelRows[i].BranchName;
+            }
+            if (excelRows[i].Currency == undefined) {
+
+                C_Currency = "";
+            }
+            else {
+                C_Currency = excelRows[i].Currency;
+            }
+
+            if (excelRows[i].Language == undefined) {
+
+                L_Language = "";
+            }
+            else {
+                L_Language = excelRows[i].Language;
+            }
+            if (excelRows[i].GSTNumber == undefined) {
+                GST_Number = "";
+            }
+            else {
+                GST_Number = excelRows[i].GSTNumber;
+            }
+            if (excelRows[i].SSTNumber == undefined) {
+                SST_Number = "";
+            }
+            else {
+                SST_Number = excelRows[i].SSTNumber;
+            }
+            if (excelRows[i].IsPlant == undefined) {
+                Is_Plant = "";
+            }
+            else {
+                Is_Plant = excelRows[i].IsPlant;
+            }
+            if (excelRows[i].IsWarehouse == undefined) {
+                Is_Warehouse = "";
+            }
+            else {
+                Is_Warehouse = excelRows[i].IsWarehouse;
+            }
+
+            tr = $('<tr/>');
+            tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+            tr.append("<td class='left_c'>" + Branch_Code + "</td>");
+            tr.append("<td class='left_c'>" + Branch_Name + "</td>");
+            tr.append("<td class='left_c'>" + C_Currency + "</td>");
+            tr.append("<td class='left_c'>" + L_Language + "</td>");
+            tr.append("<td class='left_c'>" + GST_Number + "</td>");
+            tr.append("<td class='left_c'>" + SST_Number + "</td>");
+            tr.append("<td class='left_c'>" + Is_Plant + "</td>");
+            tr.append("<td class='left_c'>" + Is_Warehouse + "</td>");
+            tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a  href='javascript:void(0);' class='deletebranch tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+            $('#EmpInfobranch').append(tr);
+        }
+        $('#EmpInfobranch').DataTable();
+        $('#EmpInfobranch').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count + " entries";
+            }
+        });
+        sessionStorage.setItem("item-count5", count);
+        $('#ExcelDataLoader').hide();
+    };
+</script>
+<script>
+    $(document).on("click", "a.deletebranch", function () {
+
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(0)').text();
+        // $row.hide();
+        //$row.remove();
+        $row.remove().draw(false);
+        var oTable = $('#EmpInfobranch').dataTable();
+
+        var rowcollection = oTable.$("tr", { "page": "all" });
+
+        var count = sessionStorage.getItem("item-count5");
+
+        sessionStorage.setItem("item-count5", (count - 1));
+
+        var count1 = count - 1;
+
+        var table = $('#EmpInfobranch').DataTable({
+            destroy: true,
+            rowReorder: true
+        });
+        table.on('row-reorder', function (e, diff, edit) {
+            var res = '';
+            for (var i = 0, ien = diff.length ; i < ien ; i++) {
+                res += diff[i].newData + '=';
+            }
+            res = res.substring(0, res.length - 1);
+            getVal(res);
+        });
+        $('#EmpInfobranch').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count1 + " entries";
+            }
+        });
+        if (count <= 1) {
+            Resettable();
+        }
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveuploaddb").click(function () {
+            $('#ExcelDataLoader').show();
+            var objBranch = {};
+            objBranch.Branch_Code = "";
+            objBranch.Branch_Name = "";
+            objBranch.Currency_Name = "";
+            objBranch.Language_Name = "";
+            objBranch.GST_Number = "";
+            objBranch.SST_Number = "";
+            objBranch.Is_Plant = "";
+            objBranch.Is_Warehouse = "";
+            var oTable = $('#EmpInfobranch').dataTable();
+            var rowcollection = oTable.$("tr", { "page": "all" });
+
+            rowcollection.each(function (index, elem) {
+                var row = $(elem).closest("tr");
+
+                if (objBranch.Branch_Name == "") {
+                    objBranch.Branch_Code = row.find('td:eq(1)').text().toUpperCase();
+                    objBranch.Branch_Name = row.find('td:eq(2)').text().charAt(0).toUpperCase() + row.find('td:eq(2)').text().slice(1);
+                    objBranch.Currency_Name = row.find('td:eq(3)').text().charAt(0).toUpperCase() + row.find('td:eq(3)').text().slice(1);
+                    objBranch.Language_Name = row.find('td:eq(4)').text().charAt(0).toUpperCase() + row.find('td:eq(4)').text().slice(1);
+                    objBranch.GST_Number = row.find('td:eq(5)').text();
+                    objBranch.SST_Number = row.find('td:eq(6)').text();
+                    objBranch.Is_Plant = row.find('td:eq(7)').text().charAt(0).toUpperCase() + row.find('td:eq(7)').text().slice(1);
+                    objBranch.Is_Warehouse = row.find('td:eq(8)').text().charAt(0).toUpperCase() + row.find('td:eq(8)').text().slice(1);
+
+                }
+                else {
+
+                    objBranch.Branch_Code = objBranch.Branch_Code + "," + row.find('td:eq(1)').text().toUpperCase();
+                    objBranch.Branch_Name = objBranch.Branch_Name + "," + row.find('td:eq(2)').text().charAt(0).toUpperCase() + row.find('td:eq(2)').text().slice(1);
+                    objBranch.Currency_Name = objBranch.Currency_Name + "," + row.find('td:eq(3)').text().charAt(0).toUpperCase() + row.find('td:eq(3)').text().slice(1)
+                    objBranch.Language_Name = objBranch.Language_Name + "," + row.find('td:eq(4)').text().charAt(0).toUpperCase() + row.find('td:eq(4)').text().slice(1)
+                    objBranch.GST_Number = objBranch.GST_Number + "," + row.find('td:eq(5)').text();
+                    objBranch.SST_Number = objBranch.SST_Number + "," + row.find('td:eq(6)').text();
+                    objBranch.Is_Plant = objBranch.Is_Plant + "," + row.find('td:eq(7)').text().charAt(0).toUpperCase() + row.find('td:eq(7)').text().slice(1);
+                    objBranch.Is_Warehouse = objBranch.Is_Warehouse + "," + row.find('td:eq(8)').text().charAt(0).toUpperCase() + row.find('td:eq(8)').text().slice(1);
+                }
+            });
+            var rowCount = $('#EmpInfobranch tr').length;
+            if (rowCount <= 1) {
+                swal("please upload excel file for data upload.");
+                return;
+            }
+            if (rowCount > 1 && objBranch.Branch_Name == "") {
+                swal("no data in table.");
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddBulkBranch",
+                data: '{objBranch: ' + JSON.stringify(objBranch) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    CurrencyName();
+                    LangaugeName();
+                    Resettable();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+                    $('#ExcelDataLoader').hide();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+        $("#btnresetbranch").click(function () {
+            Resettable();
+        });
+        $('#fileUpload').change(function (e) {
+
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+    });
+</script>
+<script>
+    function Resettable() {
+        $("#dvExcel").empty();
+        $('#spnfile').text("");
+        $('#spnfile').append('<span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span>')
+    }
+</script>
+<style>
+    .clddl_plus {
+        float: right;
+        left: 5px;
+        position: absolute !important;
+        top: 9px;
+        font-size: 13px;
+    }
+
+    #btnaddreset {
+        width: 97px;
+        padding: 1px 7px !important;
+    }
+</style>
+<style type="text/css">
+    .swal-container {
+        z-index: 2000;
+    }
+</style>
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+<div class="main-content">
+    <div class="main-content-inner top-padding">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs" style=" z-index: -1 !IMPORTANT;">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#">PMS Setting</a>
+                </li>
+
+                <li>
+                    <a href="#">Administration Setting</a>
+                </li>
+                <li class="active">Branch Setting</li>
+            </ul><!-- /.breadcrumb -->
+            @*<div class="nav-search" id="nav-search">
+                <div class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>*@<!-- /.nav-search -->
+        </div>
+        <div class="container">
+            <div id="content">
+                <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+                    <li class="active">
+                        <a href="#tab1"
+                           data-toggle="tab">Branch Tab</a>
+                    </li>
+                    <li><a href="#tab2" data-toggle="tab">Branch Address Tab</a></li>
+
+                </ul>
+                <div id="my-tab-content" class="tab-content">
+                    <div class="tab-pane  active" id="tab1">
+                        <div class="page-content1">
+                            @*--------------------------------------------------------update Branch Detail-------------------------------------------------------*@
+                            <div class="modal fade" id="dialogdivupdateBranchBasisDetail">
+                                <div class="modal-dialog modal-md modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <a href="#" class="close" data-dismiss="modal">×</a>
+                                            <h3 class="item_hedin">Update Branch Basic Detail</h3>
+                                        </div>
+                                        <div class="modal-body">
+
+
+
+
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3">Branch Code <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="txtupbranchcode" style="text-transform:uppercase" placeholder="Branch Code Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for Branch Code" />
+                                                </div>
+                                            </div>
+
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3">Currency <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                <div class="col-md-9">
+
+                                                    <select class="col-xs-10 col-sm-8" id="ddlupcurrency" data-toggle="tooltip" title="Select Currency">
+                                                        <option value="0">-Select Currency-</option>
+
+                                                    </select>
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-3">GST Number <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="txtupgstno" style="text-transform:uppercase" placeholder="GST Number" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for GST  Number" />
+                                                </div>
+                                            </div>
+
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3">is Plant <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                <div class="col-md-9">
+
+                                                    <select class="col-xs-10 col-sm-8" id="ddlupisplant" data-toggle="tooltip" title="Select Plant">
+                                                        <option value="0">-Select Plant-</option>
+                                                        <option value="Yes">Yes</option>
+                                                        <option value="No">No</option>
+
+                                                    </select>
+
+
+                                                </div>
+                                            </div>
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3">Branch Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="txtupbranchname" style="text-transform:uppercase" placeholder="Branch Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for Branch Name" />
+                                                </div>
+                                            </div>
+
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3">Language <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                <div class="col-md-9">
+
+                                                    <select class="col-xs-10 col-sm-8" id="ddluplanguage" data-toggle="tooltip" title="Select Language">
+
+                                                        <option value="0">-Select Language-</option>
+
+                                                    </select>
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-3">SST No <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                <div class="col-md-9">
+
+                                                    <select class="col-xs-10 col-sm-8" id="ddlupsstno" data-toggle="tooltip" title="Select sst no">
+
+                                                        <option value="0">-Select sst no-</option>
+                                                        <option value="SST 1">SST 1</option>
+                                                        <option value="SST 2"> SST 2</option>
+
+                                                    </select>
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-3">is Wharehouse  <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                <div class="col-md-9">
+
+                                                    <select class="col-xs-10 col-sm-8" id="ddlupiswarehouse" data-toggle="tooltip" title="Select is WhareHouse">
+                                                        <option value="0">-Select Warehouse-</option>
+                                                        <option value="Yes">Yes</option>
+                                                        <option value="No">No</option>
+                                                    </select>
+
+
+                                                </div>
+                                            </div>
+
+
+
+
+
+
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <button class="btn btn-info" id="btnupdateBranch" type="button" data-toggle="tooltip" title="Button for update data">
+                                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                                        Update
+                                                    </button>
+                                                    <button class="btn master-page-reset" id="btnresetupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                        Reset
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*-------------------------------------------------------------------------------------------------------------------------------*@
+
+                            <div class="page-header">
+                                <h3 class="item_hedin">
+                                    Branch Basic Detail
+                                </h3>
+                            </div><!-- /.page-header -->
+                            @*------------------------------------------start currency popup    risingworldempire@gmail.com---------------------------------------------------*@
+                            <div class="modal fade" id="dialogdivcurrency">
+                                <div class="modal-dialog modal-md modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <a href="#" class="close" data-dismiss="modal">×</a>
+                                            <h3 class="item_hedin">Add Currency </h3>
+                                        </div>
+                                        <div class="modal-body" style="padding-left:6px !important;">
+                                            <div class="row">
+                                                <div class="col-md-3">Currency Code <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="txtcurrencycode" style="text-transform:uppercase" placeholder="Currency Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency code" />
+                                                </div>
+                                            </div>
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3">Currency Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="txtcurrencyname" style="text-transform:capitalize" placeholder="Currency Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency name" />
+                                                </div>
+                                            </div>
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3" style="padding-right:0px">International Code <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="txtinternationalcode" placeholder="International Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for international code" />
+                                                </div>
+                                            </div>
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3" style="padding-right:0px">International Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="txtinternationalname" style="text-transform:capitalize;" placeholder="International Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for international Name" />
+                                                </div>
+                                            </div>
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3">Decimal Unit<span> : </span></div>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="txtdecimalunit" placeholder="Decimal Unit" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for decimal unit" />
+                                                </div>
+                                            </div>
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3">Currency Symbol<span> : </span></div>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="txtcurrencysymbol" placeholder="Currency Symbol" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency symbol" />
+                                                </div>
+                                            </div>
+
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <button class="btn btn-info" id="btnsavecurrency" type="button" data-toggle="tooltip" title="Button for save data">
+                                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                                        Submit
+                                                    </button>
+                                                    <button class="btn master-page-reset" id="btnresetcurrency" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                        Reset
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="dialogdivlanguage">
+                                <div class="modal-dialog modal-md modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <a href="#" class="close" data-dismiss="modal">×</a>
+                                            <h3 class="item_hedin">Add Language </h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-3">Language Name <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="txtLanguageName" style="text-transform:uppercase" placeholder="Language Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for language name " />
+                                                </div>
+                                            </div>
+
+
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <button class="btn btn-info" id="btnsavelanguage" type="button" data-toggle="tooltip" title="Button for save data">
+                                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                                        Submit
+                                                    </button>
+                                                    <button class="btn master-page-reset" id="btnresetlanguage" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                        Reset
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*-----------------------------------------/end Currency master-----------------------------------------------------------*@
+                            @*----------------------------------------------------popup for upload master data--------------------------------------------------------------*@
+                            <div id="dialogdivexcel" class="modal fade" style="margin-top:0px!important;overflow:auto!important">
+                                <div class="modal-dialog modal-lg modal-dialog-centered " style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
+                                    <div class="modal-content" style="width:100% !important;padding-bottom:22px">
+                                        <div class="modal-header">
+                                            <a href="#" class="close" data-dismiss="modal">×</a>
+                                            <h3 class="item_hedin">Upload Excel File </h3>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            <div class="row">
+
+                                                <div class="col-md-3">Choose excel file  <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                <div class="col-sm-9">
+                                                    <div class="col-xs-8 pr-0">
+
+                                                        <label class="ace-file-input upload_fl1"><input type="file" id="fileUpload" accept=".xls,.xlsx"><span class="ace-file-container upload_fl" id="spnfile" data-title="Choose"><span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                                    </div>
+                                                    <div class="col-xs-4">
+                                                        <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                                        <input type="button" id="uploadExcel" class="btn btn-info upload-bt" value="Upload" onclick="ExportToTable()" />
+                                                        <div id="ExcelDataLoader" class="loader">
+                                                            <img src="~/Images/1.gif" height="70" width="60" />
+                                                        </div>
+
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="space-6"></div>
+                                                <div class="row" style="padding-top:45px">
+                                                    <div class="col-xs-12">
+                                                        <div class="form-horizontal">
+                                                            <div id="dvExcel"></div>
+
+                                                        </div>
+
+                                                    </div><!-- /.span -->
+                                                </div><!-- /.row -->
+                                            </div>
+
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <button class="btn btn-info" id="btnsaveuploaddb" type="button" data-toggle="tooltip" title="Button for save data">
+                                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                                        Submit
+                                                    </button>
+                                                    <button class="btn master-page-reset" id="btnresetbranch" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                        Reset
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*---------------------------------------------------------------------------------------------------------------------------------------*@
+
+
+
+
+
+
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <!-- PAGE CONTENT BEGINS -->
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Branch Code  <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtbranchcode" style="text-transform:uppercase" placeholder="Branch Code" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for branch code" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Branch Name  <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtbranchname" style="text-transform:capitalize" placeholder="Branch Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for branch name" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Currency  <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+
+                                            <select class="col-xs-10 col-sm-9" id="ddlcurrency" data-toggle="tooltip" title="Select currency">
+                                                <option>-Select Currency-</option>
+                                                @*<option> Indian rupee(INR)</option>
+                                                    <option>  Malaysian ringgit(MYR)</option>*@
+
+                                            </select><sup style=" top: .5em; left: .5em;"><a class="clddlcurrency clddl_plus" data-toggle='tooltip' title='Add new currency'><i class="fa fa-plus"></i></a></sup>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Language  <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+                                            @*<input type="text" id="txtlanguage" style="text-transform:capitalize" placeholder="Language" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for language" />*@
+                                            <select class="col-xs-10 col-sm-9" id="ddllanguage" data-toggle="tooltip" title="Select language name">
+                                                <option>-Select language-</option>
+
+                                            </select><sup style=" top: .5em; left: .5em;"><a class="clddllanguage clddl_plus" data-toggle='tooltip' title='Add new language'><i class="fa fa-plus"></i></a></sup>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+
+                            <div class="row">
+
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">GST Number </label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtgstno" placeholder="GST Number" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for gst number" />
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> SST Number  <span style="color:red;font-size:14px;">*</span></label>
+
+
+                                        <div class="col-sm-9">
+                                            <select class="col-xs-10 col-sm-9" id="ddlsstno" data-toggle="tooltip" title="select sst number">
+                                                <option value="0">-Select sst no-</option>
+                                                <option value="SST 1">SST 1</option>
+                                                <option value="SST 2"> SST 2</option>
+
+                                            </select>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Is Plant  <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+                                            <select class="col-xs-10 col-sm-9" id="ddlisplant" data-toggle="tooltip" title="Select plant">
+                                                <option value="0">-Select Plant-</option>
+                                                <option value="Yes">Yes</option>
+                                                <option value="No">No</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-xs-6">
+
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Is Warehouse  <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+                                            <select class="col-xs-10 col-sm-9" id="ddliswarehouse" data-toggle="tooltip" title="Select warehouse">
+                                                <option value="0">-Select Warehouse-</option>
+                                                <option value="Yes">Yes</option>
+                                                <option value="No">No</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+
+
+
+
+                            </div>
+
+
+
+
+
+                            <div class="space-4"></div>
+
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <input type="hidden" id="hdbranch" />
+                                    <div class="clearfix form-actions">
+                                        <div class="col-md-offset-0 col-md-12">
+                                            <a href="~/excelFile/branchmaster.xlsx">Download Template</a>
+                                            &nbsp; &nbsp; &nbsp;
+                                            <button class="btn btn-info" id="btnexcel" type="button" data-toggle="tooltip" style="width: auto;" title="Button for excel data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Upload Excel File
+                                            </button>
+                                            &nbsp; &nbsp; &nbsp;
+                                            <button class="btn btn-info" id="btnsave" type="button" data-toggle="tooltip" title="Button for save data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Submit
+                                            </button>
+
+                                            &nbsp; &nbsp; &nbsp;
+                                            <button class="btn" id="btnreset" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+
+
+
+
+
+
+                                </div><!-- /.col -->
+                            </div><!-- /.row -->
+                            <!-- PAGE CONTENT BEGINS -->
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="form-horizontal">
+                                        <div class="table-header">
+                                            Current Record
+                                        </div>
+                                        <div id="divtbl"></div>
+
+
+                                    </div>
+
+                                </div><!-- /.span -->
+                            </div><!-- /.row -->
+
+
+
+                        </div>
+                    </div>
+
+                    @*-----------------------------------------------second form--------------------------------------------*@
+                    <div class="tab-pane" id="tab2">
+                        <div class="page-content">
+
+
+                            <div class="page-header">
+                                <h3 class="item_hedin">
+                                    Branch Address
+                                </h3>
+                            </div><!-- /.page-header -->
+
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <!-- PAGE CONTENT BEGINS -->
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Branch </label>
+
+                                        <div class="col-sm-9">
+                                            <select class="col-xs-10 col-sm-9" id="ddlbranchname" data-toggle="tooltip" title="Select branch name">
+                                                <option>-Select Branch-</option>
+
+
+
+                                            </select><sup style=" top: .5em; left: .5em;"><a class="clddlbranch clddl_plus" data-toggle='tooltip' title='Add new branch'><i class="fa fa-plus"></i></a></sup>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                @*------------------------------------------start Master data popup---------------------------------------------------*@
+                                <div class="modal fade" id="dialogdivCountry">
+                                    <div class="modal-dialog modal-md modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                                <h3 class="item_hedin">Add Country </h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-4">Country Code (ISO 03) <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                    <div class="col-md-8">
+                                                        <input type="text" id="txtcountrycode" style="text-transform:uppercase" placeholder="Country Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for country code" />
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-4">Country Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                    <div class="col-md-8">
+                                                        <input type="text" id="txtcountryname" style="text-transform:capitalize" placeholder="Country Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for country name" />
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3"></div>
+                                                    <div class="col-md-9">
+                                                        <button class="btn btn-info" id="btnsaveCountry" type="button" data-toggle="tooltip" title="Button for save data">
+                                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                                            Submit
+                                                        </button>
+                                                        <button class="btn master-page-reset" id="btnresetCountry" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                            Reset
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="dialogdivState">
+                                    <div class="modal-dialog modal-md modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                                <h3 class="item_hedin">Add State </h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-3">Country   <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                    <div class="col-md-9">
+                                                        <select class="col-xs-10 col-sm-8" id="ddlnewcountry" data-toggle="tooltip" title="Select country name">
+                                                            <option>-Select Country-</option>
+
+                                                        </select>
+
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3">State Code <span> : </span></div>
+                                                    <div class="col-md-9">
+                                                        <input type="text" id="txtstatecode" style="text-transform:uppercase" placeholder="State Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for state code" />
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3">State Name   <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                    <div class="col-md-9">
+                                                        <input type="text" id="txtstatename" style="text-transform:capitalize" placeholder="State Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for state name" />
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3"></div>
+                                                    <div class="col-md-9">
+                                                        <button class="btn btn-info" id="btnsavestate" type="button" data-toggle="tooltip" title="Button for save data">
+                                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                                            Submit
+                                                        </button>
+                                                        <button class="btn master-page-reset" id="btnresetstate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                            Reset
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal fade" id="dialogdivCity">
+                                    <div class="modal-dialog modal-md modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                                <h3 class="item_hedin">Add City </h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-3">Country   <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                    <div class="col-md-9">
+                                                        <select class="col-xs-10 col-sm-8" id="ddlnewsyatecountry" data-toggle="tooltip" title="Select country name">
+                                                            <option>-Select Country-</option>
+
+                                                        </select>
+
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3">State   <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                    <div class="col-md-9">
+                                                        <select class="col-xs-10 col-sm-8" id="ddlnewstate" data-toggle="tooltip" title="Select state name">
+                                                            <option>-Select State-</option>
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3">City Name   <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                    <div class="col-md-9">
+                                                        <input type="text" id="txtcityname" style="text-transform:capitalize" placeholder="City Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for city name" />
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3"></div>
+                                                    <div class="col-md-9">
+                                                        <button class="btn btn-info" id="btnsavecity" type="button" data-toggle="tooltip" title="Button for save data">
+                                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                                            Submit
+                                                        </button>
+                                                        <button class="btn master-page-reset" id="btnresetcity" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                            Reset
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal fade" id="dialogdivBranch">
+                                    <div class="modal-dialog modal-md modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                                <h3 class="item_hedin">Add Branch </h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-3">Branch Code <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                    <div class="col-md-9">
+                                                        <input type="text" id="txtbranchcode1" style="text-transform:uppercase" placeholder="Branch Code" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for branch code" />
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3">Branch Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                    <div class="col-md-9">
+                                                        <input type="text" id="txtbranchname1" style="text-transform:capitalize" placeholder="Branch Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for branch name" />
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3">Currency <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                    <div class="col-md-9">
+                                                        <select class="col-xs-10 col-sm-9" id="ddlcurrency1" data-toggle="tooltip" title="Select currency">
+                                                            <option>-Select Currency-</option>
+
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3">Language   <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                    <div class="col-md-9">
+                                                        <select class="col-xs-10 col-sm-9" id="ddllanguage1" data-toggle="tooltip" title="Select language name">
+                                                            <option>-Select language-</option>
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3">GST Number</div>
+                                                    <div class="col-md-9">
+                                                        <input type="text" id="txtgstno1" placeholder="GST Number" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for gst number" />
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3">SST number <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                    <div class="col-md-9">
+                                                        <select class="col-xs-10 col-sm-9" id="ddlsstno1" data-toggle="tooltip" title="select sst number">
+                                                            <option value="0">-Select sst number-</option>
+                                                            <option value="SST 1">SST 1</option>
+                                                            <option value="SST 2"> SST 2</option>
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3">Is Plant <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                    <div class="col-md-9">
+                                                        <select class="col-xs-10 col-sm-9" id="ddlisplant1" data-toggle="tooltip" title="Select plant">
+                                                            <option value="0">-Select Plant-</option>
+                                                            <option value="Yes">Yes</option>
+                                                            <option value="No">No</option>
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3">Is Warehouse <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                    <div class="col-md-9">
+                                                        <select class="col-xs-10 col-sm-9" id="ddliswarehouse1" data-toggle="tooltip" title="Select warehouse">
+                                                            <option value="0">-Select Warehouse-</option>
+                                                            <option value="Yes">Yes</option>
+                                                            <option value="No">No</option>
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="space-4"></div>
+                                                <div class="row">
+                                                    <div class="col-md-3"></div>
+                                                    <div class="col-md-9">
+                                                        <button class="btn btn-info" id="btnsaveBranch1" type="button" data-toggle="tooltip" title="Button for save data">
+                                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                                            Submit
+                                                        </button>
+                                                        <button class="btn master-page-reset" id="btnresetBranch1" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                            Reset
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @*------------------------------------------end Master data popup---------------------------------------------------*@
+                                <div class="col-xs-6">
+                                    <!-- PAGE CONTENT BEGINS -->
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Contact Person <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtcontactperson" style="text-transform:capitalize" placeholder="Contact Person" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for contact person" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> House No/Building No/Name</label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txthouseno" placeholder="House No/Building No/Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for house no. or building no. or name" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Street 1 </label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtstreet1" placeholder="Street 1" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for street 1" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Street 2 </label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtstreet2" placeholder="Street 2" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for street 2" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Landmark </label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtlandmark" placeholder="Landmark" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for landmark" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <!-- PAGE CONTENT BEGINS -->
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Country <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+                                            <select class="col-xs-10 col-sm-9" id="ddlcountry" data-toggle="tooltip" title="Select country name">
+                                                <option>-Select Country-</option>
+
+                                            </select><sup style=" top: .5em; left: .5em;"><a class="clddlcountry clddl_plus" data-toggle='tooltip' title='Add new country'><i class="fa fa-plus"></i></a></sup>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <!-- PAGE CONTENT BEGINS -->
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> State <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+                                            <select class="col-xs-10 col-sm-9" id="ddlstate" data-toggle="tooltip" title="Select state name">
+                                                <option>-Select State-</option>
+
+                                            </select><sup style=" top: .5em; left: .5em;"><a class="clddlstate clddl_plus" data-toggle='tooltip' title='Add new state'><i class="fa fa-plus"></i></a></sup>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-6"></div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <!-- PAGE CONTENT BEGINS -->
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> City <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+                                            <select class="col-xs-10 col-sm-9" id="ddlcity" data-toggle="tooltip" title="Select city name">
+                                                <option>-Select City-</option>
+
+
+                                            </select><sup style=" top: .5em; left: .5em;"><a class="clddlcity clddl_plus" data-toggle='tooltip' title='Add new city'><i class="fa fa-plus"></i></a></sup>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Pin code </label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtpinno" style="text-transform:uppercase" placeholder="Pin code" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for pin code" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-6"></div>
+
+                            <div class="row">
+
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Mobile Number</label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtmobileno" maxlength="10" onkeypress="return IsNumeric(event)" ondrop="return false;" onpaste="return false;" placeholder="Mobile Number" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for mobile number" />
+                                            <span id="error" style="color: Red; display: none">* Input digits (0 - 9)</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Alternate Mobile Number </label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtaltmobile" placeholder="Alternate Mobile Number" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for alternate mobile number" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            <div class="row">
+
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Telephone Number </label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtteliphoneno" placeholder="Telephone Number" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for telephone number" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Phone Number </label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtphoneno" placeholder="Phone Number " class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for phone number " />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                            <div class="space-4"></div>
+                            <div class="row">
+
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Alternate Phone Number</label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtaltphoneno" placeholder="Alternate Phone Number" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for alternate phone number" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Website </label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtwebsite" placeholder="Website" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for website" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+
+                            <div class="space-4"></div>
+
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <input type="hidden" id="hdbranchadd" />
+                                    <div class="clearfix form-actions">
+                                        <div class="col-md-offset-0 col-md-12">
+                                            <button class="btn btn-info" id="btnaddsave" type="button" data-toggle="tooltip" title="Button for save data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Submit
+                                            </button>
+
+                                            &nbsp; &nbsp; &nbsp;
+                                            <button class="btn" type="reset" id="btnaddreset" data-toggle="tooltip" title="Button for reset data">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+
+
+
+
+
+                                </div><!-- /.col -->
+                            </div><!-- /.row -->
+                            @*-------------------------------------------------popup start-------------------------------------*@
+                            <div id="dialogdiv" class="modal fade" style="margin-top:0px!important;overflow:auto!important">
+                                <div class="modal-dialog modal-lg modal-dialog-centered " style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
+                                    <div class="modal-content" style="width:100% !important;padding-bottom:22px">
+                                        <div class="modal-header">
+                                            <a href="#" class="close" data-dismiss="modal">&times;</a>
+                                            <h3 class="modal-title">Branch Address Detail</h3>
+
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="model_data">
+                                                <div class="col-md-4">
+                                                    <label>  Branch Name </label><span>:</span>
+                                                    <p id="lblbranchname">  </p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>  Contact Person </label><span>:</span>
+                                                    <p id="lblcontactperson">  </p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>  House No </label><span>:</span>
+                                                    <p id="lblhouseno">  </p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>  Street 1 </label><span>:</span>
+                                                    <p id="lblstreet1">  </p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>  Street 2 </label><span>:</span>
+                                                    <p id="lblstreet2">  </p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>  LandMark </label><span>:</span>
+                                                    <p id="lbllandmark">  </p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>  Country </label><span>:</span>
+                                                    <p id="lblcountry">  </p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>  State </label><span>:</span>
+                                                    <p id="lblstate">  </p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>  City </label><span>:</span>
+                                                    <p id="lblcity">  </p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>  Pin Code </label><span>:</span>
+                                                    <p id="lblpincode">  </p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>  Mobile No </label><span>:</span>
+                                                    <p id="lblmobileno">  </p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>  Alternate Mobile No </label><span>:</span>
+                                                    <p id="lblalternatemobileno">  </p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>  Telphone No. </label><span>:</span>
+                                                    <p id="lbltelphoneno">  </p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>  Phone No. </label><span>:</span>
+                                                    <p id="lblphoneno">  </p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>  Alternate Phone No </label><span>:</span>
+                                                    <p id="lblalternatephoneno">  </p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>  Web Site </label><span>:</span>
+                                                    <p id="lblwebsite">  </p>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*-------------------------------------------popup end-------------------------------------------------------------*@
+                            <div class="row" style=" overflow-y: auto;">
+                                <div class="col-xs-12">
+
+                                    <div class="form-horizontal">
+                                        <div class="table-header">
+                                            Current Record
+                                        </div>
+                                        <div id="divtbladd"></div>
+
+
+                                    </div>
+
+
+                                    <!-- PAGE CONTENT ENDS -->
+                                </div><!-- /.col -->
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>
+@*<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<link href="~/assets/css/colReorder.dataTables.css" rel="stylesheet" />
+<link href="~/assets/css/responsive.dataTables.css" rel="stylesheet" />
+<script src="~/assets/js/dataTables.colReorder.js"></script>
+<script src="~/assets/js/dataTables.responsive.js"></script>
+
+<link href="~/assets/css/rowReorder.dataTables.min.css" rel="stylesheet" />
+
+
+<script>
+
+    $(document).ready(function () {
+        // GetData1();
+        //$('#pending_from').dataTable({
+        //    colReorder: {
+        //        order: [4, 3, 2, 1, 0, ]
+        //    }
+        //});
+        $('#EmpInfo').dataTable({
+            colReorder: {
+                order: [0, 1, 2, 3, 4]
+            }
+        });
+        $('#EmpInfo1').dataTable({
+            colReorder: {
+                order: [0, 1, 2, 3, 4]
+            }
+        });
+    });
+
+
+
+</script>

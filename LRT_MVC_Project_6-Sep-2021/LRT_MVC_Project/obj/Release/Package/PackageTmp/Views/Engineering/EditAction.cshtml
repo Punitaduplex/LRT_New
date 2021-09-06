@@ -1,0 +1,879 @@
+﻿
+@{
+    ViewBag.Title = "EditAction";
+    Layout = "~/_Layout.cshtml";
+}
+
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+@*<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+    <script src="~/assets/js/jquery.dataTables.min.js"></script>*@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+@*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>*@
+@*<script>
+    $(document).ready(function () {
+        //$('#EmpInfo1').DataTable({ searching: false, paging: false, info: false });
+    });
+</script>*@
+<script>
+    function UploadProjectFile() {
+        $("#EmpInfo1 > tbody").html("");
+        $("#spin").show();
+        if (window.FormData !== undefined) {
+            var files = $("#fileUploadDesign").get(0).files;
+            var fileData = new FormData();
+
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("fileUploadDesign", files[i]);
+
+            }
+
+            fileData.append('Id', "Eng" + $("#txtProjectNumber").val().split(" ").join("") + $("#txtProjectName").val().split(" ").join(""));
+            //  alert(fileData);
+            $.ajax({
+                url: '/Engineering/UploadProjectFile',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                success: function (result) {
+                    var f = result.split('+');
+                    $("#hdcadfilepath").val(f[1]);
+                    if (f.length > 1) {
+                        var tr;
+                        var value = f[2].split(',');
+                        var path = f[1].split(',');
+                        var type = f[3].split(',');
+                        var formattype = f[4].split(',');
+                        $("#spin").hide();
+                        for (var i = 0; i < value.length; i++) {
+
+                            tr = $('<tr/>');
+                            tr.append("<td>" + (i + 1) + "</td>");
+                            var format = formattype[i];
+                            if (format == "2D") {
+                                tr.append("<td>" + value[i] + "</td>");
+                            }
+                            else {
+                                tr.append("<td></td>");
+                            }
+                            if (format == "3D") {
+                                tr.append("<td>" + value[i] + "</td>");
+                            }
+                            else {
+                                tr.append("<td></td>");
+                            }
+                            if (format == "PDF") {
+                                tr.append("<td>" + value[i] + "</td>");
+                            }
+                            else {
+                                tr.append("<td></td>");
+                            }
+                            if (format == "CAD") {
+                                tr.append("<td>" + value[i] + "</td>");
+                            }
+                            else {
+                                tr.append("<td></td>");
+                            }
+                            tr.append("<td style='display: none'>" + path[i] + "</td>");
+                            tr.append("<td style='display: none'>" + type[i] + "</td>");
+                            tr.append("<td style='display: none'>" + format + "</td>");
+                            tr.append("<td><a  href='javascript:void(0);' class='deletedCAD tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></td>");
+                            $('#EmpInfo1').append(tr);
+                        }
+                        $('#EmpInfo1').DataTable();
+                    }
+                    else {
+                        alert(f[0]);
+                        $("#spin").hide();
+                    }
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        } else {
+            alert("FormData is not supported.");
+        }
+    }
+</script>
+<script>
+    $(document).on("click", "a.deletedCAD", function () {
+
+        $(this).closest('tr').remove();
+        var table = document.getElementById("EmpInfo1");
+        var rowcountAfterDelete = document.getElementById("EmpInfo1").rows.length;
+        // alert(rowcountAfterDelete);
+        for (var i = 1; i < rowcountAfterDelete; i++) {
+            table.rows[i].cells[0].innerHTML = i;
+        }    // Find the row
+
+
+    });
+</script>
+<script>
+    $(document).on("click", "a.deletepart", function () {
+
+        $(this).closest('tr').remove();
+        var table = document.getElementById("EmpInfo");
+        var rowcountAfterDelete = document.getElementById("EmpInfo").rows.length;
+        // alert(rowcountAfterDelete);
+        for (var i = 1; i < rowcountAfterDelete; i++) {
+            table.rows[i].cells[0].innerHTML = i;
+        }    // Find the row
+
+
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#uploadrevisionFile').change(function (e) {
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#btnUploadrevision').click(function () {
+            if (window.FormData !== undefined) {
+                // $("#spin").show();
+                var fileUpload = $("#uploadrevisionFile").get(0);
+                var files = fileUpload.files;
+                var fileData = new FormData();
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append(files[i].name, files[i]);
+
+                }
+                fileData.append('R', $("#hdrevisionNo").val());
+
+                $.ajax({
+                    url: '/Engineering/UploadRevisionFileMethod',
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    success: function (result) {
+                        var f = result.split('+');
+                        $("#hdrevisionFile").val(f[1]);
+                        $("#hdrevisionFileName").val(f[2]);
+                        var path = $("#hdrevisionFile").val();
+                        swal(f[0]);
+                        // $("#spin").hide();
+                    },
+                    error: function (err) {
+                        alert(err.statusText);
+                    }
+                });
+            } else {
+                alert("FormData is not supported.");
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var header = sessionStorage.getItem("edit-action1");
+     //  alert(header);
+        var detailId = sessionStorage.getItem("Project-detail-id");
+        var projectId = sessionStorage.getItem("Project-id");
+        $("#hdprojectdetail").val(detailId);
+        $("#hdprojectId").val(projectId);
+        $("#liid").text(header);
+        $("#spnid").text(header);
+        if (header == "Replace") {
+            $("#divpartrow").show();
+            $("#divreplace").show();
+            $("#divmore").hide();
+        }
+        else {
+            $("#divpartrow").hide();
+            $("#divreplace").hide();
+            $("#divmore").show();
+        }
+        var objProjectDetail = {};
+        objProjectDetail.Project_Detail_Id = detailId;
+        $.ajax({
+            type: "POST",
+            url: "/Engineering/ProjectDetailForEditAction",
+            data: '{objProjectDetail: ' + JSON.stringify(objProjectDetail) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $("#selectprojectBy").val(response[0].Project_By);
+                $("#txtProjectName").val(response[0].Project_Name);
+                $("#txtProjectNumber").val(response[0].Project_Number);
+                $("#spnpartno").text(response[0].Project_Part_No);
+                $("#txtPartNumber").val(response[0].Old_part_Number + " R" + response[0].Revision_Number);
+                $("#spndrawingno").text(response[0].Project_Drawing_No);
+                $("#hdrevisionNo").val(response[0].Revision_Number)
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    })
+</script>
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnsave").click(function (e) {
+            var header = sessionStorage.getItem("edit-action1");
+            e.preventDefault();
+            if (header == "Replace") {
+                var objProjectDetail = {};
+                objProjectDetail.Project_Detail_Id = $("#hdprojectdetail").val();
+                objProjectDetail.Project_Drawing_No = $("#hdrevisionFileName").val();
+                objProjectDetail.Project_Drawing_URL = $("#hdrevisionFile").val();
+                objProjectDetail.Project_Part_No = $("#txtPartNumber").val();
+
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Engineering/AddProjectRevision",
+                    data: '{objProjectDetail: ' + JSON.stringify(objProjectDetail) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+
+                        swal(response);
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+
+               
+                var objProjectDetail = {};
+                objProjectDetail.Project_Number = $("#txtProjectNumber").val();
+                objProjectDetail.Project_Name = $("#txtProjectName").val();
+
+                objProjectDetail.Project_By = $("#selectprojectBy").val();
+
+                objProjectDetail.Project_Id = $("#hdprojectId").val();
+
+                var partno = "";
+                var drawingno = "";
+                var drawingURL = "";
+                var MType = "";
+                var Thikness = "";
+                var Finishing = "";
+                var CadFileType = "";
+                var FileFormate = "";
+                var row1 = "";
+                var row2 = "";
+
+                $('#EmpInfo tr').each(function (row, tr) {
+                    row1 = (row);
+                    if (partno == "") {
+                        partno = $(tr).find('td:eq(1)').text();
+                        MType = $(tr).find('td:eq(2) input').val();
+                        Thikness = $(tr).find('td:eq(3) input').val();
+                        Finishing = $(tr).find('td:eq(4) input').val();
+                    }
+                    else {
+                        partno = partno + "," + $(tr).find('td:eq(1)').text();
+                        MType = MType + "," + $(tr).find('td:eq(2) input').val();
+                        Thikness = Thikness + "," + $(tr).find('td:eq(3) input').val();
+                        Finishing = Finishing + "," + $(tr).find('td:eq(4) input').val();
+                    }
+                });
+
+                $('#EmpInfo1 tr').each(function (row, tr) {
+                    row2 = row;
+                    if (drawingno == "") {
+                        var format = $(tr).find('td:eq(7)').text();
+                        FileFormate = format;
+                        if (format == "2D") {
+                            drawingno = $(tr).find('td:eq(1)').text();
+                            drawingURL = $(tr).find('td:eq(5)').text();
+                            CadFileType = $(tr).find('td:eq(6)').text();
+                        }
+                        if (format == "3D") {
+                            drawingno = $(tr).find('td:eq(2)').text();
+                            drawingURL = $(tr).find('td:eq(5)').text();
+                            CadFileType = $(tr).find('td:eq(6)').text();
+                        }
+                        if (format == "PDF") {
+                            drawingno = $(tr).find('td:eq(3)').text();
+                            drawingURL = $(tr).find('td:eq(5)').text();
+                            CadFileType = $(tr).find('td:eq(6)').text();
+                        }
+                        if (format == "CAD") {
+                            drawingno = $(tr).find('td:eq(4)').text();
+                            drawingURL = $(tr).find('td:eq(5)').text();
+                            CadFileType = $(tr).find('td:eq(6)').text();
+                        }
+                    }
+                    else {
+                        var format = $(tr).find('td:eq(7)').text();
+                        FileFormate = FileFormate + "," + format;
+                        if (format == "2D") {
+                            drawingno = drawingno + "," + $(tr).find('td:eq(1)').text();
+                            drawingURL = drawingURL + "," + $(tr).find('td:eq(5)').text();
+                            CadFileType = CadFileType + "," + $(tr).find('td:eq(6)').text();
+                        }
+                        if (format == "3D") {
+                            drawingno = drawingno + "," + $(tr).find('td:eq(2)').text();
+                            drawingURL = drawingURL + "," + $(tr).find('td:eq(5)').text();
+                            CadFileType = CadFileType + "," + $(tr).find('td:eq(6)').text();
+                        }
+                        if (format == "PDF") {
+                            drawingno = drawingno + "," + $(tr).find('td:eq(3)').text();
+                            drawingURL = drawingURL + "," + $(tr).find('td:eq(5)').text();
+                            CadFileType = CadFileType + "," + $(tr).find('td:eq(6)').text();
+                        }
+                        if (format == "CAD") {
+                            drawingno = drawingno + "," + $(tr).find('td:eq(4)').text();
+                            drawingURL = drawingURL + "," + $(tr).find('td:eq(5)').text();
+                            CadFileType = CadFileType + "," + $(tr).find('td:eq(6)').text();
+                        }
+                    }
+                });
+
+                objProjectDetail.Project_Part_No = partno;
+                objProjectDetail.Project_Drawing_No = drawingno;
+                objProjectDetail.Project_Drawing_URL = drawingURL;
+                objProjectDetail.Material_Type = MType;
+                objProjectDetail.Material_Thickness = Thikness;
+                objProjectDetail.Material_Finishing = Finishing;
+                objProjectDetail.CAD_File_Type = CadFileType;
+                objProjectDetail.CAD_File_Format = FileFormate;
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Engineering/AddProjectDetail",
+                    data: '{objProjectDetail: ' + JSON.stringify(objProjectDetail) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+
+                        swal(response);
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+        })
+    });
+</script>
+<style>
+    .spinner {
+        margin: 0px auto 0;
+        width: 70px;
+        text-align: center;
+        margin: 0px auto 0;
+        width: 70px;
+        text-align: center;
+        margin-left: 0px !important;
+        margin-top: 43px !important;
+    }
+
+        .spinner > div {
+            width: 18px;
+            height: 18px;
+            background-color: #333;
+            border-radius: 100%;
+            display: inline-block;
+            -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+            animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+        }
+
+        .spinner .bounce1 {
+            -webkit-animation-delay: -0.32s;
+            animation-delay: -0.32s;
+        }
+
+        .spinner .bounce2 {
+            -webkit-animation-delay: -0.16s;
+            animation-delay: -0.16s;
+        }
+
+    @@-webkit-keyframes sk-bouncedelay {
+        0%, 80%, 100% {
+            -webkit-transform: scale(0);
+        }
+
+        40% {
+            -webkit-transform: scale(1.0);
+        }
+    }
+
+    @@keyframes sk-bouncedelay {
+        0%, 80%, 100% {
+            -webkit-transform: scale(0);
+            transform: scale(0);
+        }
+
+        40% {
+            -webkit-transform: scale(1.0);
+            transform: scale(1.0);
+        }
+    }
+
+    .wpj-head {
+        position: absolute;
+        top: 10px !important;
+        left: 20px !important;
+        margin-right: 9px !important;
+        padding-right: 11px !important;
+    }
+
+    .cls_radio1 {
+        margin-top: 5px !important;
+    }
+</style>
+<script type="text/javascript">
+    $("body").on("click", "#uploadExcel", function () {
+        //Reference the FileUpload element.
+        var fileUpload = $("#fileUpload")[0];
+
+        //Validate whether File is valid Excel file.
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx)$/;
+        if (regex.test(fileUpload.value.toLowerCase())) {
+            if (typeof (FileReader) != "undefined") {
+                var reader = new FileReader();
+
+                //For Browsers other than IE.
+                if (reader.readAsBinaryString) {
+                    reader.onload = function (e) {
+                        ProcessExcel(e.target.result);
+                    };
+                    reader.readAsBinaryString(fileUpload.files[0]);
+                } else {
+                    //For IE Browser.
+                    reader.onload = function (e) {
+                        var data = "";
+                        var bytes = new Uint8Array(e.target.result);
+                        for (var i = 0; i < bytes.byteLength; i++) {
+                            data += String.fromCharCode(bytes[i]);
+                        }
+                        ProcessExcel(data);
+                    };
+                    reader.readAsArrayBuffer(fileUpload.files[0]);
+                }
+            } else {
+                alert("This browser does not support HTML5.");
+            }
+        } else {
+            alert("Please upload a valid Excel file.");
+        }
+    });
+    function ProcessExcel(data) {
+        //Read the Excel File data.
+        var workbook = XLSX.read(data, {
+            type: 'binary'
+        });
+
+        //Fetch the name of First Sheet.
+        var firstSheet = workbook.SheetNames[0];
+
+        //Read all rows from First Sheet into an JSON array.
+        var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[firstSheet]);
+
+        //Create a HTML Table element.
+        var table = $("<table id='EmpInfo' class='table table-bordered  table-hover'/>");
+        table[0].border = "1";
+
+        //Add the header row.
+        var row = $(table[0].insertRow(-1));
+
+        //Add the header cells.
+        var headerCell = $("<th />");
+        headerCell.html("Id");
+        row.append(headerCell);
+
+        var headerCell = $("<th style='width:auto'/>");
+        headerCell.html("Part Number");
+        row.append(headerCell);
+
+
+        var headerCell = $("<th />");
+        headerCell.html("Type");
+        row.append(headerCell);
+
+        var headerCell = $("<th />");
+        headerCell.html("Thickness");
+        row.append(headerCell);
+
+        var headerCell = $("<th />");
+        headerCell.html("Finishing");
+        row.append(headerCell);
+        var headerCell = $("<th />");
+        headerCell.html("");
+        row.append(headerCell);
+        //Add the data rows from Excel file.
+        for (var i = 0; i < excelRows.length; i++) {
+            //Add the data row.
+            var row = $(table[0].insertRow(-1));
+
+            //Add the data cells.
+            var cell = $("<td />");
+            cell.html(i+1);
+            row.append(cell);
+
+            cell = $("<td />");
+            cell.html(excelRows[i].Partno);
+            row.append(cell);
+
+            cell = $("<td />");
+            cell.html("<input type='text' id='txttype" + i + "' class='col-xs-5 col-sm-5'/>");
+            row.append(cell);
+
+            cell = $("<td />");
+            cell.html("<input type='text' id='txtthickness" + i + "' class='col-xs-4 col-sm-4'/>");
+            row.append(cell);
+
+            cell = $("<td />");
+            cell.html("<input type='text' id='txtfinishing" + i + "' class='col-xs-5 col-sm-5'/>");
+            row.append(cell);
+            cell = $("<td />");
+            cell.html("<a  href='javascript:void(0);' class='deletepart tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a>");
+            row.append(cell);
+        }
+
+        var dvExcel = $("#dvExcel");
+        dvExcel.html("");
+        dvExcel.append(table);
+    };
+</script>
+<div style="width:100%" class="m_27">
+    <div style="width:18% ; float:left" class="menu_border">
+        <div class="side_bar_main">
+            @{ Html.RenderAction("SideMenu", "Master");}
+        </div>
+    </div><div style="width:82% ; float:left">
+        <div class="main-content">
+            <div class="main-content-inner">
+                <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="ace-icon fa fa-home home-icon"></i>
+                            <a href="/Engineering/EngineeringDashboard">Engineering</a>
+                        </li>
+                        <li>
+                            <a href="/Engineering/EngineeringDashboard">Project</a>
+                        </li>
+                        <li class="active" id="liid"></li>
+                    </ul><!-- /.breadcrumb -->
+                    @*<div class="nav-search" id="nav-search">
+                            <div class="form-search">
+                                <span class="input-icon">
+                                    <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                                    <i class="ace-icon fa fa-search nav-search-icon"></i>
+                                </span>
+                            </div>
+                        </div>*@<!-- /.nav-search -->
+                </div>
+                <div class="page-content">
+                    <div class="page-header">
+                        <h1>
+                            <span id="spnid"></span>
+
+                        </h1>
+                    </div><!-- /.page-header -->
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Part Number </label>
+
+                                <div class="col-sm-9">
+                                    <select id="selectprojectBy" class="col-xs-10 col-sm-10">
+                                        <option value="0">Select</option>
+                                        <option value="Designer">Designer</option>
+                                        <option value="Sales">Sales</option>
+                                    </select>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-xs-6">
+                            <!-- PAGE CONTENT BEGINS -->
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Drawing Number</label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtProjectName" style="text-transform:capitalize" placeholder="Project Name" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Project Name" />
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Project Number </label>
+
+                                <div class="col-sm-9">
+
+
+                                    <input type="text" id="txtProjectNumber" style="text-transform:capitalize" placeholder="Project Number" class="col-xs-10 col-sm-10 plc_left" data-toggle="tooltip" title="Project Number" />
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="space-4"></div>
+
+                    <div class="row" id="divpartrow">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Part Number </label>
+
+                                <div class="col-sm-9">
+
+
+                                    <span id="spnpartno"></span>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Drawing Number </label>
+
+                                <div class="col-sm-9">
+
+
+                                    <span id="spndrawingno"></span>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="space-4"></div>
+                    <div class="row" id="divreplace">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Replace Part Number </label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtPartNumber" style="text-transform:capitalize" placeholder="Part Number" class="col-xs-10 col-sm-10 plc_left" data-toggle="tooltip" title="Part Number" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Replace Drawing</label>
+                                <div class="col-sm-7">
+                                    <label class="ace-file-input upload_fl1"><input type="file" onchange="loadFile(event)" id="uploadrevisionFile"><span class="ace-file-container upload_fl" data-title="Choose"><span class="ace-file-name" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+
+                                </div>
+                                <div class="col-sm-5">
+                                    <input type="hidden" id="hdrevisionFile" />
+                                    <input type="hidden" id="hdrevisionFileName" />
+                                    <input type="hidden" id="hdrevisionNo" />
+                                    <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                    <input type="button" id="btnUploadrevision" class="btn btn-info upload-bt" value="Upload" />
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row" id="divmore">
+                        <div class="col-xs-5">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Choose xls file</label>
+                            <div class="col-sm-9">
+                                <div class="col-xs-8">
+                                    @*<input type="file" id="fileUpload" accept=".xls,.xlsx" />*@
+                                    <label class="ace-file-input upload_fl1"><input type="file" id="fileUpload" accept=".xls,.xlsx"><span class="ace-file-container upload_fl" id="spnfile" data-title="Choose"><span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                </div>
+                                <div class="col-xs-4">
+                                    <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                    <input type="button" id="uploadExcel" class="btn btn-info upload-bt" value="Upload" onclick="ExportToTable()" />
+
+                                    @*<input type="button" id="uploadExcel" class="upload_2" value="upload" onclick="ExportToTable()" />*@
+                                </div>
+
+
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row" style="padding-top:45px">
+                                <div class="col-xs-12">
+                                    <div class="form-horizontal">
+                                        <div id="dvExcel"></div>
+                                        @*<table id="EmpInfo" class="table table-bordered  table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th class="center">S. No</th>
+
+                                                    <th>Part No</th>
+                                                    <th>Type</th>
+                                                    <th>Thickness</th>
+                                                    <th>Finishing</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>*@
+
+                                    </div>
+
+                                </div><!-- /.span -->
+                            </div><!-- /.row -->
+                            @*<script>
+                                $(document).ready(function () {
+                                    $('#EmpInfo').DataTable({ searching: false, paging: false, info: false });
+                                });
+                            </script>
+                            <script>
+                                var selectedFile;
+                                document
+                                    .getElementById("fileUpload")
+                                    .addEventListener("change", function (event) {
+                                        selectedFile = event.target.files[0];
+                                    });
+                                document
+                                    .getElementById("uploadExcel")
+                                    .addEventListener("click", function () {
+                                        $("#EmpInfo > tbody").html("");
+                                        $("#spin").show();
+                                        if (selectedFile) {
+
+                                            var fileReader = new FileReader();
+                                            fileReader.onload = function (event) {
+                                                var data = event.target.result;
+
+                                                var workbook = XLSX.read(data, {
+                                                    type: "binary"
+                                                });
+                                                workbook.SheetNames.forEach(sheet => {
+                                                    let rowObject = XLSX.utils.sheet_to_row_object_array(
+                                                        workbook.Sheets[sheet]
+                                                    );
+                                                let jsonObject = JSON.stringify(rowObject);
+                                                // $("#EmpInfo > tbody").html("");
+                                                var tr;
+                                                for (var i = 0; i < rowObject.length; i++) {
+                                                    tr = $('<tr/>');
+                                                    tr.append("<td>" + (i + 1) + "</td>");
+                                                    tr.append("<td>" + rowObject[i].Part_No + "</td>");
+                                                    tr.append("<td><input type='text' id='txttype" + i + "' class='col-xs-5 col-sm-5'/></td>");
+                                                    tr.append("<td><input type='text' id='txtthickness" + i + "' class='col-xs-4 col-sm-4'/></td>");
+                                                    tr.append("<td><input type='text' id='txtfinishing" + i + "' class='col-xs-5 col-sm-5'/></td>");
+                                                    tr.append("<td><a  href='javascript:void(0);' class='deletepart tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></td>");
+                                                    $('#EmpInfo').append(tr);
+                                                }
+                                                $('#EmpInfo').DataTable();
+                                                $("#spin").hide();
+                                                //document.getElementById("jsonData").innerHTML = jsonObject;
+                                                //console.log(jsonObject);
+                                            });
+                                        };
+                                        fileReader.readAsBinaryString(selectedFile);
+                                    }
+                                });
+                            </script>*@
+
+                        </div>
+                        <div class="col-xs-1" style="vertical-align:middle">
+                            <div class="spinner" id="spin" style="margin-left: 200px;display:none">
+                                <div class="bounce1"></div>
+                                <div class="bounce2"></div>
+                                <div class="bounce3"></div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Choose CAD File</label>
+                            <div class="col-sm-9">
+                                <div class="col-xs-8">
+                                    <input type="hidden" id="hdcadfilepath" />
+                                    <label class="ace-file-input upload_fl1"><input type="file" id="fileUploadDesign" multiple><span class="ace-file-container upload_fl" data-title="Choose"><span class="ace-file-name" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                    @*<input type="file" id="fileUploadDesign" multiple />*@
+                                </div>
+                                <div class="col-xs-4">
+                                    <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                    <input type="button" id="uploadProjectFile" class="btn btn-info upload-bt" value="Upload" onclick="UploadProjectFile()" />
+                                    @*<input type="button" id="uploadProjectFile" class="upload_2" value="upload" onclick="UploadProjectFile()" />*@
+                                </div>
+
+
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row" style="padding-top:45px">
+                                <div class="col-xs-12">
+                                    <div class="form-horizontal">
+                                        <table id="EmpInfo1" class="table table-bordered  table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th class="center">S. No</th>
+                                                    <th>2D</th>
+                                                    <th>3D</th>
+                                                    <th>PDF</th>
+                                                    <th>CAD</th>
+                                                    <th style="display:none"></th>
+                                                    <th style="display:none"></th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+
+                                    </div>
+
+                                </div><!-- /.span -->
+                            </div><!-- /.row -->
+
+
+                        </div>
+                    </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="hidden" id="hdprojectdetail" />
+                            <input type="hidden" id="hdprojectId" />
+                            <div class="clearfix form-actions">
+                                <div class=" col-md-12">
+                                    <button class="btn btn-info" id="btnsave" type="button" data-toggle="tooltip" title="button for save data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Submit
+                                    </button>
+
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn" id="btnreset" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

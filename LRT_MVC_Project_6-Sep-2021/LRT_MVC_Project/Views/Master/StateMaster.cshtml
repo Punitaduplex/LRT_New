@@ -1,0 +1,1158 @@
+﻿
+@{
+    ViewBag.Title = "StateMaster";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+@*<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+
+<style>
+    .loader {
+        display: none;
+        top: 251px;
+        position: absolute;
+        margin-left: -193px;
+        margin-bottom: 117px;
+        z-index: 99999;
+    }
+</style>
+@*<script>
+    $(function () {
+        $("#uploadExcel").click(function () {
+
+            $('#ExcelDataLoader').show(); //<----here
+            $.ajax({
+
+                success: function (result) {
+                    $('#ExcelDataLoader').hide();  //<--- hide again
+                }
+            });
+
+        });
+    });
+</script>*@
+@*------------------------------------fill country data-------------------------------------------*@
+<script type="text/javascript">
+    function CountryName() {
+        //  alert();
+        var ddlcountry = $("#ddlcountry");
+        var ddlupcountry = $("#ddlupcountry");
+        var ddlnewcountry = $("#ddlnewcountry");
+        ddlcountry.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlupcountry.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlnewcountry.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/CountryName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlcountry.empty().append('<option selected="selected" value="0">Select country name</option>');
+                ddlupcountry.empty().append('<option selected="selected" value="0">Select country name</option>');
+                ddlnewcountry.empty().append('<option selected="selected" value="0">Select country name</option>');
+                $.each(response, function () {
+                    ddlcountry.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlupcountry.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlnewcountry.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $("#ddlcountry").focus();
+        CountryName();
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "/assets/js/jquery.dataTables.min.js";
+        document.getElementsByTagName("body")[0].appendChild(script);
+    })
+</script>
+@*------------------------------------reset data-------------------------------------------*@
+<script>
+    function Resetdata1() {
+        $("#ddlupcountry").val("0");
+        $("#txtupstatecode").val("");
+        $("#txtupstatename").val("");
+        $("#txtupgstcode").val("");
+    }
+</script>
+<script>
+    function Resetdata() {
+        $("#ddlcountry").val("0");
+        $("#txtstatecode").val("");
+        $("#txtstatename").val("");
+        $("#txtgstcode").val("");
+       
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Submit");
+        $("#hdstatemast").val("");
+        $("#ddlcountry").focus();
+
+        var objRolePermission = {};
+        objRolePermission.Sub_To_Sub_Menu_Id = sessionStorage.getItem("sid");
+        //alert(objRolePermission.Sub_To_Sub_Menu_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/AddRolePermission",
+            data: '{objRolePermission: ' + JSON.stringify(objRolePermission) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //if (response.Is_Add == false) {
+                //    $("#btnsave").css('visibility', 'hidden');
+                //    $("#btnreset").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Edit == false) {
+                //    $("a.remove").css('visibility', 'hidden');
+                //}
+                ////alert(response.Is_Delete);
+                //if (response.Is_Delete == false) {
+                //    $("a.delete").css('visibility', 'hidden');
+                //}
+                //if (response.Is_View == false) {
+                //    $("#EmpInfo_wrapper").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Approve == false) {
+                //    $("a.approve").css('visibility', 'hidden');
+                //}
+                //$('script[src=~/assets/js/jquery.dataTables.min.js]').remove();
+                //$('script[src=/assets/js/jquery.dataTables.min.js]').remove();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnreset").click(function () {
+            Resetdata();
+        });
+        $("#btnresetupdate").click(function () {
+            Resetdata1();
+        });
+    })
+</script>
+@*------------------------------------get data-------------------------------------------*@
+<script>
+    var myVar;
+    $(document).ready(function () {
+        Getdata();
+        myVar = setTimeout(Resetdata, 50);
+        Resetdata();
+    });
+</script>
+
+<script>
+    function Getdata() {
+        $("#divtbl").append(' <table id="EmpInfo" class="table table-bordered  table-hover"> <thead><tr><th class="left_c w61_i">S. No</th><th class="left_c">Country Name</th><th class="left_c">State Code</th><th class="left_c">State Name</th><th class="left_c">GST Code</th><th style="display:none;"></th> <th style="display:none;"></th><th class="w155_i">Action</th></tr></thead><tbody></tbody></table>')
+        $("#EmpInfo > tbody").html("");
+        //Call EmpDetails jsonResult Method
+        // alert();
+        $.getJSON("/Master/StateDetails",
+            function (json) {
+                var tr;
+
+                //Append each row to html table
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Country_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].State_Code + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].State_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].GST_Code + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].State_Id + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Country_Id + "</td>");
+                    var status = json[i].Approve_Status;
+                    var status1 = "";
+                    if (status == 1) {
+                        status1 = "<i class='menu-icon fa fa-check bigger-120 green'  data-toggle='tooltip' title='Approved'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-clock-o bigger-120 green' data-toggle='tooltip' title='Pending'></i>";
+                    }
+
+                    tr.append("<td class='lst_td w155_i' ><ul class='list_main'><li><a href='javascript:void(0);' class='approve tooltip-error comn_inline grn' data-rel='tooltip' >" + status1 + "</a></li><li><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip' title='Edit'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i></a></li><li><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='Delete'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+                    $('#EmpInfo').append(tr);
+
+                }
+                //$('.left_c').editable();
+                $('#EmpInfo').DataTable();
+                //EditableRecord();
+            });
+
+    }
+</script>
+@*------------------------------------approve data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.approve", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(5)').text();
+        var objState = {};
+        objState.State_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Master/StateApproveStatus",
+            data: '{objState: ' + JSON.stringify(objState) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //$(".dataTables_length").remove();
+                //$(".dataTables_filter").remove();
+                //$(".dataTables_info").remove();
+                //$(".dataTables_paginate").remove();
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                Getdata();
+                Resetdata();
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+@*------------------------------------save data-------------------------------------------*@
+<script type="text/javascript">
+    $(function () {
+        $("#btnsave").click(function (e) {
+            e.preventDefault();
+            var objstate = {};
+            objstate.Country_Id = $("#ddlcountry").val();
+            objstate.State_Code = $("#txtstatecode").val().toUpperCase();
+            objstate.State_Name = $("#txtstatename").val().charAt(0).toUpperCase() + $("#txtstatename").val().slice(1);
+            objstate.GST_Code = $("#txtgstcode").val();
+            objstate.State_Id = $("#hdstatemast").val();
+            //alert(objstate.Country_Id);
+            if (objstate.Country_Id == "0" || objstate.Country_Id == null) {
+                swal("Please select country.");
+
+                $("#ddlcountry").focus();
+                return;
+            }
+            //if (objstate.State_Code == "" || objstate.State_Code == null) {
+            //    swal("Please enter state code.");
+
+            //    $("#txtstatecode").focus();
+            //    return;
+            //}
+            if (objstate.State_Name == "" || objstate.State_Name == null) {
+                swal("Please enter state name.");
+                $("#txtstatename").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddState",
+                data: '{objstate: ' + JSON.stringify(objstate) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnupdatestate").click(function (e) {
+            e.preventDefault();
+            var objstate = {};
+            objstate.Country_Id = $("#ddlupcountry").val();
+            objstate.State_Code = $("#txtupstatecode").val().toUpperCase();
+            objstate.State_Name = $("#txtupstatename").val().charAt(0).toUpperCase() + $("#txtupstatename").val().slice(1);
+            objstate.GST_Code = $("#txtupgstcode").val();
+            objstate.State_Id = $("#hdstatemast").val();
+            //alert(objstate.Country_Id);
+            if (objstate.Country_Id == "0" || objstate.Country_Id == null) {
+                swal("Please select country.");
+
+                $("#ddlupcountry").focus();
+                return;
+            }
+            //if (objstate.State_Code == "" || objstate.State_Code == null) {
+            //    swal("Please enter state code.");
+
+            //    $("#txtstatecode").focus();
+            //    return;
+            //}
+            if (objstate.State_Name == "" || objstate.State_Name == null) {
+                swal("Please enter state name.");
+                $("#txtupstatename").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddState",
+                data: '{objstate: ' + JSON.stringify(objstate) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata1();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+@*------------------------------------edit data-------------------------------------------*@
+
+<script>
+    $(document).on("click", "a.remove", function (e) {
+        e.preventDefault();
+      
+        var $row = $(this).closest("tr");    // Find the row
+       
+        var $countryname = $row.find('td:eq(1)').text();
+        var $code = $row.find('td:eq(2)').text();
+        var $name = $row.find('td:eq(3)').text();
+        var $gstcode = $row.find('td:eq(4)').text();
+        var $id = $row.find('td:eq(5)').text()
+        var $countryid = $row.find('td:eq(6)').text()
+        $("#dialogdivupdatestate").modal("show");
+        $("#ddlupcountry").val($countryid);
+        $("#txtupstatecode").val($code);
+        $("#txtupstatename").val($name);
+        $("#txtupgstcode").val($gstcode);
+
+      //  $("#hdddlcountry").val($countryid);
+        $("#hdstatemast").val($id);
+      //  $("#btnsave").text("");
+      //  $("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Update");
+      //  $("#btnsave").css('visibility', 'visible');
+      //  $("#btnreset").css('visibility', 'visible');
+    });
+   
+</script>
+
+@*------------------------------------delete data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.delete", function (e) {
+
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(5)').text();
+
+        swal({
+            title: 'Are you sure?',
+            text: '*You want to delete this data?*',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function (value) {
+            if (value) {
+                var objstate = {};
+                objstate.State_Id = $id;
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/DeleteState",
+                    data: '{objstate: ' + JSON.stringify(objstate) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        Getdata();
+                        Resetdata();
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "/assets/js/jquery.dataTables.min.js";
+                        document.getElementsByTagName("body")[0].appendChild(script);
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+                swal("*Your data is safe*");
+            }
+        });
+
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveCountry").click(function () {
+
+            var objcountry = {};
+            objcountry.Country_Code = $("#txtcountrycode").val().toUpperCase();
+            objcountry.Country_Name = $("#txtcountryname").val().charAt(0).toUpperCase() + $("#txtcountryname").val().slice(1);
+            objcountry.Country_Id = $("#hdcountry").val();
+            if (objcountry.Country_Code == "" || objcountry.Country_Code == null) {
+                swal("Please enter country code.");
+
+                $("#txtcountrycode").focus();
+                return;
+            }
+            if (objcountry.Country_Name == "" || objcountry.Country_Name == null) {
+                swal("Please enter country name.");
+                $("#txtcountryname").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddCountry",
+                data: '{objcountry: ' + JSON.stringify(objcountry) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+
+                    swal(response);
+                    CountryName();
+                    ResetCountry();
+
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnresetCountry").click(function (e) {
+            ResetCountry();
+        });
+    });
+</script>
+<script>
+    function ResetCountry() {
+        //$("#ddlnewsyatecountry").val(0);
+        $("#txtcountrycode").val("");
+        $("#txtcountryname").val("");
+    }
+ 
+
+</script>
+
+<script>
+    $(document).on("click", "a.clddlcountry", function () {
+        $('#dialogdivCountry').modal('show');
+    });
+</script>
+
+@*------------------------------------------------------------------------------upload excel file-----------------------------------------*@
+<script>
+    $(function () {
+        $("#btnexcel").click(function () {
+            $('#dialogdivexcel').modal('show');
+        });
+    });
+</script>
+<script type="text/javascript">
+    $("body").on("click", "#uploadExcel", function () {
+        Resettable();
+        //Reference the FileUpload element.
+        var fileUpload = $("#fileUpload")[0];
+
+        //Validate whether File is valid Excel file.
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx)$/;
+        if (regex.test(fileUpload.value.toLowerCase())) {
+            if (typeof (FileReader) != "undefined") {
+                var reader = new FileReader();
+
+                //For Browsers other than IE.
+                if (reader.readAsBinaryString) {
+                    reader.onload = function (e) {
+                        ProcessExcel(e.target.result);
+                    };
+                    reader.readAsBinaryString(fileUpload.files[0]);
+                } else {
+                    //For IE Browser.
+                    reader.onload = function (e) {
+                        var data = "";
+                        var bytes = new Uint8Array(e.target.result);
+                        for (var i = 0; i < bytes.byteLength; i++) {
+                            data += String.fromCharCode(bytes[i]);
+                        }
+                        ProcessExcel(data);
+                      
+                    };
+                    reader.readAsArrayBuffer(fileUpload.files[0]);
+                   
+                }
+            } else {
+                alert("This browser does not support HTML5.");
+            }
+        } else {
+            alert("Please upload a valid Excel file.");
+        }
+    });
+    function ProcessExcel(data) {
+        $('#ExcelDataLoader').show();
+        var workbook = XLSX.read(data, {
+            type: 'binary'
+        });
+        var firstSheet = workbook.SheetNames[0];
+        var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[firstSheet]);
+        // $("#dvExcel").empty();
+        $("#dvExcel").append('<table id="EmpInfostate" class="table table-bordered table-hover"><thead><tr><th class="left_c w61_i">S. No</th> <th class="left_c">Country</th> <th class="left_c">State Code</th><th class="left_c">State Name</th> <th class="left_c">GST Code</th><th class="w155_i">Action</th> </tr></thead><tbody></tbody> </table>')
+        $("#EmpInfostate > tbody").html("");
+        var count = excelRows.length;
+        for (var i = 0; i < excelRows.length; i++) {
+            var Country_Name = "";
+            var State_Code = "";
+            var State_Name = "";
+            var GST_Code = "";
+
+
+
+            if (excelRows[i].CountryName == undefined) {
+
+                Country_Name = "";
+            }
+            else {
+                Country_Name = excelRows[i].CountryName;
+
+            }
+
+            if (excelRows[i].StateCode == undefined) {
+
+                State_Code = "";
+            }
+            else {
+                State_Code = excelRows[i].StateCode;
+
+            }
+            if (excelRows[i].StateName == undefined) {
+
+                State_Name = "";
+            }
+            else {
+                State_Name = excelRows[i].StateName;
+
+            }
+
+            if (excelRows[i].GSTCode == undefined) {
+
+                GST_Code = "";
+            }
+            else {
+                GST_Code = excelRows[i].GSTCode;
+
+            }
+
+
+            tr = $('<tr/>');
+            tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+            tr.append("<td class='left_c'>" + Country_Name + "</td>");
+            tr.append("<td class='left_c'>" + State_Code + "</td>");
+            tr.append("<td class='left_c'>" + State_Name + "</td>");
+            tr.append("<td class='left_c'>" + GST_Code + "</td>");
+            tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a  href='javascript:void(0);' class='deletestate tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+            $('#EmpInfostate').append(tr);
+        }
+        $('#EmpInfostate').DataTable();
+        $('#EmpInfostate').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count + " entries";
+            }
+        });
+        sessionStorage.setItem("item-count25", count);
+        $('#ExcelDataLoader').hide();
+       
+    };
+</script>
+<script>
+    $(document).on("click", "a.deletestate", function () {
+
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(0)').text();
+        // $row.hide();
+        //$row.remove();
+        $row.remove().draw(false);
+        var oTable = $('#EmpInfostate').dataTable();
+
+        var rowcollection = oTable.$("tr", { "page": "all" });
+
+        var count = sessionStorage.getItem("item-count25");
+
+        sessionStorage.setItem("item-count25", (count - 1));
+
+        var count1 = count - 1;
+
+        var table = $('#EmpInfostate').DataTable({
+            destroy: true,
+            rowReorder: true
+        });
+        table.on('row-reorder', function (e, diff, edit) {
+            var res = '';
+            for (var i = 0, ien = diff.length ; i < ien ; i++) {
+                res += diff[i].newData + '=';
+            }
+            res = res.substring(0, res.length - 1);
+            getVal(res);
+        });
+        $('#EmpInfostate').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count1 + " entries";
+            }
+        });
+        if (count <= 1) {
+            Resettable();
+        }
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveuploaddb").click(function () {
+            $('#ExcelDataLoader').show();
+            var objstate = {};
+            objstate.Country_Name ="";
+            objstate.State_Code = "";
+            objstate.State_Name ="";
+            objstate.GST_Code ="";
+            objstate.State_Id = 0;
+            var oTable = $('#EmpInfostate').dataTable();
+            var rowcollection = oTable.$("tr", { "page": "all" });
+           // alert(rowcollection.length);
+           // return;
+            rowcollection.each(function (index, elem) {
+                var row = $(elem).closest("tr");
+                if (objstate.State_Name == "") {
+                    objstate.Country_Name = row.find('td:eq(1)').text().toUpperCase();
+                   
+                    objstate.State_Code = row.find('td:eq(2)').text().charAt(0).toUpperCase() + row.find('td:eq(2)').text().slice(1);
+                  
+                    objstate.State_Name = row.find('td:eq(3)').text().toUpperCase();
+                    objstate.GST_Code = row.find('td:eq(4)').text().toUpperCase();
+
+                }
+                else {
+                   
+                    objstate.Country_Name = objstate.Country_Name + "," + row.find('td:eq(1)').text().toUpperCase();
+                    objstate.State_Code = objstate.State_Code + "," + row.find('td:eq(2)').text().charAt(0).toUpperCase() + row.find('td:eq(2)').text().slice(1);
+                    objstate.State_Name = objstate.State_Name + "," + row.find('td:eq(3)').text().toUpperCase();
+                    objstate.GST_Code = objstate.GST_Code + "," + row.find('td:eq(4)').text().toUpperCase();
+                    
+                }
+            });
+            var rowCount = $('#EmpInfostate tr').length;
+            if (rowCount <= 1) {
+                swal("please upload excel file for data upload.");
+                return;
+            }
+            if (rowCount > 1 && objstate.State_Name == "") {
+                swal("no data in table.");
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddBulkState",
+                data: '{objstate: ' + JSON.stringify(objstate) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    CountryName();
+                    Resettable();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+                    $('#ExcelDataLoader').hide();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+        $("#btnresetstate").click(function () {
+            Resettable();
+        });
+        $('#fileUpload').change(function (e) {
+
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+    });
+</script>
+<script>
+    function Resettable() {
+        $("#dvExcel").empty();
+        $('#spnfile').text("");
+        $('#spnfile').append('<span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span>')
+
+    }
+</script>
+<style>
+.clddl_plus {
+    float: right;
+    left: 5px;
+    position: absolute!important;
+    top: 9px;
+    font-size: 13px;
+}
+</style>
+
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+        <div class="main-content">
+            <div class="main-content-inner top-padding">
+                <div class="breadcrumbs ace-save-state" id="breadcrumbs" style=" z-index: -1 !IMPORTANT;">
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="ace-icon fa fa-home home-icon"></i>
+                            <a href="#">PMS Setting</a>
+                        </li>
+
+                        <li>
+                            <a href="#">System Setting</a>
+                        </li>
+                        <li class="active">State</li>
+                    </ul><!-- /.breadcrumb -->
+                    @*<div class="nav-search" id="nav-search">
+                <div class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>*@<!-- /.nav-search -->
+                </div>
+
+                <div class="page-content1">
+
+
+                    <div class="page-header">
+                        <h3 class="item_hedin">
+                            State
+                        </h3>
+                    </div><!-- /.page-header -->
+                    @*------------------------------------------start Master data popup---------------------------------------------------*@
+                    <div class="modal fade" id="dialogdivCountry">
+                        <div class="modal-dialog modal-md modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">×</a>
+                                    <h3 class="item_hedin">Add Country </h3>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-4">Country Code (ISO 03) <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-8">
+                                            <input type="text" id="txtcountrycode" style="text-transform:uppercase" placeholder="Country Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for country code" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-4">Country Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-8">
+                                            <input type="text" id="txtcountryname" style="text-transform:capitalize" placeholder="Country Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for country name" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9">
+                                            <button class="btn btn-info" id="btnsaveCountry" type="button" data-toggle="tooltip" title="Button for save data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Submit
+                                            </button>
+                                            <button class="btn master-page-reset" id="btnresetCountry" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @*--------------------------------------------------------update state-------------------------------------------------------*@
+                    <div class="modal fade" id="dialogdivupdatestate">
+                        <div class="modal-dialog modal-md modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">×</a>
+                                    <h3 class="item_hedin">Update State </h3>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-3">Country Name <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                        <div class="col-md-9">
+
+                                            <select class="col-xs-10 col-sm-8" id="ddlupcountry" data-toggle="tooltip" title="Select country name">
+                                                <option>-Select Country-</option>
+
+                                            </select>
+
+
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3">State Code <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtupstatecode" style="text-transform:uppercase" placeholder="State Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for state code" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3">State Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtupstatename" style="text-transform:capitalize" placeholder="State Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for state name" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3">GST Code<span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtupgstcode" placeholder="GST Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for gst code" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9">
+                                            <button class="btn btn-info" id="btnupdatestate" type="button" data-toggle="tooltip" title="Button for update data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Update
+                                            </button>
+                                            <button class="btn master-page-reset" id="btnresetupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @*-------------------------------------------------------------------------------------------------------------------------------*@
+                    @*------------------------------------------end Master data popup---------------------------------------------------*@
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <!-- PAGE CONTENT BEGINS -->
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Country Name <span style="color:red;font-size:14px;">*</span></label>
+
+                                <div class="col-sm-9">
+                                    <input type="hidden" id="hdddlcountry" />
+                                    <select class="col-xs-10 col-sm-8" id="ddlcountry" data-toggle="tooltip" title="Select country name">
+                                        <option>-Select Country Name-</option>
+
+                                    </select><sup style=" top: .5em; left: .5em;"><a class="clddlcountry clddl_plus" data-toggle='tooltip' title='Add new country'><i class="fa fa-plus"></i></a></sup>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <!-- PAGE CONTENT BEGINS -->
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> State Code </label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtstatecode" style="text-transform:uppercase" placeholder="State Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for state code" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> State Name <span style="color:red;font-size:14px;">*</span></label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtstatename" style="text-transform:capitalize" placeholder="State Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for state name" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> GST Code</label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtgstcode" placeholder="GST Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for gst code" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="space-4"></div>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="hidden" id="hdstatemast" />
+                            <div class="clearfix form-actions">
+                                <div class="col-md-offset-0 col-md-12">
+                                    <a href="~/excelFile/statemaster.xlsx">Download Template</a>
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn btn-info" id="btnexcel" type="button" data-toggle="tooltip" style="width: auto;" title="Button for excel data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Upload Excel File
+                                    </button>
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn btn-info" id="btnsave" type="button" data-toggle="tooltip" title="Button for save data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Submit
+                                    </button>
+
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn" id="btnreset" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+
+
+
+                            @*----------------------------------------------------popup for upload master data--------------------------------------------------------------*@
+                            <div id="dialogdivexcel" class="modal fade" style="margin-top:0px!important;overflow:auto!important">
+                                <div class="modal-dialog modal-lg modal-dialog-centered " style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
+                                    <div class="modal-content" style="width:100% !important;padding-bottom:22px">
+                                        <div class="modal-header">
+                                            <a href="#" class="close" data-dismiss="modal">×</a>
+                                            <h3 class="item_hedin">Upload Excel File </h3>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            <div class="row">
+
+                                                <div class="col-md-3">Choose excel file <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                <div class="col-sm-9">
+                                                    <div class="col-xs-8 pr-0">
+
+                                                        <label class="ace-file-input upload_fl1"><input type="file" id="fileUpload" accept=".xls,.xlsx"><span class="ace-file-container upload_fl" id="spnfile" data-title="Choose"><span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                                    </div>
+                                                    <div class="col-xs-4">
+                                                        <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                                        <input type="button" id="uploadExcel" class="btn btn-info upload-bt" value="Upload" onclick="ExportToTable()" />
+                                                        <div id="ExcelDataLoader" class="loader">
+                                                            <img src="~/Images/1.gif" height="70" width="60" />
+                                                        </div>
+
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="space-6"></div>
+                                                <div class="row" style="padding-top:45px">
+                                                    <div class="col-xs-12">
+                                                        <div class="form-horizontal">
+                                                            <div id="dvExcel"></div>
+
+                                                        </div>
+
+                                                    </div><!-- /.span -->
+                                                </div><!-- /.row -->
+                                            </div>
+
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <button class="btn btn-info" id="btnsaveuploaddb" type="button" data-toggle="tooltip" title="Button for save data">
+                                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                                        Submit
+                                                    </button>
+                                                    <button class="btn master-page-reset" id="btnresetstate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                        Reset
+                                                    </button>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*---------------------------------------------------------------------------------------------------------------------------------------*@
+
+
+
+
+
+
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+
+
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="form-horizontal">
+                                <div class="table-header">
+                                    Current Record
+                                </div>
+                                <div id="divtbl"></div>
+
+
+                            </div>
+
+                        </div><!-- /.span -->
+                    </div><!-- /.row -->
+
+
+                </div>
+
+            </div>
+        </div>
+  
+@*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>
+@*<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<link href="~/assets/css/colReorder.dataTables.css" rel="stylesheet" />
+<link href="~/assets/css/responsive.dataTables.css" rel="stylesheet" />
+<script src="~/assets/js/dataTables.colReorder.js"></script>
+<script src="~/assets/js/dataTables.responsive.js"></script>
+
+<link href="~/assets/css/rowReorder.dataTables.min.css" rel="stylesheet" />
+
+
+<script>
+
+    $(document).ready(function () {
+        // GetData1();
+        //$('#pending_from').dataTable({
+        //    colReorder: {
+        //        order: [4, 3, 2, 1, 0, ]
+        //    }
+        //});
+        $('#EmpInfo').dataTable({
+            colReorder: {
+                order: [0, 1, 2, 3, 4]
+            }
+        });
+    });
+
+
+
+</script>

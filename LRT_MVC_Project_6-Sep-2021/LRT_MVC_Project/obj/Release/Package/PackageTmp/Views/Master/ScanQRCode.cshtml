@@ -1,0 +1,258 @@
+﻿@{
+    ViewBag.Title = "ScanQRCode";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/3.3.3/adapter.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
+<script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+<script src="~/assets/camera.js"></script>
+<script src="~/assets/scanner.js"></script>
+<script src="~/assets/app.js"></script>
+<link href="~/assets/style.css" rel="stylesheet" />
+
+<style>
+    .cameras {
+        padding-left: 23px;
+    }
+
+        .cameras ul {
+            padding: 0px;
+            margin: 3px;
+            margin-bottom: 13px;
+        }
+</style>
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+<div class="main-content">
+    <div class="main-content-inner top-padding">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+            <input type="hidden" id="hdzoom" />
+            <input type="hidden" id="hdt" />
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#">PMS Setting</a>
+                </li>
+
+                <li>
+                    <a href="/Master/ItemMaster">Item Master</a>
+                </li>
+                <li class="active">Scan QR Code</li>
+            </ul><!-- /.breadcrumb -->
+
+
+        </div>
+        <div class="page-content1">
+
+
+            <div class="page-header">
+                <h3 class="item_hedin">
+                    Scan QR Code
+                </h3>
+            </div>
+            <div id="app" class="row">
+                <div class="sidebar">
+                    <section class="cameras">
+                        <h2>Cameras</h2>
+                        <ul>
+                            <li v-if="cameras.length === 0" class="empty">No cameras found</li>
+                            <li v-for="camera in cameras">
+                                <span v-if="camera.id == activeCameraId" title="formatName(camera.name)" class="active">{{ formatName(camera.name) }}</span>
+                                <span v-if="camera.id != activeCameraId" title="formatName(camera.name)">
+                                    <a @@click.stop="selectCamera(camera)">{{ formatName(camera.name) }}</a>
+                                </span>
+                            </li>
+                        </ul>
+                    </section>
+                    @*<section class="scans">
+                            <h2>Scans</h2>
+                            <ul v-if="scans.length === 0">
+                                <li class="empty">No scans yet</li>
+                            </ul>
+
+                            <transition-group name="scans" tag="ul">
+                                <li v-for="scan in scans" key="scan.date" title="scan.content">{{ scan.content }}</li>
+                                <label id="lblq" v-for="scan in scans" key="scan.date" title="scan.content">{{ scan.content }}</label>
+                            </transition-group>
+                        </section>*@
+                </div>
+                <div class="preview-container">
+                    <video id="preview"></video>
+                </div>
+
+            </div>
+            <div class="row">
+                @*-----------------------------Show QR Code Scan Data--------------------------------------*@
+
+                <div id="dialogQR" class="modal fade">
+                    <div class="modal-dialog modal-md modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h4>QR Scan Report </h4>
+
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>  Item Code    </label><span>:</span>
+                                        <span id="lblqritemcode"> </span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>  Item Quantity    </label><span>:</span>
+                                        <span id="lblqty"> </span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>  Location    </label><span>:</span>
+                                        <span id="lblqrlocation"> </span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>  Location Code   </label><span>:</span>
+                                        <span id="lblqrlocationcode"> </span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>  Rack Number   </label><span>:</span>
+                                        <span id="lblqrrack"> </span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>  Cell Number     </label><span>:</span>
+                                        <span id="lblqrcellno"> </span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>  Bin Number     </label><span>:</span>
+                                        <span id="lblqrrackno"> </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*-----------------------------Show QR Code Scan Data end--------------------------------------*@
+            </div>
+            <script>
+                        var app = new Vue({
+                            el: '#app',
+                            data: {
+                                scanner: null,
+                                activeCameraId: null,
+                                cameras: [],
+                                scans: []
+                            },
+                            mounted: function () {
+                                var self = "";
+                                self = this;
+                                self.scanner = new Instascan.Scanner({ video: document.getElementById('preview'), scanPeriod: 5 });
+                                self.scanner.addListener('scan', function (content, image) {
+
+                                    self.scans.unshift({ date: +(Date.now()), content: content });
+                                   // var o = content;
+                                    // alert(content);
+
+                                    var objItem = {};
+                                   // '7512977956';//
+                                    objItem.Bar_Code_No = content;
+                                   // var scrapinput = "select";
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "/Master/ReadQRCode",
+                                        data: '{objItem: ' + JSON.stringify(objItem) + '}',
+                                        contentType: "application/json; charset=utf-8",
+                                        dataType: "json",
+                                        success: function (response) {
+                                            $("#lblqritemcode").text(response.Internal_Item_Code);
+                                            $("#lblqrrack").text(response.Rack_Name);
+                                            $("#lblqrrackno").text(response.Rack_Number_Name);
+                                            $("#lblqrlocation").text(response.Store_Location_Name);
+                                            $("#lblqrlocationcode").text(response.Store_Location_Code);
+                                            $("#lblqty").text(response.Item_Quantity);
+                                            $("#lblqrcellno").text(response.Cell_Number);
+                                            $("#dialogQR").modal('show');
+
+                                        },
+                                        failure: function (response) {
+                                            alert(response.responseText);
+                                        },
+                                        error: function (response) {
+                                            alert(response.responseText);
+                                        }
+                                    });
+
+
+
+                                });
+                                Instascan.Camera.getCameras().then(function (cameras) {
+                                    self.cameras = cameras;
+                                    if (cameras.length > 0) {
+                                        self.activeCameraId = cameras[0].id;
+                                        self.scanner.start(cameras[0]);
+                                    } else {
+                                        console.error('No cameras found.');
+                                    }
+                                }).catch(function (e) {
+                                    console.error(e);
+                                });
+                            },
+                            methods: {
+                                formatName: function (name) {
+                                    return name || '(unknown)';
+                                },
+                                selectCamera: function (camera) {
+                                    this.activeCameraId = camera.id;
+                                    this.scanner.start(camera);
+                                }
+                            }
+                        });
+            </script>
+        </div>
+
+
+
+
+    </div>
+</div>
+
+

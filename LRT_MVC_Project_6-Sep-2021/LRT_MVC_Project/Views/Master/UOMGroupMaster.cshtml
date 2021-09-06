@@ -1,0 +1,2187 @@
+﻿@{
+    ViewBag.Title = "UOMGroupMaster";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+@*<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+<style>
+    .loader {
+        display: none;
+        top: 251px;
+        position: absolute;
+        margin-left: -193px;
+        margin-bottom: 117px;
+        z-index: 99999;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $("#txtgroupcode").focus();
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "/assets/js/jquery.dataTables.min.js";
+        document.getElementsByTagName("body")[0].appendChild(script);
+    })
+</script>
+@*------------------------------------reset uom group data-------------------------------------------*@
+<script>
+    function Resetdatauomgrp1() {
+        $("#txtupgroupcode").val("");
+        $("#txtupgroupname").val("");
+    }
+</script>
+<script>
+    function Resetdatauomgrp() {
+        $("#txtgroupcode").val("");
+        $("#txtgroupname").val("");
+
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Submit");
+        $("#hduomgroup").val("");
+        $("#txtgroupcode").focus();
+
+        var objRolePermission = {};
+        objRolePermission.Sub_To_Sub_Menu_Id = sessionStorage.getItem("sid");
+        //alert(objRolePermission.Sub_To_Sub_Menu_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/AddRolePermission",
+            data: '{objRolePermission: ' + JSON.stringify(objRolePermission) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //if (response.Is_Add == false) {
+                //    $("#btnsave").css('visibility', 'hidden');
+                //    $("#btnreset").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Edit == false) {
+                //    $("a.remove").css('visibility', 'hidden');
+                //}
+                ////alert(response.Is_Delete);
+                //if (response.Is_Delete == false) {
+                //    $("a.delete").css('visibility', 'hidden');
+                //}
+                //if (response.Is_View == false) {
+                //    $("#EmpInfo_wrapper").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Approve == false) {
+                //    $("a.approve").css('visibility', 'hidden');
+                //}
+                //$('script[src=~/assets/js/jquery.dataTables.min.js]').remove();
+                //$('script[src=/assets/js/jquery.dataTables.min.js]').remove();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnrest").click(function () {
+            Resetdatauomgrp();
+        });
+        $("#btnresetupdate").click(function () {
+            Resetdatauomgrp1();
+        });
+    })
+</script>
+@*------------------------------------get uom group data-------------------------------------------*@
+<script>
+    var myVar;
+    $(document).ready(function () {
+        Getdata();
+        myVar = setTimeout(Resetdatauomgrp, 50);
+    });
+</script>
+<script>
+    function Getdata() {
+        $("#divtbl").append('<table id="EmpInfo" class="table table-bordered  table-hover"><thead><tr><th class="left_c w61_i">S. No</th><th class="left_c">Group Name</th><th class="left_c">Group  Code</th><th style="display:none;"></th><th class="w155_i">Action</th></tr></thead><tbody></tbody></table>')
+        $("#EmpInfo > tbody").html("");
+        $.getJSON("/Master/UOMGroupDetails",
+            function (json) {
+                var tr;
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Group_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Group_Code + "</td>");
+
+                    tr.append("<td style='display:none'>" + json[i].UOM_Group_Id + "</td>");
+                    var status = json[i].Approve_Status;
+                    var status1 = "";
+                    if (status == 1) {
+                        status1 = "<i class='menu-icon fa fa-check bigger-120 green'  data-toggle='tooltip' title='Approved'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-clock-o bigger-120 green' data-toggle='tooltip' title='Pending'></i>";
+                    }
+
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a href='javascript:void(0);' class='approve tooltip-error comn_inline grn' data-rel='tooltip' >" + status1 + "</a></li><li><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip' title='Edit'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i></a></li><li><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='Delete'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+                    $('#EmpInfo').append(tr);
+
+                }
+                $('#EmpInfo').DataTable();
+            });
+
+    }
+</script>
+@*------------------------------------approve uom group data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.approve", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(3)').text();
+        var objUOMGroup = {};
+        objUOMGroup.UOM_Group_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Master/UOMGroupApproveStatus",
+            data: '{objUOMGroup: ' + JSON.stringify(objUOMGroup) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //$(".dataTables_length").remove();
+                //$(".dataTables_filter").remove();
+                //$(".dataTables_info").remove();
+                //$(".dataTables_paginate").remove();
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                Getdata();
+                GetAdddata();
+                Resetdatauomgrp();
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+@*------------------------------------save uom group data-------------------------------------------*@
+<script type="text/javascript">
+    $(function () {
+        $("#btnsave").click(function (e) {
+            e.preventDefault();
+            //  alert();
+            var objUOMGroup = {};
+            objUOMGroup.Group_Code = $("#txtgroupcode").val().toUpperCase();
+            objUOMGroup.Group_Name = $("#txtgroupname").val().charAt(0).toUpperCase() + $("#txtgroupname").val().slice(1);
+            objUOMGroup.UOM_Group_Id = $("#hduomgroup").val();
+            //if (objUOMGroup.Group_Code == "" || objUOMGroup.Group_Code == null) {
+            //    swal("Please enter group code.");
+
+            //    $("#txtgroupcode").focus();
+            //    return;
+            //}
+            if (objUOMGroup.Group_Name == "" || objUOMGroup.Group_Name == null) {
+                swal("Please enter group name.");
+                $("#txtgroupname").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddUOMGroup",
+                data: '{objUOMGroup: ' + JSON.stringify(objUOMGroup) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    GetAdddata();
+                    // GetUOMGrpdata();
+                    Resetdatauomgrp();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnupdateuomgroup").click(function (e) {
+            e.preventDefault();
+            //  alert();
+            var objUOMGroup = {};
+            objUOMGroup.Group_Code = $("#txtupgroupcode").val().toUpperCase();
+            objUOMGroup.Group_Name = $("#txtupgroupname").val().charAt(0).toUpperCase() + $("#txtupgroupname").val().slice(1);
+            objUOMGroup.UOM_Group_Id = $("#hduomgroup").val();
+            //if (objUOMGroup.Group_Code == "" || objUOMGroup.Group_Code == null) {
+            //    swal("Please enter group code.");
+
+            //    $("#txtgroupcode").focus();
+            //    return;
+            //}
+            if (objUOMGroup.Group_Name == "" || objUOMGroup.Group_Name == null) {
+                swal("Please enter group name.");
+                $("#txtupgroupname").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddUOMGroup",
+                data: '{objUOMGroup: ' + JSON.stringify(objUOMGroup) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    GetAdddata();
+                    // GetUOMGrpdata();
+                    Resetdatauomgrp1();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+@*------------------------------------edit uom group data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.remove", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $code = $row.find('td:eq(2)').text();
+        var $name = $row.find('td:eq(1)').text();
+        var $id = $row.find('td:eq(3)').text()
+        $("#dialogdivupdateuom").modal("show");
+        $("#txtupgroupcode").val($code);
+        $("#txtupgroupname").val($name);
+
+        $("#hduomgroup").val($id);
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Update");
+        //$("#btnsave").css('visibility', 'visible');
+        //$("#btnreset").css('visibility', 'visible');
+    });
+</script>
+
+@*------------------------------------delete uom group data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.delete", function (e) {
+
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(3)').text();
+        swal({
+            title: 'Are you sure?',
+            text: '*You want to delete this data?*',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function (value) {
+            if (value) {
+                var objUOMGroup = {};
+                objUOMGroup.UOM_Group_Id = $id;
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/DeleteUOMGroup",
+                    data: '{objUOMGroup: ' + JSON.stringify(objUOMGroup) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        Getdata();
+                        GetAdddata();
+                        Resetdatauomgrp();
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "/assets/js/jquery.dataTables.min.js";
+                        document.getElementsByTagName("body")[0].appendChild(script);
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+                swal("*Your data is safe*");
+            }
+        });
+
+    });
+</script>
+
+
+
+
+<script>
+    $(document).on("click", "a.delete", function (e) {
+
+        //e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(3)').text();
+        // alert();
+        swal({
+            title: 'Are you sure?',
+            text: '*You want to delete this data?*',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function (value) {
+            if (value) {
+
+                var objUOMGroup = {};
+                objUOMGroup.UOM_Group_Id = $id;
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/DeleteUOMGroup",
+                    data: '{objUOMGroup: ' + JSON.stringify(objUOMGroup) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        Getdata();
+                        GetAdddata();
+                        Resetdatauomgrp();
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "/assets/js/jquery.dataTables.min.js";
+                        document.getElementsByTagName("body")[0].appendChild(script);
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+                swal("*Your data is safe*");
+            }
+        });
+
+    });
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        GetUOMGrpdata();
+        UOMBaseName();
+        UOMAltName();
+        GetAdddata();
+        // Resetmapdata();
+    });
+</script>
+@*------------------------------------fill uom group data-------------------------------------------*@
+<script>
+    function GetUOMGrpdata() {
+        var ddlgroup = $("#ddluomgrpmap");
+        var ddlupgroup = $("#ddlupuomgrpmap");
+        ddlgroup.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlupgroup.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/UOMGroupName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlgroup.empty().append('<option selected="selected" value="0">Select UOM Group</option>');
+                ddlupgroup.empty().append('<option selected="selected" value="0">Select UOM Group</option>');
+                $.each(response, function () {
+                    ddlgroup.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlupgroup.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+@*------------------------------------fill uom data-------------------------------------------*@
+<script type="text/javascript">
+    function UOMBaseName() {
+        //alert();
+        var ddlbaseuom = $("#ddlbaseuom");
+        var ddlupbaseuom = $("#ddlupbaseuom");
+        ddlbaseuom.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlupbaseuom.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/UOMBaseAltName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlbaseuom.empty().append('<option selected="selected" value="0">Select Base UOM</option>');
+                ddlupbaseuom.empty().append('<option selected="selected" value="0">Select Base UOM</option>');
+                $.each(response, function () {
+                    ddlbaseuom.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlupbaseuom.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+<script type="text/javascript">
+    function UOMAltName() {
+        //alert();
+        var ddlaltuom = $("#ddlaltuom");
+        var ddlupaltuom = $("#ddlupaltuom");
+        ddlaltuom.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlupaltuom.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/UOMBaseAltName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlaltuom.empty().append('<option selected="selected" value="0">Select Alternate UOM</option>');
+                ddlupaltuom.empty().append('<option selected="selected" value="0">Select Alternate UOM</option>');
+                $.each(response, function () {
+                    ddlaltuom.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlupaltuom.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+<script type="text/javascript">
+    function checkDec(el) {
+        var ex = /^[0-9]+\.?[0-9]*$/;
+        if (ex.test(el.value) == false) {
+            el.value = el.value.substring(0, el.value.length - 1);
+        }
+    }
+</script>
+@*------------------------------------save uom mapping data-------------------------------------------*@
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnmapsave").click(function (e) {
+            e.preventDefault();
+            var objUOMGroupMap = {};
+            objUOMGroupMap.UOM_Group_Id = $("#ddluomgrpmap").val();
+            objUOMGroupMap.Base_UOM_Id = $("#ddlbaseuom").val();
+            objUOMGroupMap.Alt_UOM_Id = $("#ddlaltuom").val();
+            objUOMGroupMap.Base_Quantity = $("#txtbaseqty").val();
+            objUOMGroupMap.Base_UOM = $("#ddlbaseuom").val();
+            objUOMGroupMap.Alt_Quantity = $("#txtaltqty").val();
+            objUOMGroupMap.Alt_UOM = $("#ddlaltuom").val();
+            objUOMGroupMap.UOM_Group_Qty_Id = $("#hduomgroupmap").val();
+            // alert(objUOMGroupMap.UOM_Group_Id);
+            if (objUOMGroupMap.UOM_Group_Id == 0 || objUOMGroupMap.UOM_Group_Id == null) {
+                swal("Please select Group.");
+                $("#ddluomgrpmap").focus();
+                return;
+            }
+            if (objUOMGroupMap.Base_Quantity == "" || objUOMGroupMap.Base_Quantity == null) {
+                swal("Please enter Base Quantity.");
+                $("#txtbaseqty").focus();
+                return;
+            }
+            //alert();
+            if (objUOMGroupMap.Base_UOM == 0 || objUOMGroupMap.Base_UOM == null) {
+                swal("Please select base UOM.");
+                $("#ddlbaseuom").focus();
+                return;
+            }
+
+            if (objUOMGroupMap.Alt_Quantity == "" || objUOMGroupMap.Alt_Quantity == null) {
+                swal("Please enter alt qty.");
+                $("#txtaltqty").focus();
+                return;
+            }
+
+            if (objUOMGroupMap.Alt_UOM == 0 || objUOMGroupMap.Alt_UOM == null) {
+                swal("Please select alt uom.");
+                $("#ddlaltuom").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddUOMGroupQty",
+                contentType: "application/json; charset=utf-8",
+                processData: true, // Not to process data
+                data: '{objUOMGroupMap: ' + JSON.stringify(objUOMGroupMap) + '}',
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    GetAdddata();
+                    Resetmapdata();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnupdateuomgroupmap").click(function (e) {
+            e.preventDefault();
+            var objUOMGroupMap = {};
+            objUOMGroupMap.UOM_Group_Id = $("#ddlupuomgrpmap").val();
+            objUOMGroupMap.Base_UOM_Id = $("#ddlupbaseuom").val();
+            objUOMGroupMap.Alt_UOM_Id = $("#ddlupaltuom").val();
+            objUOMGroupMap.Base_Quantity = $("#txtupbaseqty").val();
+            objUOMGroupMap.Base_UOM = $("#ddlupbaseuom").val();
+            objUOMGroupMap.Alt_Quantity = $("#txtupaltqty").val();
+            objUOMGroupMap.Alt_UOM = $("#ddlupaltuom").val();
+            objUOMGroupMap.UOM_Group_Qty_Id = $("#hduomgroupmap").val();
+            // alert(objUOMGroupMap.UOM_Group_Id);
+            if (objUOMGroupMap.UOM_Group_Id == 0 || objUOMGroupMap.UOM_Group_Id == null) {
+                swal("Please select Group.");
+                $("#ddlupuomgrpmap").focus();
+                return;
+            }
+            if (objUOMGroupMap.Base_Quantity == "" || objUOMGroupMap.Base_Quantity == null) {
+                swal("Please enter Base Quantity.");
+                $("#txtupbaseqty").focus();
+                return;
+            }
+            //alert();
+            if (objUOMGroupMap.Base_UOM == 0 || objUOMGroupMap.Base_UOM == null) {
+                swal("Please select base UOM.");
+                $("#ddlupbaseuom").focus();
+                return;
+            }
+
+            if (objUOMGroupMap.Alt_Quantity == "" || objUOMGroupMap.Alt_Quantity == null) {
+                swal("Please enter alt qty.");
+                $("#txtupaltqty").focus();
+                return;
+            }
+
+            if (objUOMGroupMap.Alt_UOM == 0 || objUOMGroupMap.Alt_UOM == null) {
+                swal("Please select alt uom.");
+                $("#ddlupaltuom").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddUOMGroupQty",
+                contentType: "application/json; charset=utf-8",
+                processData: true, // Not to process data
+                data: '{objUOMGroupMap: ' + JSON.stringify(objUOMGroupMap) + '}',
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    GetAdddata();
+                    Resetmapdata1();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+@*------------------------------------reset uom mapping data-------------------------------------------*@
+<script>
+    function Resetmapdata1() {
+        $("#ddlupuomgrpmap").val(0);
+        $("#ddlupbaseuom").val(0);
+        $("#ddlupaltuom").val(0);
+        $("#txtupbaseqty").val("");
+        $("#txtupaltqty").val("");
+    }
+</script>
+<script>
+    function Resetmapdata() {
+        $("#ddluomgrpmap").val(0);
+        $("#ddlbaseuom").val(0);
+        $("#ddlaltuom").val(0);
+        $("#txtbaseqty").val("");
+        $("#txtaltqty").val("");
+
+        //$("#btnmapsave").text("");
+        //$("#btnmapsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Submit");
+        $("#hduomgroupmap").val("");
+        $("#ddlgroup").focus();
+        var objRolePermission = {};
+        objRolePermission.Sub_To_Sub_Menu_Id = sessionStorage.getItem("sid");
+        //alert(objRolePermission.Sub_To_Sub_Menu_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/AddRolePermission",
+            data: '{objRolePermission: ' + JSON.stringify(objRolePermission) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //if (response.Is_Add == false) {
+                //    $("#btnsave").css('visibility', 'hidden');
+                //    $("#btnreset").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Edit == false) {
+                //    $("a.removeadd").css('visibility', 'hidden');
+                //}
+                ////alert(response.Is_Delete);
+                //if (response.Is_Delete == false) {
+                //    $("a.deleteadd").css('visibility', 'hidden');
+                //}
+                //if (response.Is_View == false) {
+                //    $("#EmpInfo1").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Approve == false) {
+                //    $("a.approveqty").css('visibility', 'hidden');
+                //}
+                //$('script[src=~/assets/js/jquery.dataTables.min.js]').remove();
+                //$('script[src=/assets/js/jquery.dataTables.min.js]').remove();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnresetmap").click(function () {
+            Resetmapdata();
+        });
+        $("#btnresetupdatemap").click(function () {
+            Resetmapdata1();
+        });
+    })
+</script>
+@*------------------------------------get uom mapping data-------------------------------------------*@
+@*<script>
+        $(document).ready(function () {
+
+        });
+    </script>*@
+<script>
+    function GetAdddata() {
+        $("#divtblmap").append(' <table id="EmpInfo1" class="table1 table-bordered  table-hover"><thead><tr> <th class="left_c w61_i">S. No</th><th class="left_c">UOM Group  </th><th class="left_c">Base Quantity</th><th class="left_c">Base UOM</th><th class="left_c">Alternate Quantity</th><th class="left_c">Alternate UOM</th><th style="display:none;"></th><th style="display:none;"></th><th style="display:none;"></th><th style="display:none;"></th><th class="w155_i">Action</th></tr></thead><tbody></tbody> </table>')
+        $("#EmpInfo1 > tbody").html("");
+        //Call EmpDetails jsonResult Method
+        // alert();
+        $.getJSON("/Master/UOMGroupQtyDetails",
+            function (json) {
+                var tr;
+
+                //Append each row to html table
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Group_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Base_Quantity + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Base_UOM + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Alt_Quantity + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Alt_UOM + "</td>");
+                    tr.append("<td style='display:none;'>" + json[i].UOM_Group_Qty_Id + "</td>");
+                    tr.append("<td style='display:none;'>" + json[i].UOM_Group_Id + "</td>");
+                    tr.append("<td style='display:none;'>" + json[i].Base_UOM_Id + "</td>");
+                    tr.append("<td style='display:none;'>" + json[i].Alt_UOM_Id + "</td>");
+                    var status = json[i].Approve_Status;
+                    //  alert(json[i].Approve_Status);
+                    var status1 = "";
+                    if (status == 1) {
+                        status1 = "<i class='menu-icon fa fa-check bigger-120 green'  data-toggle='tooltip' title='Approved'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-clock-o bigger-120 green' data-toggle='tooltip' title='Pending'></i>";
+                    }
+
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a href='javascript:void(0);' class='approveqty tooltip-error comn_inline grn' data-rel='tooltip' >" + status1 + "</a></li><li><a href='javascript:void(0);'  id='myAnc' class='removemap tooltip-error comn_inline blu' data-rel='tooltip' title='edit'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i></a></li><li><a  href='javascript:void(0);' class='deletemap tooltip-error comn_inline red' data-rel='tooltip' title='delete'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+                    $('#EmpInfo1').append(tr);
+
+                }
+                $('#EmpInfo1').DataTable();
+            });
+
+    }
+</script>
+@*------------------------------------approve uom mapping data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.approveqty", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(6)').text();
+        var objUOMGroupQty = {};
+        objUOMGroupQty.UOM_Group_Qty_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Master/UOMGroupQtyApproveStatus",
+            data: '{objUOMGroupQty: ' + JSON.stringify(objUOMGroupQty) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //$(".dataTables_length").remove();
+                //$(".dataTables_filter").remove();
+                //$(".dataTables_info").remove();
+                //$(".dataTables_paginate").remove();
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                Getdata();
+                GetAdddata();
+                Resetmapdata();
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+@*------------------------------------edit uom mapping data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.removemap", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        //var $name = $row.find('td:eq(1)').text();
+        var $baseqty = $row.find('td:eq(2)').text();
+        //var $baseuom = $row.find('td:eq(3)').text();
+        var $altqty = $row.find('td:eq(4)').text();
+        //var $altuom = $row.find('td:eq(5)').text();
+        var $id = $row.find('td:eq(6)').text();
+        var $groupid = $row.find('td:eq(7)').text();
+        var $baseuomid = $row.find('td:eq(8)').text();
+        var $altuomid = $row.find('td:eq(9)').text();
+        $("#dialogdivupdateuomgroupmapping").modal("show");
+        $("#ddlupuomgrpmap").val($groupid);
+        $("#ddlupbaseuom").val($baseuomid);
+        $("#ddlupaltuom").val($altuomid);
+        $("#txtupaltqty").val($altqty);
+        $("#txtupbaseqty").val($baseqty);
+
+        $("#hduomgroupmap").val($id);
+        //$("#btnmapsave").text("");
+        //$("#btnmapsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Update");
+        //$("#btnmapsave").css('visibility', 'visible');
+        //$("#btnresetmap").css('visibility', 'visible');
+    });
+</script>
+
+@*------------------------------------delete uom mapping data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.deletemap", function (e) {
+
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(6)').text();
+
+        swal({
+            title: 'Are you sure?',
+            text: '*You want to delete this data?*',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function (value) {
+            if (value) {
+                var objUOMGroupMap = {};
+                objUOMGroupMap.UOM_Group_Qty_Id = $id;
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/DeleteUOMGroupQty",
+                    data: '{objUOMGroupMap: ' + JSON.stringify(objUOMGroupMap) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        Getdata();
+                        GetAdddata();
+                        Resetmapdata();
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "/assets/js/jquery.dataTables.min.js";
+                        document.getElementsByTagName("body")[0].appendChild(script);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+                swal("*Your data is safe*");
+            }
+        });
+
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveuomgroup").click(function (e) {
+            e.preventDefault();
+            //  alert();
+            var objUOMGroup = {};
+            objUOMGroup.Group_Code = $("#txtgroupcode1").val().toUpperCase();
+            objUOMGroup.Group_Name = $("#txtgroupname1").val().charAt(0).toUpperCase() + $("#txtgroupname1").val().slice(1);
+            objUOMGroup.UOM_Group_Id = 0;
+
+            if (objUOMGroup.Group_Name == "" || objUOMGroup.Group_Name == null) {
+                swal("Please enter group name.");
+                $("#txtgroupname").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddUOMGroup",
+                data: '{objUOMGroup: ' + JSON.stringify(objUOMGroup) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    swal(response);
+                    GetUOMGrpdata();
+                    ResetUOMGroup();
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveuom").click(function (e) {
+            e.preventDefault();
+            var objuom = {};
+            objuom.UOM_Code = $("#txtuomcode").val().toUpperCase();
+            objuom.UOM_Name = $("#txtuomname").val().charAt(0).toUpperCase() + $("#txtuomname").val().slice(1);
+            objuom.UOM_Id = 0;
+
+            if (objuom.UOM_Code == "" || objuom.UOM_Code == null) {
+                swal("Please enter uom code.");
+
+                $("#txtuomcode").focus();
+                return;
+            }
+            //alert();
+            if (objuom.UOM_Name == "" || objuom.UOM_Name == null) {
+                swal("Please enter uom name.");
+                $("#txtuomname").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddUOM",
+                data: '{objuom: ' + JSON.stringify(objuom) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    swal(response);
+                    UOMBaseName();
+                    UOMAltName();
+                    ResetUOM();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script>
+    function ResetUOMGroup() {
+        $("#txtgroupcode1").val("");
+        $("#txtgroupname1").val("");
+    }
+    function ResetUOM() {
+        $("#txtuomcode").val("");
+        $("#txtuomname").val("");
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $("#btnresetuomgroup1").click(function (e) {
+            ResetUOMGroup();
+        });
+        $("#btnresetuom").click(function (e) {
+            ResetUOM();
+        });
+    });
+</script>
+
+<script>
+    $(document).on("click", "a.clddluomgroup", function () {
+        $('#dialogdivddlUOMGroup').modal('show');
+    });
+    $(document).on("click", "a.clddluom", function () {
+        $('#dialogdivddlUom').modal('show');
+    });
+</script>
+
+@*------------------------------------------------------------------------------upload excel file-----------------------------------------*@
+<script>
+    $(function () {
+        $("#btnexcel").click(function () {
+            $('#dialogdivexcel').modal('show');
+        });
+    });
+</script>
+<script type="text/javascript">
+    $("body").on("click", "#uploadExcel", function () {
+        //Reference the FileUpload element.
+        Resettable();
+        var fileUpload = $("#fileUpload")[0];
+
+        //Validate whether File is valid Excel file.
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx)$/;
+        if (regex.test(fileUpload.value.toLowerCase())) {
+            if (typeof (FileReader) != "undefined") {
+                var reader = new FileReader();
+
+                //For Browsers other than IE.
+                if (reader.readAsBinaryString) {
+                    reader.onload = function (e) {
+                        ProcessExcel(e.target.result);
+                    };
+                    reader.readAsBinaryString(fileUpload.files[0]);
+                } else {
+                    //For IE Browser.
+                    reader.onload = function (e) {
+                        var data = "";
+                        var bytes = new Uint8Array(e.target.result);
+                        for (var i = 0; i < bytes.byteLength; i++) {
+                            data += String.fromCharCode(bytes[i]);
+                        }
+                        ProcessExcel(data);
+                    };
+                    reader.readAsArrayBuffer(fileUpload.files[0]);
+                }
+            } else {
+                alert("This browser does not support HTML5.");
+            }
+        } else {
+            alert("Please upload a valid Excel file.");
+        }
+    });
+    function ProcessExcel(data) {
+        $('#ExcelDataLoader').show();
+        var workbook = XLSX.read(data, {
+            type: 'binary'
+        });
+        var firstSheet = workbook.SheetNames[0];
+        var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[firstSheet]);
+        // $("#dvExcel").empty();
+        $("#dvExcel").append('<table id="EmpInfouomgroup" class="table table-bordered table-hover"><thead><tr><th class="left_c w61_i">S. No</th> <th class="left_c">UOM Group Name</th> <th class="left_c">UOM Group Code</th><th class="w155_i">Action</th> </tr></thead><tbody></tbody> </table>')
+        $("#EmpInfouomgroup > tbody").html("");
+
+        var count = excelRows.length;
+
+        for (var i = 0; i < excelRows.length; i++) {
+            var UOM_Group_Name = "";
+            var UOM_Group_Code = "";
+
+            if (excelRows[i].UOMGroupName == undefined) {
+                UOM_Group_Name = "";
+            }
+            else {
+                UOM_Group_Name = excelRows[i].UOMGroupName;
+            }
+
+            if (excelRows[i].UOMGroupCode == undefined) {
+                UOM_Group_Code = "";
+            }
+            else {
+                UOM_Group_Code = excelRows[i].UOMGroupCode;
+            }
+            tr = $('<tr/>');
+            tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+            tr.append("<td class='left_c'>" + UOM_Group_Name + "</td>");
+            tr.append("<td class='left_c'>" + UOM_Group_Code + "</td>");
+            tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a  href='javascript:void(0);' class='deleteuomgroup tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+            $('#EmpInfouomgroup').append(tr);
+        }
+        $('#EmpInfouomgroup').DataTable();
+
+        $('#EmpInfouomgroup').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count + " entries";
+            }
+        });
+
+        $('#ExcelDataLoader').hide();
+        sessionStorage.setItem("item-count27", count);
+
+    };
+</script>
+<script>
+    $(document).on("click", "a.deleteuomgroup", function () {
+
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(0)').text();
+        // $row.hide();
+        //$row.remove();
+
+        $row.remove().draw(false);
+        var oTable = $('#EmpInfouomgroup').dataTable();
+
+        var rowcollection = oTable.$("tr", { "page": "all" });
+
+        var count = sessionStorage.getItem("item-count27");
+
+        sessionStorage.setItem("item-count27", (count - 1));
+
+        var count1 = count - 1;
+
+        var table = $('#EmpInfouomgroup').DataTable({
+            destroy: true,
+            rowReorder: true
+        });
+        table.on('row-reorder', function (e, diff, edit) {
+            var res = '';
+            for (var i = 0, ien = diff.length ; i < ien ; i++) {
+                res += diff[i].newData + '=';
+            }
+            res = res.substring(0, res.length - 1);
+            getVal(res);
+        });
+        $('#EmpInfouomgroup').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count1 + " entries";
+            }
+        });
+        if (count <= 1) {
+            Resettable();
+        }
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveuploaddb").click(function () {
+            $('#ExcelDataLoader').show();
+            var objUOMGroup = {};
+            objUOMGroup.Group_Code = "";
+            objUOMGroup.Group_Name = "";
+            var oTable = $('#EmpInfouomgroup').dataTable();
+            var rowcollection = oTable.$("tr", { "page": "all" });
+
+            rowcollection.each(function (index, elem) {
+                var row = $(elem).closest("tr");
+                if (objUOMGroup.Group_Name == "") {
+                    objUOMGroup.Group_Code = row.find('td:eq(2)').text().toUpperCase();
+                    objUOMGroup.Group_Name = row.find('td:eq(1)').text().charAt(0).toUpperCase() + row.find('td:eq(1)').text().slice(1);
+                }
+                else {
+                    objUOMGroup.Group_Code = objUOMGroup.Group_Code + "," + row.find('td:eq(2)').text().toUpperCase();
+                    objUOMGroup.Group_Name = objUOMGroup.Group_Name + "," + row.find('td:eq(1)').text().charAt(0).toUpperCase() + row.find('td:eq(1)').text().slice(1);
+
+                }
+            });
+            objUOMGroup.UOM_Group_Id = 0;
+            var rowCount = $('#EmpInfouomgroup tr').length;
+            if (rowCount <= 1) {
+                swal("please upload excel file for data upload.");
+                return;
+            }
+            if (rowCount > 1 && objUOMGroup.Group_Name == "") {
+                swal("no data in table.");
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddBulkuomGroup",
+                data: '{objUOMGroup: ' + JSON.stringify(objUOMGroup) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resettable();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+                    $('#ExcelDataLoader').hide();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        });
+        $("#btnresetuomgroup").click(function () {
+            Resettable();
+        });
+        $('#fileUpload').change(function (e) {
+
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+    });
+</script>
+<script>
+    function Resettable() {
+        $("#dvExcel").empty();
+        $('#spnfile').text("");
+        $('#spnfile').append('<span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span>')
+
+    }
+</script>
+@*------------------------------------------------------------------------excel mapping upload---------------------------------------------*@
+@*------------------------------------------------------------------------------upload excel file-----------------------------------------*@
+<script>
+    $(function () {
+        $("#btnexcelGroupMapping").click(function () {
+            $('#dialogdivexcelGroupMapping').modal('show');
+        });
+    });
+</script>
+<script type="text/javascript">
+    $("body").on("click", "#uploadExcelUomGroupMapping", function () {
+        //Reference the FileUpload element.
+        var fileUpload = $("#fileUploadUOMGroupMapping")[0];
+
+        //Validate whether File is valid Excel file.
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx)$/;
+        if (regex.test(fileUpload.value.toLowerCase())) {
+            if (typeof (FileReader) != "undefined") {
+                var reader = new FileReader();
+
+                //For Browsers other than IE.
+                if (reader.readAsBinaryString) {
+                    reader.onload = function (e) {
+                        ProcessExcelUOMGroupMapping(e.target.result);
+                    };
+                    reader.readAsBinaryString(fileUpload.files[0]);
+                } else {
+                    //For IE Browser.
+                    reader.onload = function (e) {
+                        var data = "";
+                        var bytes = new Uint8Array(e.target.result);
+                        for (var i = 0; i < bytes.byteLength; i++) {
+                            data += String.fromCharCode(bytes[i]);
+                        }
+                        ProcessExcelUOMGroupMapping(data);
+                    };
+                    reader.readAsArrayBuffer(fileUpload.files[0]);
+                }
+            } else {
+                alert("This browser does not support HTML5.");
+            }
+        } else {
+            alert("Please upload a valid Excel file.");
+        }
+    });
+    Resettable();
+    function ProcessExcelUOMGroupMapping(data) {
+
+        var workbook = XLSX.read(data, {
+            type: 'binary'
+        });
+        var firstSheet = workbook.SheetNames[0];
+        var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[firstSheet]);
+        // $("#dvExcel").empty();
+        $("#dvExceluomgroupMapping").append('<table id="EmpInfouomgroupMapping" class="table table-bordered table-hover"><thead><tr><th class="left_c w61_i">S. No</th> <th class="left_c">UOM Group</th> <th class="left_c">Base Quantity</th>  <th class="left_c">Base UOM</th>    <th class="left_c">Alternate Quantity</th>   <th class="left_c">Alternate UOM</th><th class="w155_i">Action</th> </tr></thead><tbody></tbody> </table>')
+        $("#EmpInfouomgroupMapping > tbody").html("");
+        var count = excelRows.length;
+        for (var i = 0; i < excelRows.length; i++) {
+            var UOM_Group = "";
+            var Base_Quantity = "";
+            var Base_UOM = "";
+            var Alternate_Quantity = "";
+            var Alternate_UOM = "";
+
+
+
+            if (excelRows[i].UOMGroup == undefined) {
+
+                UOM_Group = "";
+            }
+            else {
+                UOM_Group = excelRows[i].UOMGroup;
+
+            }
+
+            if (excelRows[i].BaseQuantity == undefined) {
+
+                Base_Quantity = "";
+            }
+            else {
+                Base_Quantity = excelRows[i].BaseQuantity;
+
+            }
+
+
+            if (excelRows[i].BaseUOM == undefined) {
+
+                Base_UOM = "";
+            }
+            else {
+                Base_UOM = excelRows[i].BaseUOM;
+
+            }
+
+            if (excelRows[i].AlternateQuantity == undefined) {
+
+                Alternate_Quantity = "";
+            }
+            else {
+                Alternate_Quantity = excelRows[i].AlternateQuantity;
+
+            }
+
+            if (excelRows[i].AlternateUOM == undefined) {
+
+                Alternate_UOM = "";
+            }
+            else {
+                Alternate_UOM = excelRows[i].AlternateUOM;
+
+            }
+
+            tr = $('<tr/>');
+            tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+            tr.append("<td class='left_c'>" + UOM_Group + "</td>");
+            tr.append("<td class='left_c'>" + Base_Quantity + "</td>");
+            tr.append("<td class='left_c'>" + Base_UOM + "</td>");
+            tr.append("<td class='left_c'>" + Alternate_Quantity + "</td>");
+            tr.append("<td class='left_c'>" + Alternate_UOM + "</td>");
+
+            tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a  href='javascript:void(0);' class='deleteuomgroupmapping tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+            $('#EmpInfouomgroupMapping').append(tr);
+        }
+        $('#EmpInfouomgroupMapping').DataTable();
+        $('#EmpInfouomgroupMapping').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count + " entries";
+            }
+        });
+        sessionStorage.setItem("item-count28", count);
+    };
+</script>
+<script>
+    $(document).on("click", "a.deleteuomgroupmapping", function () {
+
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(0)').text();
+        $row.hide();
+        $row.remove();
+        var oTable = $('#EmpInfouomgroupMapping').dataTable();
+
+        var rowcollection = oTable.$("tr", { "page": "all" });
+
+        var count = sessionStorage.getItem("item-count28");
+
+        sessionStorage.setItem("item-count28", (count - 1));
+
+        var count1 = count - 1;
+
+        var table = $('#EmpInfouomgroupMapping').DataTable({
+            destroy: true,
+            rowReorder: true
+        });
+        table.on('row-reorder', function (e, diff, edit) {
+            var res = '';
+            for (var i = 0, ien = diff.length ; i < ien ; i++) {
+                res += diff[i].newData + '=';
+            }
+            res = res.substring(0, res.length - 1);
+            getVal(res);
+        });
+        $('#EmpInfouomgroupMapping').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count1 + " entries";
+            }
+        });
+        if (count <= 1) {
+            Resettable();
+        }
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveuploadUOMGroupMappingdb").click(function () {
+
+            $('#ExcelDataLoader').show();
+            var objUOMGroupMapping = {};
+            //  alert()
+            objUOMGroupMapping.Group_Name = "";
+            var oTable = $('#EmpInfouomgroupMapping').dataTable();
+            var rowcollection = oTable.$("tr", { "page": "all" });
+            // alert()
+            rowcollection.each(function (index, elem) {
+                var row = $(elem).closest("tr");
+                if (objUOMGroupMapping.Group_Name == "") {
+                    // objUOMGroupMapping.UOMGroup = row.find('td:eq(1)').text().toUpperCase();
+                    objUOMGroupMapping.Base_Quantity = row.find('td:eq(2)').text();
+                    objUOMGroupMapping.Base_UOM = row.find('td:eq(3)').text().toUpperCase();
+                    objUOMGroupMapping.Alt_Quantity = row.find('td:eq(4)').text();
+                    objUOMGroupMapping.Alt_UOM = row.find('td:eq(5)').text().toUpperCase();
+                    objUOMGroupMapping.Group_Name = row.find('td:eq(1)').text().charAt(0).toUpperCase() + row.find('td:eq(1)').text().slice(1);
+                }
+                else {
+                    // objUOMGroupMapping.UOMGroup =objUOMGroupMapping.UOMGroup +","+ row.find('td:eq(1)').text().toUpperCase();
+                    objUOMGroupMapping.Base_Quantity = objUOMGroupMapping.Base_Quantity + "," + row.find('td:eq(2)').text();
+                    objUOMGroupMapping.Base_UOM = objUOMGroupMapping.Base_UOM + "," + row.find('td:eq(3)').text().toUpperCase();
+                    objUOMGroupMapping.Alt_Quantity = objUOMGroupMapping.Alt_Quantity + "," + row.find('td:eq(4)').text();
+                    objUOMGroupMapping.Alt_UOM = objUOMGroupMapping.Alt_UOM + "," + row.find('td:eq(5)').text().toUpperCase();
+                    objUOMGroupMapping.Group_Name = objUOMGroupMapping.Group_Name + "," + row.find('td:eq(1)').text().charAt(0).toUpperCase() + row.find('td:eq(1)').text().slice(1);
+
+                }
+            });
+            // alert()
+            // objUOMGroupMapping.UOM_Group_Id = 0;
+            var rowCount = $('#EmpInfouomgroupMapping tr').length;
+            if (rowCount <= 1) {
+                swal("please upload excel file for data upload.");
+                return;
+            }
+            if (rowCount > 1 && objUOMGroupMapping.Group_Name == "") {
+                swal("no data in table.");
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddBulkuomGroupMapping",
+                data: '{objUOMGroupMapping: ' + JSON.stringify(objUOMGroupMapping) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    GetAdddata();
+                    UOMBaseName();
+                    UOMAltName();
+                    GetUOMGrpdata();
+                    ResettableUOMGroupMapping();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+                    $('#ExcelDataLoader').hide();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        });
+        $("#btnresetuomgroupMapping").click(function () {
+            ResettableUOMGroupMapping();
+        });
+        $('#fileUploadUOMGroupMapping').change(function (e) {
+
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+    });
+</script>
+<script>
+    function ResettableUOMGroupMapping() {
+        $("#dvExceluomgroupMapping").empty();
+    }
+</script>
+
+
+
+<style>
+    #content {
+        padding: 0px 45px;
+    }
+
+    #btnresetmap {
+        width: 97px;
+        padding: 1px 7px !important;
+    }
+
+    .clddl_plus {
+        float: right;
+        left: 5px;
+        position: absolute !important;
+        top: 9px;
+        font-size: 13px;
+    }
+</style>
+
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+<div class="main-content">
+    <div class="main-content-inner top-padding">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs" style=" z-index: -1 !IMPORTANT;">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#">PMS Setting</a>
+                </li>
+
+                <li>
+                    <a href="#">MRP Setting</a>
+                </li>
+                <li class="active">UOM Grouping</li>
+            </ul><!-- /.breadcrumb -->
+            @*<div class="nav-search" id="nav-search">
+                <div class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>*@<!-- /.nav-search -->
+        </div>
+        <div class="container-fluid ">
+            <div id="conten" class="company_area">
+                <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+                    <li class="active">
+                        <a href="#tab1"
+                           data-toggle="tab">UOM Group Tab</a>
+                    </li>
+                    <li><a href="#tab2" data-toggle="tab">UOM Group Mapping Tab</a></li>
+
+                </ul>
+                <div id="my-tab-content" class="tab-content">
+                    <div class="tab-pane  active" id="tab1">
+                        <div class="page-content1">
+
+
+                            <div class="page-header">
+                                <h3 class="item_hedin">
+                                    UOM Grouping
+                                </h3>
+                            </div><!-- /.page-header -->
+                            @*-----------------------------------------------update uom group---------------------------------------------------------*@
+                            <div class="modal fade" id="dialogdivupdateuom">
+                                <div class="modal-dialog modal-md modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <a href="#" class="close" data-dismiss="modal">×</a>
+                                            <h3 class="item_hedin">Update UOM Group</h3>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3" style="padding-right:0px">UOM Group Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="txtupgroupname" style="text-transform:capitalize" placeholder=" UOM Group  Name" class="col-xs-10 col-sm-5" data-toggle="tooltip" title="Field for uom group  name" />
+                                                </div>
+                                            </div>
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3">UOM Group Code <span> : </span></div>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="txtupgroupcode" style="text-transform:uppercase" placeholder="UOM Group Code" class="col-xs-10 col-sm-5" data-toggle="tooltip" title="Field for uom group code" />
+                                                </div>
+                                            </div>
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <button class="btn btn-info" id="btnupdateuomgroup" type="button" data-toggle="tooltip" title="Button for update data">
+                                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                                        Update
+                                                    </button>
+                                                    <button class="btn master-page-reset" id="btnresetupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                        Reset
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*---------------------------------------------------------------------------------------------------------------------*@
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">UOM Group Name <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtgroupname" style="text-transform:capitalize" placeholder=" UOM Group  Name" class="col-xs-10 col-sm-5" data-toggle="tooltip" title="Field for uom group  name" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-6">
+                                    <!-- PAGE CONTENT BEGINS -->
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">UOM Group  Code </label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtgroupcode" style="text-transform:uppercase" placeholder="UOM Group Code" class="col-xs-10 col-sm-5" data-toggle="tooltip" title="Field for uom group code" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="space-4"></div>
+
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <input type="hidden" id="hduomgroup" />
+                                    <div class="clearfix form-actions">
+                                        <div class="col-md-offset-0 col-md-12">
+                                            <a href="~/excelFile/UOMGroupmaster.xlsx">Download Template</a>
+                                            &nbsp; &nbsp; &nbsp;
+                                            <button class="btn btn-info" id="btnexcel" type="button" data-toggle="tooltip" style="width: auto;" title="Button for excel data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Upload Excel File
+                                            </button>
+                                            &nbsp; &nbsp; &nbsp;
+                                            <button class="btn btn-info" id="btnsave" type="button" data-toggle="tooltip" title="Button for save data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Submit
+                                            </button>
+
+                                            &nbsp; &nbsp; &nbsp;
+                                            <button class="btn" id="btnrest" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div><!-- /.col -->
+                            </div><!-- /.row -->
+                            @*----------------------------------------------------popup for upload master data--------------------------------------------------------------*@
+                            <div id="dialogdivexcel" class="modal fade" style="margin-top:0px!important;overflow:auto!important">
+                                <div class="modal-dialog modal-lg modal-dialog-centered " style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
+                                    <div class="modal-content" style="width:100% !important;padding-bottom:22px">
+                                        <div class="modal-header">
+                                            <a href="#" class="close" data-dismiss="modal">×</a>
+                                            <h3 class="item_hedin">Upload Excel File </h3>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            <div class="row">
+
+                                                <div class="col-md-3">Choose excel file <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                <div class="col-sm-9">
+                                                    <div class="col-xs-8 pr-0">
+
+                                                        <label class="ace-file-input upload_fl1"><input type="file" id="fileUpload" accept=".xls,.xlsx"><span class="ace-file-container upload_fl" id="spnfile" data-title="Choose"><span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                                    </div>
+                                                    <div class="col-xs-4">
+                                                        <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                                        <input type="button" id="uploadExcel" class="btn btn-info upload-bt" value="Upload" onclick="ExportToTable()" />
+                                                        <div id="ExcelDataLoader" class="loader">
+                                                            <img src="~/Images/1.gif" height="70" width="60" />
+                                                        </div>
+
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="space-6"></div>
+                                                <div class="row" style="padding-top:45px">
+                                                    <div class="col-xs-12">
+                                                        <div class="form-horizontal">
+                                                            <div id="dvExcel"></div>
+
+                                                        </div>
+
+                                                    </div><!-- /.span -->
+                                                </div><!-- /.row -->
+                                            </div>
+
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <button class="btn btn-info" id="btnsaveuploaddb" type="button" data-toggle="tooltip" title="Button for save data">
+                                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                                        Submit
+                                                    </button>
+                                                    <button class="btn master-page-reset" id="btnresetuomgroup" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                        Reset
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*---------------------------------------------------------------------------------------------------------------------------------------*@
+
+
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="form-horizontal">
+                                        <div class="table-header">
+                                            Current Record
+                                        </div>
+                                        <div id="divtbl"></div>
+
+
+                                    </div>
+
+                                </div><!-- /.span -->
+                            </div><!-- /.row -->
+
+                        </div>
+                    </div>
+
+                    @*-----------------------------------------------second form--------------------------------------------*@
+                    <div class="tab-pane" id="tab2">
+
+                        @*--------------------------------------------master--------------------------------------------------*@
+                        <div class="modal fade" id="dialogdivddlUOMGroup">
+                            <div class="modal-dialog modal-dialog-centered modal-md">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <a href="#" class="close" data-dismiss="modal">×</a>
+                                        <h3 class="item_hedin">Add UOM Group </h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-3" style="padding-right:0px">UOM Group Code <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                            <div class="col-md-9">
+                                                <input type="text" id="txtgroupcode1" style="text-transform:uppercase" placeholder="UOM Group Code" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for uom group code" />
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3" style="padding-right:0px">UOM Group Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                            <div class="col-md-9">
+                                                <input type="text" id="txtgroupname1" style="text-transform:capitalize" placeholder="UOM Group Name" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for uom group name" />
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3"></div>
+                                            <div class="col-md-9">
+                                                <button class="btn btn-info" id="btnsaveuomgroup" type="button" data-toggle="tooltip" title="Button for save data">
+                                                    <i class="ace-icon fa fa-floppy-o"></i>
+                                                    Submit
+                                                </button>
+                                                <button class="btn master-page-reset" id="btnresetuomgroup1" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                    Reset
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="dialogdivddlUom">
+                            <div class="modal-dialog modal-dialog-centered modal-md">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <a href="#" class="close" data-dismiss="modal">×</a>
+                                        <h3 class="item_hedin">Add UOM </h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-3">UOM Code <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                            <div class="col-md-9">
+                                                <input type="text" id="txtuomcode" style="text-transform:uppercase" placeholder="UOM Code" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for uom code" />
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3">UOM Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                            <div class="col-md-9">
+                                                <input type="text" id="txtuomname" style="text-transform:capitalize" placeholder="UOM Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for uom name" />
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3"></div>
+                                            <div class="col-md-9">
+                                                <button class="btn btn-info" id="btnsaveuom" type="button" data-toggle="tooltip" title="Button for save data">
+                                                    <i class="ace-icon fa fa-floppy-o"></i>
+                                                    Submit
+                                                </button>
+                                                <button class="btn master-page-reset" id="btnresetuom" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                    Reset
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @*-----------------------------------------------------------------------------------------*@
+                        @*-----------------------------------------------update uom group---------------------------------------------------------*@
+                        <div class="modal fade" id="dialogdivupdateuomgroupmapping">
+                            <div class="modal-dialog modal-md modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <a href="#" class="close" data-dismiss="modal">×</a>
+                                        <h3 class="item_hedin">Update UOM Group Mapping</h3>
+                                    </div>
+                                    <div class="modal-body">
+
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3">UOM Group <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                            <div class="col-md-9">
+                                                <select class="col-xs-10 col-sm-9" id="ddlupuomgrpmap" data-toggle="tooltip" title="Select uom group ">
+                                                    <option>-Select UOM Group -</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3">Base Quantity <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                            <div class="col-md-9">
+                                                <input type="text" id="txtupbaseqty" placeholder="Base Quantity" onkeyup="checkDec(this);" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Insert base quantity" />
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3">Base UOM  <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                            <div class="col-md-9">
+                                                <select class="col-xs-10 col-sm-9" id="ddlupbaseuom" data-toggle="tooltip" title="Select Base UOM">
+                                                    <option>-Select Base UOM-</option>
+                                                    @*<option>Kilogram(KG)</option>*@
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3" style="padding-right:0px">Alternate Quantity <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                            <div class="col-md-9">
+                                                <input type="text" id="txtupaltqty" placeholder="Alternate Quantity" onkeyup="checkDec(this);" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Insert alternate quantity " />
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3" style="padding-right:0px">Alternate UOM <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                            <div class="col-md-9">
+                                                <select class="col-xs-10 col-sm-9" id="ddlupaltuom" data-toggle="tooltip" title="Select Alternate UOM">
+                                                    <option>-Select Alt UOM-</option>
+                                                    @*<option> Kilogram(kg)</option>*@
+
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            <div class="col-md-3"></div>
+                                            <div class="col-md-9">
+                                                <button class="btn btn-info" id="btnupdateuomgroupmap" type="button" data-toggle="tooltip" title="Button for update data">
+                                                    <i class="ace-icon fa fa-floppy-o"></i>
+                                                    Update
+                                                </button>
+                                                <button class="btn master-page-reset" id="btnresetupdatemap" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                    Reset
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @*---------------------------------------------------------------------------------------------------------------------*@
+                        <div class="page-content">
+
+
+                            <div class="page-header">
+                                <h3 class="item_hedin">
+                                    UOM Group Mapping
+                                </h3>
+                            </div><!-- /.page-header -->
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <!-- PAGE CONTENT BEGINS -->
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">UOM Group <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+                                            <select class="col-xs-10 col-sm-9" id="ddluomgrpmap" data-toggle="tooltip" title="Select uom group ">
+                                                <option>-Select UOM Group -</option>
+
+                                            </select><sup style=" top: .5em; left: .5em;"><a class="clddluomgroup clddl_plus" data-toggle="tooltip" title="Add new uom group"><i class="fa fa-plus"></i></a></sup>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <!-- PAGE CONTENT BEGINS -->
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Base Quantity <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtbaseqty" placeholder="Base Quantity" onkeyup="checkDec(this);" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Insert base quantity" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <!-- PAGE CONTENT BEGINS -->
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Base UOM <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+                                            <select class="col-xs-10 col-sm-9" id="ddlbaseuom" data-toggle="tooltip" title="Select Base UOM">
+                                                <option>-Select Base UOM-</option>
+                                                @*<option>Kilogram(KG)</option>*@
+
+                                            </select><sup style=" top: .5em; left: .5em;"><a class="clddluom clddl_plus" data-toggle="tooltip" title="Add new base uom "><i class="fa fa-plus"></i></a></sup>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="space-6"></div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <!-- PAGE CONTENT BEGINS -->
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Alternate Quantity <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+                                            <input type="text" id="txtaltqty" placeholder="Alternate Quantity" onkeyup="checkDec(this);" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Insert alternate quantity " />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <!-- PAGE CONTENT BEGINS -->
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Alternate UOM <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-9">
+                                            <select class="col-xs-10 col-sm-9" id="ddlaltuom" data-toggle="tooltip" title="Select Alternate UOM">
+                                                <option>-Select Alt UOM-</option>
+                                                @*<option> Kilogram(kg)</option>*@
+
+
+                                            </select><sup style=" top: .5em; left: .5em;"><a class="clddluom clddl_plus" data-toggle="tooltip" title="Add new alternate uom"><i class="fa fa-plus"></i></a></sup>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="space-4"></div>
+
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <input type="hidden" id="hduomgroupmap" />
+                                    <div class="clearfix form-actions">
+                                        <div class="col-md-offset-0 col-md-12">
+                                            <a href="~/excelFile/UOMGroupMapping.xlsx">Download Template</a>
+                                            &nbsp; &nbsp; &nbsp;
+                                            <button class="btn btn-info" id="btnexcelGroupMapping" type="button" data-toggle="tooltip" style="width: auto;" title="Button for excel data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Upload Excel File
+                                            </button>
+                                            &nbsp; &nbsp; &nbsp;
+                                            <button class="btn btn-info" id="btnmapsave" type="button" data-toggle="tooltip" title="Button for save data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Submit
+                                            </button>
+
+                                            &nbsp; &nbsp; &nbsp;
+                                            <button class="btn" id="btnresetmap" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+
+
+                                    @*----------------------------------------------------popup for upload Group mapping master data--------------------------------------------------------------*@
+
+                                    <div id="dialogdivexcelGroupMapping" class="modal fade" style="margin-top:0px!important;overflow:auto!important">
+                                        <div class="modal-dialog modal-lg modal-dialog-centered " style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
+                                            <div class="modal-content" style="width:100% !important;padding-bottom:22px">
+                                                <div class="modal-header">
+                                                    <a href="#" class="close" data-dismiss="modal">×</a>
+                                                    <h3 class="item_hedin">Upload Excel File </h3>
+                                                </div>
+                                                <div class="modal-body">
+
+                                                    <div class="row">
+
+                                                        <div class="col-md-3">Choose excel file <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                        <div class="col-sm-9">
+                                                            <div class="col-xs-8 pr-0">
+
+                                                                <label class="ace-file-input upload_fl1"><input type="file" id="fileUploadUOMGroupMapping" accept=".xls,.xlsx"><span class="ace-file-container upload_fl" data-title="Choose"><span class="ace-file-name" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                                            </div>
+                                                            <div class="col-xs-4">
+                                                                <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                                                <input type="button" id="uploadExcelUomGroupMapping" class="btn btn-info upload-bt" value="Upload" onclick="ExportToTable()" />
+
+
+                                                            </div>
+
+
+                                                        </div>
+                                                        <div class="space-6"></div>
+                                                        <div class="row" style="padding-top:45px">
+                                                            <div class="col-xs-12">
+                                                                <div class="form-horizontal">
+                                                                    <div id="dvExceluomgroupMapping"></div>
+
+                                                                </div>
+
+                                                            </div><!-- /.span -->
+                                                        </div><!-- /.row -->
+                                                    </div>
+
+                                                    <div class="space-4"></div>
+                                                    <div class="row">
+                                                        <div class="col-md-3"></div>
+                                                        <div class="col-md-9">
+                                                            <button class="btn btn-info" id="btnsaveuploadUOMGroupMappingdb" type="button" data-toggle="tooltip" title="Button for save data">
+                                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                                Submit
+                                                            </button>
+                                                            <button class="btn master-page-reset" id="btnresetuomgroupMapping" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                                Reset
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @*---------------------------------------------------------------------------------------------------------------------------------------*@
+
+
+
+                                </div><!-- /.col -->
+                            </div><!-- /.row -->
+
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="form-horizontal">
+                                        <div class="table-header">
+                                            Current Record
+                                        </div>
+                                        <div id="divtblmap"></div>
+
+
+                                    </div>
+
+                                </div><!-- /.span -->
+                            </div><!-- /.row -->
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+@*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>
+@*<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<link href="~/assets/css/colReorder.dataTables.css" rel="stylesheet" />
+<link href="~/assets/css/responsive.dataTables.css" rel="stylesheet" />
+<script src="~/assets/js/dataTables.colReorder.js"></script>
+<script src="~/assets/js/dataTables.responsive.js"></script>
+
+<link href="~/assets/css/rowReorder.dataTables.min.css" rel="stylesheet" />
+
+
+<script>
+
+    $(document).ready(function () {
+        // GetData1();
+        //$('#pending_from').dataTable({
+        //    colReorder: {
+        //        order: [4, 3, 2, 1, 0, ]
+        //    }
+        //});
+        $('#EmpInfo').dataTable({
+            colReorder: {
+                order: [0, 1, 2, 3, 4]
+            }
+        });
+    });
+
+
+
+</script>

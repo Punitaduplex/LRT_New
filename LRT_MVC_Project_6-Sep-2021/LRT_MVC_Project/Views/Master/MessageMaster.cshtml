@@ -1,0 +1,515 @@
+﻿
+@{
+    ViewBag.Title = "MessageMaster";
+    Layout = "~/_Layout.cshtml";
+}
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+<style>
+    .loader {
+        display: none;
+        top: 251px;
+        position: absolute;
+        margin-left: -193px;
+        margin-bottom: 117px;
+        z-index: 99999;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $("#txtcountrycode").focus();
+
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "/assets/js/jquery.dataTables.min.js";
+        document.getElementsByTagName("body")[0].appendChild(script);
+    })
+</script>
+@*------------------------------------reset data-------------------------------------------*@
+<script>
+    function Resetdata1() {
+        $("#txtupmessasetype").val("");
+        $("#txtmessasedescription").val("");
+    }
+</script>
+<script>
+    function Resetdata() {
+        $("#txtmessasetype").val("");
+        $("#txtmessasedescription").val("");
+
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Submit");
+        $("#hdcountry").val("");
+        $("#txtcountrycode").focus();
+
+        var objRolePermission = {};
+        objRolePermission.Sub_To_Sub_Menu_Id = sessionStorage.getItem("sid");
+        //alert(objRolePermission.Sub_To_Sub_To_Menu_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/AddRolePermission",
+            data: '{objRolePermission: ' + JSON.stringify(objRolePermission) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //if (response.Is_Add == false) {
+                //    $("#btnsave").css('visibility', 'hidden');
+                //    $("#btnreset").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Edit == false) {
+                //    $("a.remove").css('visibility', 'hidden');
+                //}
+                ////alert(response.Is_Delete);
+                //if (response.Is_Delete == false) {
+                //    $("a.delete").css('visibility', 'hidden');
+                //}
+                //if (response.Is_View == false) {
+                //    $("#EmpInfo_wrapper").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Approve == false) {
+                //    $("a.approve").css('visibility', 'hidden');
+                //}
+                //$('script[src=~/assets/js/jquery.dataTables.min.js]').remove();
+                //$('script[src=/assets/js/jquery.dataTables.min.js]').remove();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnreset").click(function () {
+            Resetdata();
+        });
+        $("#btnresetupdate").click(function () {
+            Resetdata1();
+        });
+    })
+</script>
+@*------------------------------------get data-------------------------------------------*@
+<script>
+    var myVar;
+    $(document).ready(function () {
+        Getdata();
+        myVar = setTimeout(Resetdata, 50);
+        // Resetdata();
+    });
+</script>
+<script>
+    function Getdata() {
+        $("#divtbl").append('<table id="EmpInfo" class="table table-bordered  table-hover"><thead><tr><th class="left_c w61_i">S. No</th><th class="left_c">Message Type</th><th class="left_c">Message Description</th><th style=" display:none"></th><th class="w155_i">Action</th></tr></thead><tbody></tbody> </table>')
+        $("#EmpInfo > tbody").html("");
+        $.getJSON("/Master/MessageDetails",
+            function (json) {
+                var tr;
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Message_Type + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Message_Description + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Message_Id + "</td>");
+                    var status = json[i].Approve_Status;
+                    var status1 = "";
+                    if (status == 1) {
+                        status1 = "<i class='menu-icon fa fa-check bigger-120 green'  data-toggle='tooltip' title='Approved'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-clock-o bigger-120 green' data-toggle='tooltip' title='Pending'></i>";
+                    }
+
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a href='javascript:void(0);' class='approve tooltip-error comn_inline grn' data-rel='tooltip' >" + status1 + "</a></li><li><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip' title='Edit'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i></a></li><li><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='Delete'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+                    $('#EmpInfo').append(tr);
+                }
+                $('#EmpInfo').DataTable();
+            });
+    }
+</script>
+@*------------------------------------save data-------------------------------------------*@
+<script type="text/javascript">
+    $(function () {
+        $("#btnsave").click(function () {
+
+            var objMessage = {};
+            objMessage.Message_Type = $("#txtmessasetype").val().toUpperCase();
+            objMessage.Message_Description = $("#txtmessasedescription").val().charAt(0).toUpperCase() + $("#txtmessasedescription").val().slice(1);
+            objMessage.Message_Id = $("#hdcountry").val();
+            if (objMessage.Message_Type == "" || objMessage.Message_Type == null) {
+                swal("Please enter message type.");
+
+                $("#txtmessasetype").focus();
+                return;
+            }
+            if (objMessage.Message_Description == "" || objMessage.Message_Description == null) {
+                swal("Please enter message description.");
+                $("#txtmessasedescription").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddMessage",
+                data: '{objMessage: ' + JSON.stringify(objMessage) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnupdatemessase").click(function () {
+
+            var objMessage = {};
+            objMessage.Message_Type = $("#txtupmessasetype").val().toUpperCase();
+            objMessage.Message_Description = $("#txtupmessasedescription").val().charAt(0).toUpperCase() + $("#txtupmessasedescription").val().slice(1);
+            objMessage.Message_Id = $("#hdcountry").val();
+            if (objMessage.Message_Type == "" || objMessage.Message_Type == null) {
+                swal("Please enter country code.");
+
+                $("#txtupmessasetype").focus();
+                return;
+            }
+            if (objMessage.Message_Description == "" || objMessage.Message_Description == null) {
+                swal("Please enter message description.");
+                $("#txtupmessasedescription").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddMessage",
+                data: '{objMessage: ' + JSON.stringify(objMessage) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata1();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+@*------------------------------------edit data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.remove", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $code = $row.find('td:eq(1)').text();
+        var $name = $row.find('td:eq(2)').text();
+        var $id = $row.find('td:eq(3)').text()
+        $("#dialogdivupdatemessase").modal("show");
+        $("#txtupmessasetype").val($code);
+        $("#txtupmessasedescription").val($name);
+
+        $("#hdcountry").val($id);
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Update");
+        //$("#btnsave").css('visibility', 'visible');
+        //$("#btnreset").css('visibility', 'visible');
+    });
+</script>
+<div style="width:100%" class="m_27">
+    <div style="width:18% ; float:left" class="menu_border">
+        <div class="side_bar_main">
+
+            @{ Html.RenderAction("SideMenu", "Master");}
+
+        </div>
+
+    </div><div style="width:82% ; float:left" class="side_content">
+        <div class="main-content">
+            <div class="main-content-inner">
+                <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="ace-icon fa fa-home home-icon"></i>
+                            <a href="#">PMS Setting</a>
+                        </li>
+
+                        <li>
+                           <a href="#">System Setting</a>
+                        </li>
+                        <li class="active">Message Master</li>
+                    </ul><!-- /.breadcrumb -->
+                  
+                </div>
+                @*-----------------------------------------------update messase---------------------------------------------------------*@
+                <div class="modal fade" id="dialogdivupdatemessase">
+                    <div class="modal-dialog modal-md modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h3 class="item_hedin">Update Message </h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-3">Message Type<span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtupmessasetype" style="text-transform:uppercase" placeholder="Message Type" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for message type" />
+
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">Message Description <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtupmessasedescription" style="text-transform:capitalize" placeholder="Message Description" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for message description" />
+                                    </div>
+                                </div>
+
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <button class="btn btn-info" id="btnupdatemessase" type="button" data-toggle="tooltip" title="Button for update data">
+                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                            Update
+                                        </button>
+                                        <button class="btn master-page-reset" id="btnresetupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*---------------------------------------------------------------------------------------------------------------------*@
+                <div class="page-content">
+
+
+                    <div class="page-header">
+                        <h3 class="item_hedin">
+                            Message Master
+                        </h3>
+                    </div><!-- /.page-header -->
+
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <!-- PAGE CONTENT BEGINS -->
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Message Type <span style="color:red;font-size:14px;">*</span></label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtmessasetype" style="text-transform:uppercase" placeholder="Message Type" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for message type" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Message Description <span style="color:red;font-size:14px;">*</span></label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtmessasedescription" style="text-transform:capitalize" placeholder="Message Description" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for message description" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="space-4"></div>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="hidden" id="hdcountry" />
+                            <div class="clearfix form-actions">
+                                <div class="col-md-offset-0 col-md-12">
+                                    <a href="~/excelFile/countrymaster.xlsx">Download Template</a>
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn btn-info" id="btnexcel" type="button" data-toggle="tooltip" style="width: auto;" title="Button for excel data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Upload Excel File
+                                    </button>
+
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn btn-info" id="btnsave" type="button" data-toggle="tooltip" title="Button for save data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Submit
+                                    </button>
+
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn" id="btnreset" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+
+                            @*----------------------------------------------------popup for upload master data--------------------------------------------------------------*@
+                            <div class="modal fade" id="dialogdivexcel">
+                                <div class="modal-dialog modal-md modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <a href="#" class="close" data-dismiss="modal">×</a>
+                                            <h3 class="item_hedin">Upload Excel File </h3>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            <div class="row">
+
+                                                <div class="col-md-3">Choose excel file <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                <div class="col-sm-9">
+                                                    <div class="col-xs-8 pr-0">
+
+                                                        <label class="ace-file-input upload_fl1"><input type="file" id="fileUpload" accept=".xls,.xlsx"><span class="ace-file-container upload_fl" id="spnfile" data-title="Choose"><span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                                    </div>
+                                                    <div class="col-xs-4">
+                                                        <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                                        <input type="button" id="uploadExcel" class="btn btn-info upload-bt" value="Upload" onclick="ExportToTable()" />
+                                                        <div id="ExcelDataLoader" class="loader">
+                                                            <img src="~/Images/1.gif" height="70" width="60" />
+                                                        </div>
+
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="space-6"></div>
+                                                <div class="row" style="padding-top:45px">
+                                                    <div class="col-xs-12">
+                                                        <div class="form-horizontal">
+                                                            <div id="dvExcel"></div>
+
+                                                        </div>
+
+                                                    </div><!-- /.span -->
+                                                </div><!-- /.row -->
+                                            </div>
+
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <button class="btn btn-info" id="btnsaveuploaddb" type="button" data-toggle="tooltip" title="Button for save data">
+                                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                                        Submit
+                                                    </button>
+                                                    <button class="btn master-page-reset" id="btnresetcountry" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                        Reset
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*---------------------------------------------------------------------------------------------------------------------------------------*@
+                            @*-----------------------------------------------update country---------------------------------------------------------*@
+                            <div class="modal fade" id="dialogdivupdatecountry">
+                                <div class="modal-dialog modal-md modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <a href="#" class="close" data-dismiss="modal">×</a>
+                                            <h3 class="item_hedin">Update Country </h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-4">Country Code (ISO 03) <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                <div class="col-md-8">
+                                                    <input type="text" id="txtupcountrycode" style="text-transform:uppercase" placeholder="Country Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for country code" />
+
+                                                </div>
+                                            </div>
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-4">Country Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                                <div class="col-md-6">
+                                                    <input type="text" id="txtupcountryname" style="text-transform:capitalize" placeholder="Country Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for country name" />
+                                                </div>
+                                            </div>
+
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <button class="btn btn-info" id="btnupdatecountry" type="button" data-toggle="tooltip" title="Button for update data">
+                                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                                        Update
+                                                    </button>
+                                                    <button class="btn master-page-reset" id="btnresetupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                        Reset
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*---------------------------------------------------------------------------------------------------------------------*@
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+                    <!-- PAGE CONTENT BEGINS -->
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="form-horizontal">
+                                <div class="table-header">
+                                    Current Record
+                                </div>
+                                <div id="divtbl"></div>
+
+
+                            </div>
+
+                        </div><!-- /.span -->
+                    </div><!-- /.row -->
+
+                    <div class="hr hr-18 dotted hr-double"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+

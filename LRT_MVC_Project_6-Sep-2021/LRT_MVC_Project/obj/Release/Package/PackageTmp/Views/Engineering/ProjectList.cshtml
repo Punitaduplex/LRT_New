@@ -1,0 +1,368 @@
+﻿@{
+    ViewBag.Title = "ProjectList";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+@*<link rel="stylesheet" href="~/assets/css/modalpop.css">
+
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+
+<script>
+    $(document).ready(function () {
+        var projectby = sessionStorage.getItem("projectBy");
+
+        $("#EmpInfo > tbody").html("");
+        var objProject = {};
+        objProject.Project_By = projectby;
+        $.ajax({
+            type: "POST",
+            url: "/Engineering/ProjectDesignDetail",
+            data: '{objProject: ' + JSON.stringify(objProject) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+
+                var tr;
+                for (var i = 0; i < response.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td style='text-align:center'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Project_Name + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Project_Number + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Project_Type + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Project_Count + "</td>");
+                    tr.append("<td style='display:none'>" + response[i].Project_Id + "</td>");
+                    tr.append("<td class='lst_td'><ul class='list_main'><li><a href='javascript:void(0);' class='sorting tooltip-error comn_inline grn' data-rel='tooltip'>View For Sorting</a></li></ul></td>");
+                    $('#EmpInfo').append(tr);
+                }
+                $('#EmpInfo').DataTable();
+                swal("sorting has completed");
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnnew").click(function (e) {
+            window.location.replace("/Engineering/ProjectMaster");
+        });
+    });
+</script>
+
+@*<script type="text/javascript">
+        $(function () {
+            $('#dialogdivSort').dialog({
+                autoOpen: false,
+                width: 1000,
+                resizable: false,
+                modal: true,
+                title: "View Details"
+            });
+
+        });
+    </script>*@
+
+
+<script>
+    $(document).on("click", "a.sorting", function () {
+        var $row = $(this).closest("tr");    // Find the row
+        var $Id = $row.find('td:eq(5)').text();
+        //$("#spin").show();
+        var objProject = {};
+        objProject.Project_Id = $Id;
+        $.ajax({
+            type: "POST",
+            url: "/Engineering/ProjectDesignDetailForSorting",
+            data: '{objProject: ' + JSON.stringify(objProject) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $("#EmpInfoSort > tbody").html("");
+                var tr;
+                for (var i = 0; i < response.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td style='text-align:center'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Part_No + "</td>");
+                    tr.append("<td class='left_c'>" + response[i].Drawing_No + "</td>");
+
+                    tr.append("<td style='display:none'>" + response[i].Drawing_URL + "</td>");
+                    tr.append("<td style='display:none'>" + response[i].Project_Detail_Id + "</td>");
+                    $('#EmpInfoSort').append(tr);
+                }
+                $('#EmpInfoSort').DataTable();
+                // $("#spin").hide();
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+
+        $("#dialogdivSort").modal('show');
+    });
+</script>
+<style>
+    .main-content-inner {
+        float: left;
+        width: 100%;
+        margin-top: 47px;
+    }
+
+    .btn_sort {
+        background-color: #ffffff !important;
+        border-color: #efefef;
+        width: 100px;
+        border-radius: 4px;
+        padding: 3px 5px;
+        float: none;
+        display: block;
+        border-radius: 3px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        text-transform: capitalize;
+        display: block;
+        margin: auto;
+        margin-top: 12px;
+    }
+
+        .btn_sort:hover {
+            background: #0893e2 !important;
+            color: #fff;
+            cursor: pointer;
+        }
+</style>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnsort").click(function (e) {
+
+            var PartNo = "";
+            var DrawingNo = "";
+            var DrawingURL = "";
+            var DetailId = "";
+            $('#EmpInfoSort tr').each(function (row, tr) {
+                if (row == 0) { return; }
+                if (row == 1) {
+                    PartNo = $(tr).find('td:eq(1)').text();
+                    DrawingNo = $(tr).find('td:eq(2)').text();
+                    DrawingURL = $(tr).find('td:eq(3)').text();
+                    DetailId = $(tr).find('td:eq(4)').text();
+                }
+                else {
+                    PartNo = PartNo + "," + $(tr).find('td:eq(1)').text();
+                    DrawingNo = DrawingNo + "," + $(tr).find('td:eq(2)').text();
+                    DrawingURL = DrawingURL + "," + $(tr).find('td:eq(3)').text();
+                    DetailId = DetailId + "," + $(tr).find('td:eq(4)').text();
+                }
+            });
+            var objProject = {};
+            objProject.Part_No = PartNo;
+            objProject.Drawing_No = DrawingNo;
+            objProject.Drawing_URL = DrawingURL;
+            objProject.Project_Detail = DetailId;
+            $.ajax({
+                type: "POST",
+                url: "/Engineering/ProjectDesignSorting",
+                data: '{objProject: ' + JSON.stringify(objProject) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $("#EmpInfoSort > tbody").html("");
+                    var tr;
+                    for (var i = 0; i < response.length; i++) {
+                        tr = $('<tr/>');
+                        tr.append("<td style='text-align:center'>" + (i + 1) + "</td>");
+                        tr.append("<td class='left_c'>" + response[i].Part_No + "</td>");
+                        tr.append("<td class='left_c'>" + response[i].Drawing_No + "</td>");
+
+                        tr.append("<td style='display:none'>" + response[i].Drawing_URL + "</td>");
+                        tr.append("<td style='display:none'>" + response[i].Project_Detail_Id + "</td>");
+                        $('#EmpInfoSort').append(tr);
+                    }
+                    $('#EmpInfoSort').DataTable();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+
+
+
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+<div class="main-content">
+    <div class="main-content-inner top-padding">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs" style=" z-index: -1 !IMPORTANT;">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="/Engineering/EngineeringDashboard">Engineering</a>
+                </li>
+                <li>
+                    <a href="/Engineering/EngineeringDashboard">Project</a>
+                </li>
+                <li class="active">Project Sorting</li>
+            </ul><!-- /.breadcrumb -->
+            @*<div class="nav-search" id="nav-search">
+                <div class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>*@<!-- /.nav-search -->
+        </div>
+        <div class="page-content1">
+            <div class="page-header">
+                <h1>
+                    Project Sorting
+                </h1>
+            </div><!-- /.page-header -->
+            <div class="row">
+                <div class="col-xs-12">
+                    <input type="button" value="New Project" id="btnnew" />
+                </div>
+            </div>
+            <div class="space-6"></div>
+            <div class="row">
+                <div class="col-xs-12">
+
+                    <div class="row" style="padding-top:45px">
+                        <div class="col-xs-12">
+                            <div class="form-horizontal">
+                                <table id="EmpInfo" class="table table-bordered  table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="center">S. No</th>
+
+                                            <th>Project No</th>
+                                            <th>Project Name</th>
+                                            <th>Project Type</th>
+                                            <th>No Of Drawing</th>
+                                            <th style="display:none"></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div><!-- /.span -->
+                    </div><!-- /.row -->
+                    @*//----------------------------------------------------popup------------------------------*@
+                    <div id="dialogdivSort" class="modal fade">
+                        <div class="modal-dialog modal-lg modal-dialog-centered" style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
+                            <div class="modal-content" style="width:100% !important">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">&times;</a>
+                                    <h3 class="item_hedin">Sorting</h3>
+
+                                </div>
+                                <div class="modal-body">
+
+
+                                    <div class="row" style="padding-top:20px">
+                                        <div class="col-xs-12">
+                                            <div class="form-horizontal">
+                                                <table id="EmpInfoSort" class="table table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="center">S.No</th>
+                                                            <th>Part No</th>
+
+                                                            <th>CAD Number</th>
+
+                                                            <th style="display:none"></th>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                            </div>
+                                        </div><!-- /.span -->
+                                    </div><!-- /.row -->
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="form-horizontal">
+                                                <input id="btnsort" value="Sorting" type="button" class="btn_sort" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="hr hr-18 dotted hr-double"></div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

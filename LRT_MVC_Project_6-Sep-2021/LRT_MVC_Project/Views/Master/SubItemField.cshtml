@@ -1,0 +1,1081 @@
+﻿@{
+    ViewBag.Title = "SubItemField";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+@*<link rel="stylesheet" href="~/assets/css/modalpop.css">
+        <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+<script src="~/assets/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    function ItemType() {
+        var ddlitemcategory = $("#ddlitemcategory");
+        var ddlitemtype1 = $("#ddlitemtype1");
+        ddlitemcategory.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlitemtype1.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/ItemTypeName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlitemcategory.empty().append('<option selected="selected" value="0">Select Item Type</option>');
+                ddlitemtype1.empty().append('<option selected="selected" value="0">Select Item Type</option>');
+                $.each(response, function () {
+                    ddlitemcategory.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlitemtype1.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+
+    $(function () {
+        $('#ddlitemcategory').on("change", function () {
+            var ddlSubItemType = $("#ddlSubItemType");
+            $("#ddlSubItemType option:selected").remove();
+
+            var objSubItemType = {};
+            objSubItemType.Item_Type_Id = $("#ddlitemcategory").val();
+
+            ddlSubItemType.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            $.ajax({
+                type: "POST",
+                url: "/Master/SubItemTypeNameAccItemType",
+                data: '{objSubItemType: ' + JSON.stringify(objSubItemType) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    ddlSubItemType.empty().append('<option selected="selected" value="0">Select Sub Item Type</option>');
+                    $.each(response, function () {
+                        ddlSubItemType.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+
+    function SubItemType() {
+        var ddlSubItemType = $("#ddlSubItemType");
+        ddlSubItemType.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/SubItemTypeName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlSubItemType.empty().append('<option selected="selected" value="0">Select Sub Item Type</option>');
+                $.each(response, function () {
+                    ddlSubItemType.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+<script type="text/javascript">
+    $(function () {
+
+        var ddlvaluetype = $("#ddlvaluetype");
+        ddlvaluetype.append('<option selected="selected" value="0">Select</option>');
+        ddlvaluetype.append('<option value="Optional">Optional</option>');
+        ddlvaluetype.append('<option value="Input">Input</option>');
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        //  alert();
+        var ddlinputtype = $("#ddlinputtype");
+        ddlinputtype.append('<option selected="selected" value="0">Select</option>');
+        ddlinputtype.append('<option value="Numeric">Numeric</option>');
+        ddlinputtype.append('<option value="Textual">Textual</option>');
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        //  alert();
+        var ddlstatus = $("#ddlstatus");
+        ddlstatus.append('<option selected="selected" value="Select">Select</option>');
+        ddlstatus.append('<option value="0">Active</option>');
+        ddlstatus.append('<option value="1">InActive</option>');
+    });
+</script>
+
+<style>
+    .inputtype {
+        display: none;
+    }
+
+    .optional {
+        display: none;
+    }
+
+    .sequence {
+        display: none;
+    }
+</style>
+<script>
+    $(function () {
+        $('#ddlvaluetype').on("change", function () {
+            if ($("#ddlvaluetype").val() == "0") {
+                $(".optional").css('display', 'none');
+                $(".inputtype").css('display', 'none');
+                $(".sequence").css('display', 'none');
+                // $(".display_uom").css('display', 'none');
+            }
+            if ($("#ddlvaluetype").val() == "Optional") {
+                $(".optional").css('display', 'inherit');
+                $(".inputtype").css('display', 'none');
+                $(".sequence").css('display', 'inherit');
+                //$(".display_uom").css('display', 'none');
+            }
+            if ($("#ddlvaluetype").val() == "Input") {
+                $(".inputtype").css('display', 'inherit');
+                $(".optional").css('display', 'none');
+                $(".sequence").css('display', 'inherit');
+                //$(".display_uom").css('display', 'none');
+            }
+        });
+    });
+</script>
+<script>
+    function GetUOMGroup() {
+        var ddlUOMGroup = $("#ddluomgroup");
+        ddlUOMGroup.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/UOMGroupName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlUOMGroup.empty().append('<option selected="selected" value="0">Select UOM Group</option>');
+                $.each(response, function () {
+                    ddlUOMGroup.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+<script>
+    $(document).ready(function () {
+        $("#ddlitemcategory").focus();
+        $(".display_uom").css('display', 'none');
+        GetUOMGroup();
+        ItemType();
+        SubItemType();
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "/assets/js/jquery.dataTables.min.js";
+        document.getElementsByTagName("body")[0].appendChild(script);
+        $('input[type=radio][name="permision"]').on('change', function () {
+
+            if (this.value == 'with') {
+                $(".display_uom").css('display', 'inherit');
+            }
+            else if (this.value == 'without') {
+                $(".display_uom").css('display', 'none');
+            }
+        });
+    })
+</script>
+@*<script>
+        $(document).ready(function () {
+
+        });
+    </script>*@
+
+<script>
+    function Resetdata() {
+        $("#ddlitemcategory").val("0");
+        $("#ddlSubItemType").val("0");
+        $("#txtfieldlabelname").val("");
+        $("#ddlvaluetype").val("0");
+        $("#txtvalue").val("");
+        $("#ddlinputtype").val("0");
+        $("#ddlpriority").val("0");
+        $("#ddlstatus").val("0");
+        $("#btnsave").text("");
+        $("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Submit");
+        $("#hdstatemast").val("");
+        $("#ddlcountry").focus();
+        $(".display_uom").css('display', 'none');
+        GetUOMGroup();
+        var objRolePermission = {};
+        objRolePermission.Sub_To_Sub_Menu_Id = sessionStorage.getItem("sid");
+        //alert(objRolePermission.Sub_To_Sub_Menu_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/AddRolePermission",
+            data: '{objRolePermission: ' + JSON.stringify(objRolePermission) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //if (response.Is_Add == false) {
+                //    $("#btnsave").css('visibility', 'hidden');
+                //    $("#btnreset").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Edit == false) {
+                //    $("a.remove").css('visibility', 'hidden');
+                //}
+                //alert(response.Is_Delete);
+                //if (response.Is_Delete == false) {
+                //    $("a.delete").css('visibility', 'hidden');
+                //}
+                //if (response.Is_View == false) {
+                //    $(".view").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Approve == false) {
+                //    $("a.approve").css('visibility', 'hidden');
+                //}
+                //$('script[src=~/assets/js/jquery.dataTables.min.js]').remove();
+                //$('script[src=/assets/js/jquery.dataTables.min.js]').remove();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnreset").click(function () {
+            Resetdata();
+        });
+    })
+</script>
+<script>
+    var myVar;
+    $(document).ready(function () {
+        Getdata();
+        myVar = setTimeout(Resetdata, 50);
+        //Resetdata();
+    });
+</script>
+<style>
+    .more_dis {
+        display: inline-block;
+        padding-left: 6px;
+        font-size: 13px !important;
+        padding-right: 6px;
+        text-transform: capitalize;
+        text-decoration: underline;
+        color: #0893e2 !IMPORTANT;
+    }
+</style>
+<script>
+    function Getdata() {
+        $("#divtbl").append('<table id="EmpInfo" class="table table-bordered  table-hover"><thead> <tr><th class="left_c w61_i">S. No</th><th class="left_c">Item Type</th><th class="left_c">Sub Item Type</th><th class="left_c">Field Label Name</th><th class="left_c">Value Type</th><th class="left_c">Value</th><th class="left_c">Input Type</th><th class="left_c" style="display:none">Sequence</th> <th class="left_c">UOM Group</th><th style="display:none;"></th> <th style="display:none;"></th> <th style="display:none;"></th><th style="display:none;"></th><th style="display:none;"></th><th class="w155_i">Action</th> </tr> </thead><tbody></tbody> </table>')
+        $("#EmpInfo > tbody").html("");
+        //Call EmpDetails jsonResult Method
+        // alert();
+        $.getJSON("/Master/SubItemTypeFieldDetails",
+            function (json) {
+                var tr;
+
+                //Append each row to html table
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    // alert(json[i].Sub_Item_Type_Field_Optional_Full_Value);
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Item_Type_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Sub_Item_Type_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Sub_Item_Type_Field_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Sub_Item_Type_Field_Optional + "</td>");
+                    var opt = json[i].Sub_Item_Type_Field_Optional_Value;
+                    if (opt == "") {
+                        tr.append("<td class='left_c'>" + json[i].Sub_Item_Type_Field_Optional_Value + "</td>");
+                    }
+                    else {
+                        tr.append("<td class='left_c'>" + json[i].Sub_Item_Type_Field_Optional_Value + "<a  href='javascript:void(0);' class='more tooltip-error comn_inline more_dis' data-rel='tooltip'>....more</a></td>");
+                    }
+                    tr.append("<td class='left_c'>" + json[i].Sub_Item_Type_Field_Input_Type + "</td>");
+                    tr.append("<td class='left_c' style='display:none'>" + json[i].Sub_Item_Type_Field_Priority + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].UOM_Group_Name + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Item_Type_Id + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Sub_item_Type_Id + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Sub_item_Type_Field_Id + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].UOM_Group_Id + "</td>");
+                    var status = json[i].Approve_Status;
+                    var status1 = "";
+                    if (status == 1) {
+                        status1 = "<i class='menu-icon fa fa-check bigger-120 green'  data-toggle='tooltip' title='Approved'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-clock-o bigger-120 green' data-toggle='tooltip' title='Pending'></i>";
+                    }
+                    tr.append("<td style='display:none'>" + json[i].Sub_Item_Type_Field_Optional_Full_Value + "</td>");
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a href='javascript:void(0);' class='approve tooltip-error comn_inline grn' data-rel='tooltip' >" + status1 + "</a></li><li><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip' title='Edit'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i></a></li><li><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='Delete'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+                    //tr.append("<td class='lst_td'><ul class='list_main'><li><a href='' class='tooltip-error comn_inline grn' data-rel='tooltip' title='Approve by it'><i class='menu-icon fa fa-check grn'></i>Approve</a></li><li><a href='#' class='tooltip-error comn_inline blu' data-rel='tooltip' title='Edit by it'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i>Edit</a></li><li><a href='' class='tooltip-error comn_inline red' data-rel='tooltip' title='Delete by it'><i class='menu-icon fa fa-trash bigger-120 red'></i>Delete</a></li></ul></td>");
+
+                    $('table').append(tr);
+
+                }
+                $('#EmpInfo').DataTable();
+            });
+
+    }
+</script>
+<script>
+    $(document).on("click", "a.approve", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(11)').text();
+        var objSubItemTypeField = {};
+        objSubItemTypeField.Sub_item_Type_Field_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Master/SubItemTypeFieldApproveStatus",
+            data: '{objSubItemTypeField: ' + JSON.stringify(objSubItemTypeField) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //$(".dataTables_length").remove();
+                //$(".dataTables_filter").remove();
+                //$(".dataTables_info").remove();
+                //$(".dataTables_paginate").remove();
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                Getdata();
+                Resetdata();
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+
+<script>
+    $(document).on("click", "a.more", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(11)').text();
+        var objSubItemTypeField = {};
+        objSubItemTypeField.Sub_item_Type_Field_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Master/SubItemTypeFieldOPtionalValue",
+            data: '{objSubItemTypeField: ' + JSON.stringify(objSubItemTypeField) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //alert(response.Sub_Item_Type_Field_Optional_Value);
+                $("#lblmore").text(response.Sub_Item_Type_Field_Optional_Value);
+                $('#dialogdiv').modal('show');
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsave").click(function () {
+            var objsubitemfield = {};
+            objsubitemfield.Item_Type_Id = $("#ddlitemcategory").val();
+            objsubitemfield.Sub_item_Type_Id = $("#ddlSubItemType").val();
+            objsubitemfield.Sub_Item_Type_Field_Name = $("#txtfieldlabelname").val().charAt(0).toUpperCase() + $("#txtfieldlabelname").val().slice(1);
+            objsubitemfield.Sub_Item_Type_Field_Optional = $("#ddlvaluetype").val();
+            objsubitemfield.Sub_Item_Type_Field_Optional_Value = $("#txtvalue").val();
+            objsubitemfield.UOM_Group_Id = $("#ddluomgroup").val();
+            objsubitemfield.Sub_Item_Type_Field_Priority = $("#ddlpriority").val();
+            objsubitemfield.Sub_item_Type_Field_Id = $("#hdsubitemfield").val();
+            if (objsubitemfield.Sub_Item_Type_Field_Optional == "Optional") {
+                objsubitemfield.Sub_Item_Type_Field_Input_Type = "";
+            }
+            else {
+                objsubitemfield.Sub_Item_Type_Field_Input_Type = $("#ddlinputtype").val();
+            }
+            var permission = $('input[name="permision"]:checked').val();
+            // alert(permission);
+            if (permission == "without") {
+                objsubitemfield.UOM_Group_Id = 0;
+            }
+            //alert(objstate.Country_Id);
+            if (objsubitemfield.Item_Type_Id == "0" || objsubitemfield.Item_Type_Id == null) {
+                swal("Please select item category.");
+                $("#ddlitemcategory").focus();
+                return;
+            }
+            if (objsubitemfield.Sub_item_Type_Id == "0" || objsubitemfield.Sub_item_Type_Id == null) {
+                swal("Please select sub item type.");
+                $("#ddlSubItemType").focus();
+                return;
+            }
+            if (objsubitemfield.Sub_Item_Type_Field_Name == "" || objsubitemfield.Sub_Item_Type_Field_Name == null) {
+                swal("Please enter Field Label Name.");
+                $("#txtfieldlabelname").focus();
+                return;
+            }
+            if (objsubitemfield.Sub_Item_Type_Field_Optional == "0" || objsubitemfield.Sub_Item_Type_Field_Optional == null) {
+                swal("Please select Field Optional.");
+                $("#ddlSubItemType").focus();
+                return;
+            }
+            if (objsubitemfield.Sub_Item_Type_Field_Optional == "Optional") {
+                if (objsubitemfield.Sub_Item_Type_Field_Optional_Value == "" || objsubitemfield.Sub_Item_Type_Field_Optional_Value == null) {
+                    //objsubitemfield.Sub_Item_Type_Field_Input_Type = "";
+                    swal("Please enter Field Optional value.");
+                    $("#txtvalue").focus();
+
+                    return;
+                }
+            }
+            else {
+
+                if (objsubitemfield.Sub_Item_Type_Field_Input_Type == "0" || objsubitemfield.Sub_Item_Type_Field_Input_Type == null) {
+                    swal("txtvalue select Field input type.");
+                    $("#ddlinputtype").focus();
+                    objsubitemfield.Sub_Item_Type_Field_Optional_Value == "";
+                    return;
+                }
+            }
+            //if (objsubitemfield.Sub_Item_Type_Field_Priority == "0" || objsubitemfield.Sub_Item_Type_Field_Priority == null) {
+            //    swal("Please select priority.");
+            //    $("#ddlpriority").focus();
+            //    return;
+            //}
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddSubItemField",
+                data: '{objsubitemfield: ' + JSON.stringify(objsubitemfield) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).on("click", "a.remove", function () {
+        var $row = $(this).closest("tr");    // Find the row
+        // var $itemcategoryId = $row.find('td:eq(11)').text();
+        //var $itemsubitemtypeId = $row.find('td:eq(12)').text();
+        var $subitemtypefieldname = $row.find('td:eq(3)').text();
+        var $subitemtypefieldoptional = $row.find('td:eq(4)').text();
+        var $subitemtypefieldoptionalvalue = $row.find('td:eq(13)').text();
+        // alert($subitemtypefieldoptionalvalue);
+        var $subitemtypefieldinputtype = $row.find('td:eq(6)').text();
+        var $subitemtypefieldinputpriority = $row.find('td:eq(7)').text();
+        var $id = $row.find('td:eq(11)').text();
+        var $itemcategoryid = $row.find('td:eq(9)').text();
+        var $itemsubitemtypenameid = $row.find('td:eq(10)').text();
+        var $uomgroupid = $row.find('td:eq(12)').text();
+        //  alert($uomgroupid);
+        if ($uomgroupid == 0) {
+
+            $('input:radio[name="permision"][value="without"]').prop('checked', true);
+            //$('input:radio[name="permision"]').filter('[value="without"]').attr('checked', true);
+            $(".display_uom").css('display', 'none');
+
+        }
+        else {
+            //$('input:radio[name="permision"]').filter('[value="without"]').attr('checked', false);
+            $('input:radio[name="permision"][value="with"]').prop('checked', true);
+            $(".display_uom").css('display', 'inherit');
+        }
+        if ($subitemtypefieldoptional == "0") {
+            $(".optional").css('display', 'none');
+            $(".inputtype").css('display', 'none');
+            $(".sequence").css('display', 'none');
+        }
+        if ($subitemtypefieldoptional == "Optional") {
+            $(".optional").css('display', 'inherit');
+            $(".inputtype").css('display', 'none');
+            $(".sequence").css('display', 'inherit');
+        }
+        if ($subitemtypefieldoptional == "Input") {
+            $(".inputtype").css('display', 'inherit');
+            $(".optional").css('display', 'none');
+            $(".sequence").css('display', 'inherit');
+        }
+
+
+        $("#ddlitemcategory").val($itemcategoryid);
+        $("#ddlSubItemType").val($itemsubitemtypenameid);
+        $("#txtfieldlabelname").val($subitemtypefieldname);
+        $("#ddlvaluetype").val($subitemtypefieldoptional);
+        $("#txtvalue").val($subitemtypefieldoptionalvalue);
+        $("#ddlinputtype").val($subitemtypefieldinputtype);
+        $("#ddlpriority").val($subitemtypefieldinputpriority);
+        $("#ddluomgroup").val($uomgroupid);
+        $("#hdsubitemfield").val($id);
+        $("#btnsave").text("");
+        $("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Update");
+        $("#btnsave").css('visibility', 'visible');
+        $("#btnreset").css('visibility', 'visible');
+    });
+</script>
+
+<script>
+    $(document).on("click", "a.delete", function (e) {
+
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(11)').text();
+
+        swal({
+            title: 'Are you sure?',
+            text: '*You want to delete this data?*',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function (value) {
+            if (value) {
+                var objsubitemtypefield = {};
+                objsubitemtypefield.Sub_item_Type_Field_Id = $id;
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/DeleteSubItemTypeField",
+                    data: '{objsubitemtypefield: ' + JSON.stringify(objsubitemtypefield) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        Getdata();
+                        Resetdata();
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "/assets/js/jquery.dataTables.min.js";
+                        document.getElementsByTagName("body")[0].appendChild(script);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+                swal("*Your data is safe*");
+            }
+        });
+
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $("#btnsaveitemtype").click(function (e) {
+            // e.preventDefault();
+            // alert();
+            var objitemtype = {};
+            objitemtype.Item_Type_Code = $("#txtitemtypecode").val();
+            objitemtype.Item_Type_Name = $("#txtitemtypename").val();
+            objitemtype.Item_Type_Id = $("#hditemtype").val();
+            if (objitemtype.Item_Type_Code == "" || objitemtype.Item_Type_Name == null) {
+                swal("Please enter item type code.");
+                $("#txtitemtypecode").focus();
+                return;
+            }
+            if (objitemtype.Item_Type_Name == "" || objitemtype.Item_Type_Name == null) {
+                swal("Please enter item type name.");
+                $("#txtitemtypename").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddItemType",
+                data: '{objitemtype: ' + JSON.stringify(objitemtype) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    swal(response);
+                    ItemType();
+                    Resetitemtype();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        });
+
+        $("#btnsavesubitemtype").click(function (e) {
+            e.preventDefault();
+            var objsubitemtype = {};
+            objsubitemtype.Item_Type_Id = $("#ddlitemtype1").val();
+            objsubitemtype.Sub_Item_Type_Name = $("#txtsubitemtypename").val();
+            objsubitemtype.Sub_item_Type_Id = $("#hdsubitemtype").val();
+            //alert(objstate.Country_Id);
+            if (objsubitemtype.Item_Type_Id == "0" || objsubitemtype.Item_Type_Id == null) {
+                swal("Please select Item Type.");
+                $("#ddlitemtype1").focus();
+                return;
+            }
+            if (objsubitemtype.Sub_Item_Type_Name == "" || objsubitemtype.Sub_Item_Type_Name == null) {
+                swal("Please enter sub item type name.");
+                $("#txtsubitemtypename").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddSubItemType",
+                data: '{objsubitemtype: ' + JSON.stringify(objsubitemtype) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    swal(response);
+                    SubItemType();
+
+                    Resetsubitemtype();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+        $("#btnresetitemtype").click(function (e) {
+            Resetitemtype();
+        });
+        $("#btnresetitemsubtype").click(function (e) {
+            Resetsubitemtype();
+
+        });
+    });
+</script>
+<script>
+    function Resetitemtype() {
+
+        $("#txtitemtypecode").val("");
+        $("#txtitemtypename").val("");
+    }
+    function Resetsubitemtype() {
+
+        $("#ddlitemtype1").val(0);
+        $("#txtsubitemtypename").val("");
+    }
+</script>
+
+<script>
+    $(document).on("click", "a.clddlitemtype", function () {
+        $('#dialogdivddlItemType').modal('show');
+    });
+    $(document).on("click", "a.clddlitemsub", function () {
+        $('#dialogdivddlItemSub').modal('show');
+    });
+</script>
+<style>
+    .clddl_plus {
+        float: right;
+        left: 5px;
+        position: absolute !important;
+        top: 9px;
+        font-size: 13px;
+    }
+</style>
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+<div class="main-content">
+    <div class="main-content-inner top-padding">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs" style=" z-index: -1 !IMPORTANT;">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#">PMS Setting</a>
+                </li>
+                <li>
+                    <a href="#">MRP Setting</a>
+                </li>
+                <li class="active">  Sub Item Type Field</li>
+            </ul><!-- /.breadcrumb -->
+            @*<div class="nav-search" id="nav-search">
+                <div class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>*@<!-- /.nav-search -->
+        </div>
+        @*------------------------------------------Master data popup---------------------------------------------------*@
+        <div class="modal fade" id="dialogdivddlItemType">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <a href="#" class="close" data-dismiss="modal">×</a>
+                        <h3 class="item_hedin">Add Item Type </h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-3">Item Type Code<span>:</span></div>
+                            <div class="col-md-9">
+                                <input type="text" id="txtitemtypecode" style="text-transform:uppercase" placeholder="Item Type Code" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for item type code" />
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-3">Item Type Name<span> : </span></div>
+                            <div class="col-md-9">
+                                <input type="text" id="txtitemtypename" style="text-transform:capitalize" placeholder="Item Type Name" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for item type name" />
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-9">
+                                <button class="btn btn-info" id="btnsaveitemtype" type="button" data-toggle="tooltip" title="Button for save data">
+                                    <i class="ace-icon fa fa-floppy-o"></i>
+                                    Submit
+                                </button>
+                                <button class="btn master-page-reset" id="btnresetitemtype" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="dialogdivddlItemSub">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <a href="#" class="close" data-dismiss="modal">×</a>
+                        <h3 class="item_hedin">Add Sub Item Type </h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-3">Item Type Name<span>:</span></div>
+                            <div class="col-md-9">
+                                <select class="col-xs-10 col-sm-10" id="ddlitemtype1" data-toggle="tooltip" title="Select item type">
+                                    <option>-Select Item Type-</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-3">Sub Item Type Name<span> : </span></div>
+                            <div class="col-md-9">
+                                <input type="text" id="txtsubitemtypename" style="text-transform:capitalize" placeholder="Sub Item Type Name" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for sub item type name" />
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-9">
+                                <button class="btn btn-info" id="btnsavesubitemtype" type="button" data-toggle="tooltip" title="Button for save data">
+                                    <i class="ace-icon fa fa-floppy-o"></i>
+                                    Submit
+                                </button>
+                                <button class="btn master-page-reset" id="btnresetitemsubtype" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="page-content1">
+            <div class="page-header">
+                <h3 class="item_hedin">
+                    Sub Item Type Field
+                </h3>
+            </div><!-- /.page-header -->
+            <div class="row">
+                <div class="col-xs-6">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Item Type  <span style="color:red;font-size:14px;">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="col-xs-10 col-sm-8" id="ddlitemcategory" data-toggle="tooltip" title="Select Item Type name"></select>
+                            <sup style=" top: .5em; left: .5em;"><a href='javascript:void(0);' class="clddlitemtype" data-toggle="tooltip" title="Add new item type"><i class="fa fa-plus"></i></a></sup>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">  Sub Item Type  <span style="color:red;font-size:14px;">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="col-xs-10 col-sm-8" id="ddlSubItemType" data-toggle="tooltip" title="Select Sub Item Type "></select>
+                            <sup style=" top: .5em; left: .5em;"><a class="clddlitemsub" data-toggle="tooltip" title="Add new sub item type"><i class="fa fa-plus"></i></a></sup>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-4"></div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Field Label Name  <span style="color:red;font-size:14px;">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" id="txtfieldlabelname" placeholder="Field Label Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for field label name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Value Type  <span style="color:red;font-size:14px;">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="col-xs-10 col-sm-8" id="ddlvaluetype" data-toggle="tooltip" title="Select Value Type"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="space-4"></div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"></label>
+                        <div class="col-sm-9">
+                            <input type="radio" id="rwith" name="permision" value="with">
+                            <label for="with">With UOM Group</label>
+                            <input type="radio" id="rwithout" name="permision" value="without" checked="checked">
+                            <label for="without">Without UOM Group</label>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="space-2"></div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">
+                            <span class="optional">Optional Value </span>
+                            <span class="inputtype">Input Type </span>
+                        </label>
+                        <div class="col-sm-9">
+                            <input type="text" id="txtvalue" placeholder="Value" class="col-xs-10 col-sm-8 optional" data-toggle="tooltip" title="Field for value" />
+                            <select class="col-xs-10 col-sm-8 inputtype" id="ddlinputtype" data-toggle="tooltip" title="Select Value Type"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 display_uom">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">
+                            <span>UOM Group </span>
+
+                        </label>
+                        <div class="col-sm-9">
+
+                            <select class="col-xs-10 col-sm-8" id="ddluomgroup" data-toggle="tooltip" title="Select uom group"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*<div class="space-4"></div>*@
+            <div class="row">
+                <div class="col-xs-6" style="display:none">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Sequence  </label>
+                        <div class="col-sm-9">
+                            <select class="col-xs-10 col-sm-8" id="ddlpriority" data-toggle="tooltip" title="Select Priority">
+                                <option value="0">Select</option>
+                                <option value="1" selected="selected">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="13">13</option>
+                                <option value="14">14</option>
+                                <option value="15">15</option>
+                                <option value="16">16</option>
+                                <option value="17">17</option>
+                                <option value="18">18</option>
+                                <option value="19">19</option>
+                                <option value="20">20</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Status </label>
+                        <div class="col-sm-9">
+                            <select class="col-xs-10 col-sm-8" id="ddlstatus" data-toggle="tooltip" title="Select Status"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="space-4"></div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <input type="hidden" id="hdsubitemfield" />
+                    <div class="clearfix form-actions">
+                        <div class="col-md-offset-0 col-md-12">
+                            <button class="btn btn-info" id="btnsave" type="button" data-toggle="tooltip" title="Button for save data">
+                                <i class="ace-icon fa fa-floppy-o"></i>
+                                Submit
+                            </button>
+                            &nbsp; &nbsp; &nbsp;
+                            <button class="btn" id="btnreset" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+            @*-------------------------popup start---------------------------------------------------------------------*@
+            <div id="dialogdiv" class="modal fade">
+                <div class="modal-dialog modal-dialog-centered modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <a href="#" class="close" data-dismiss="modal">×</a>
+                            <h3 class="item_hedin">Detail </h3>
+
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <label id="lblmore" class="col-sm-12 control-label "></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*-------------------------popup end---------------------------------------------------------------------*@
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="form-horizontal">
+                        <div class="table-header">
+                            Current Record
+                        </div>
+                        <div id="divtbl"></div>
+
+                    </div>
+                </div><!-- /.span -->
+            </div><!-- /.row -->
+
+
+
+        </div>
+
+    </div>
+</div>

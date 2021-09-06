@@ -1,0 +1,4223 @@
+﻿@{
+    ViewBag.Title = "UpdateItem";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+<script src="~/assets/js/bootstrap.min.js"></script>
+@*<script src="http://code.jquery.com/jquery-latest.min.js"></script>*@
+
+@*<script src="~/Scripts/jquery-barcode.js"></script>*@
+@*<link rel="stylesheet" href="~/assets/css/modalpop.css">*@
+@*<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+
+<style type="text/css">
+    body {
+        margin: 0;
+        background: #e6e6e6;
+    }
+
+    .img {
+        width: 200px;
+        height: 200px;
+    }
+
+    .showSlide {
+        display: none;
+    }
+
+    /* .showSlide img {
+            width: 100%;
+        }*/
+
+    .slidercontainer {
+        max-width: 1000px;
+        position: relative;
+        margin: auto;
+        border: dotted 1px;
+        width: 200px;
+        height: 200px;
+        margin-left: 129px;
+    }
+
+    .left, .right {
+        cursor: pointer;
+        position: absolute;
+        top: 100%;
+        width: auto;
+        padding: 16px;
+        margin-top: -22px;
+        font-weight: bold;
+        font-size: 18px;
+        transition: 0.6s ease;
+        border-radius: 0 3px 3px 0;
+    }
+
+    .right {
+        right: 0;
+        border-radius: 3px 0 0 3px;
+    }
+
+    /* .left:hover, .right:hover {
+            background-color: rgba(115, 115, 115, 0.8);
+        }*/
+    .space-4, [class*=vspace-4] {
+        max-height: 1px;
+        min-height: 1px;
+        overflow: hidden;
+        margin: 0px 0 0px;
+    }
+
+    .content {
+        color: #eff5d4;
+        font-size: 30px;
+        padding: 8px 12px;
+        position: absolute;
+        top: 10px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .showSlide .active {
+        background-color: #717171;
+    }
+    /* Fading animation */
+    .fade {
+        -webkit-animation-name: fade;
+        -webkit-animation-duration: 10000000.5s;
+        animation-name: fade;
+        animation-duration: 1000000.5s;
+    }
+
+    @@-webkit-keyframes fade {
+        from {
+            opacity: .4;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @@keyframes fade {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+<style>
+    .no-image {
+        margin - left: 30%;
+        margin-top: 40%;
+        font-size: 16px;
+        font-weight: 700;
+    }
+</style>
+<style>
+    .fnt_smal {
+        font-size: 10px !important;
+        padding-left: 0px !important;
+    }
+
+    .fnt_smal {
+        font-size: 10px !important;
+        padding-left: 24px !important;
+    }
+</style>
+<style>
+    .clddlstore {
+        font-size: 11px;
+        position: absolute;
+        top: 4px;
+        color: #276d9b !important;
+        display: inline-block;
+        z-index: 1;
+        right: -5px;
+    }
+
+    .clddlrackno {
+        font-size: 11px;
+        position: absolute;
+        top: 4px;
+        color: #276d9b !important;
+        display: inline-block;
+        z-index: 1;
+        right: -5px;
+    }
+
+    .clddlrack {
+        font-size: 11px;
+        position: absolute;
+        top: 4px;
+        color: #276d9b !important;
+        display: inline-block;
+        z-index: 1;
+        right: -5px;
+    }
+
+    .clddluom {
+        font-size: 12px;
+        position: absolute;
+        top: 7px;
+    }
+
+    .clddluomgroup {
+        font-size: 11px;
+        position: absolute;
+        top: 4px;
+        color: #276d9b !important;
+        display: inline-block;
+        z-index: 1;
+        right: -5px;
+    }
+
+    .clddluomvaluation {
+        font-size: 11px;
+        position: absolute;
+        top: 4px;
+        color: #276d9b !important;
+        display: inline-block;
+        z-index: 1;
+        right: -5px;
+    }
+
+
+    .clddlitemsub {
+        font-size: 11px;
+        position: absolute;
+        top: 4px;
+        color: #276d9b !important;
+        display: inline-block;
+        z-index: 1;
+        right: -5px;
+    }
+
+    .clddlmanageitem {
+        font-size: 11px;
+        position: absolute;
+        top: 4px;
+        color: #276d9b !important;
+        display: inline-block;
+        z-index: 1;
+        right: -5px;
+    }
+
+    .clddlmaterialcategory {
+        font-size: 11px;
+        position: absolute;
+        top: 4px;
+        color: #276d9b !important;
+        display: inline-block;
+        z-index: 1;
+        right: -5px;
+    }
+
+    #btnaddalt {
+        padding: 3px 5px 3px 0px;
+        font-size: 12px;
+        margin-top: 4px;
+        background: #307ECC !important;
+        border: 4px solid #307ECC !IMPORTANT;
+        width: 97px;
+        text-align: center;
+        border-radius: 3px;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $('#uploaddatesheet').change(function (e) {
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+        $('#uploadCompliance').change(function (e) {
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+        $('#uploadCADFile').change(function (e) {
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+        $('#uploadScrapping').change(function (e) {
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+        $('#uploadcertification').change(function (e) {
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+        //$('#btnUploadCAD').click();
+
+        //$('#btnUploaddatesheet').click();
+        //$('#btnUploadCompliance').click();
+        //$('#btnUploadScrapping').click();
+        // $('#btnUploadcertification').click();
+        var checkCookie = sessionStorage.getItem("sub-item-id");
+        // var checkCookie = $.cookie("sub-item-id");
+        // alert(checkCookie);
+        GetSubItemField(checkCookie);
+        SetAltDataForUpdate();
+        setTimeout(SetDataForUpdate, 2500);
+        CurrencyName();
+        CellNumber();
+        UOMName();
+        UOMGroupName();
+        // alert();
+        $("#btnaddalt").click(function (e) {
+
+            var table_length = $("#EmpInfoalt tr").length;
+            // alert(table_length);
+            var row = parseInt($("#txtNoOfRows").val());
+            var count = (row + table_length);
+            //  alert(count);
+            var tr;
+            $("#altrow").show();
+            for (var i = table_length; i < count; i++) {
+                tr = $('<tr/>');
+                tr.append("<td>" + i + "</td>");
+
+                tr.append("<td><input type='text' id='txtmpn" + i + "' /></td>");
+                tr.append("<td><input type='text' id='txtbrand" + i + "' class='col-xs-2 col-sm-4'/></td>");
+                tr.append("<td><input type='text' id='txturl" + i + "' class='col-xs-2 col-sm-4'/></td>");
+                tr.append("<td><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></td>");
+                $('#EmpInfoalt').append(tr);
+            }
+            $('#EmpInfoalt').DataTable();
+
+        });
+        $('#btnUploadAll').click(function () {
+            $("#spin").show();
+            Uploaddatesheet();
+            //UploadCAD();
+            //UploadScrapping();
+            //Uploadcertification();
+            //UploadCompliance();
+            $("#spin").hide();
+        });
+    });
+</script>
+<script>
+    function CurrencyName() {
+        var ddlcurrency = $("#ddlcurrency");
+        ddlcurrency.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/CurrencyName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlcurrency.empty().append('<option selected="selected" value="0">Select Currency Name</option>');
+                $.each(response, function () {
+                    ddlcurrency.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    function CellNumber() {
+        var ddlcellnumber = $("#ddlcellnumber");
+        ddlcellnumber.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/CellNumberName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlcellnumber.empty().append('<option selected="selected" value="0">Select Cell Number</option>');
+                $.each(response, function () {
+                    ddlcellnumber.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+
+    function Uploaddatesheet() {
+        if (window.FormData !== undefined) {
+            var fileUpload = $("#uploaddatesheet").get(0);
+            var files = fileUpload.files;
+            var fileData = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                fileData.append(files[i].name, files[i]);
+
+            }
+            fileData.append('Datesheet', "DateSheet" + $("#ddlItemType").val().split(" ").join("") + $("#txtMPNumber").val().split(" ").join(""));
+
+            $.ajax({
+                url: '/Master/UploadFileMethod',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                success: function (result) {
+                    var f = result.split('+');
+                    $("#hddatesheet").val(f[1]);
+                    var path = $("#hddatesheet").val();
+                    //---------------------------------------------------------------------------------------
+                    swal({
+                        // title: 'Auto close alert!',
+                        text: f[0],
+                        timer: 5000,
+                        onOpen: function () {
+                            swal.showLoading()
+                        }
+                    }).then(
+                                                function () { UploadCAD() },
+
+                                                      function (dismiss) {
+                                                          if (dismiss === 'timer') {
+                                                              console.log('I was closed by the timer')
+                                                          }
+                                                      }
+                                                     )
+
+                    //--------------------------------------------------------------------------------------
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        } else {
+            alert("FormData is not supported.");
+        }
+    }
+    function UploadCAD() {
+        if (window.FormData !== undefined) {
+            var fileUpload = $("#uploadCADFile").get(0);
+            var files = fileUpload.files;
+            var fileData = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                fileData.append(files[i].name, files[i]);
+
+            }
+            fileData.append('CAD', "CAD" + $("#ddlItemType").val().split(" ").join("") + $("#txtMPNumber").val().split(" ").join(""));
+
+            $.ajax({
+                url: '/Master/UploadCADFileMethod',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                success: function (result) {
+                    var f = result.split('+');
+                    $("#hdCADFile").val(f[1]);
+                    var path = $("#hdCADFile").val();
+                    //---------------------------------------------------------------------------------------
+                    swal({
+                        // title: 'Auto close alert!',
+                        text: f[0],
+                        timer: 5000,
+                        onOpen: function () {
+                            swal.showLoading()
+                        }
+                    }).then(
+                                                function () { UploadCompliance() },
+
+                                                      function (dismiss) {
+                                                          if (dismiss === 'timer') {
+                                                              console.log('I was closed by the timer')
+                                                          }
+                                                      }
+                                                     )
+
+                    //--------------------------------------------------------------------------------------
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        } else {
+            alert("FormData is not supported.");
+        }
+    }
+    function UploadCompliance() {
+        if (window.FormData !== undefined) {
+            var fileUpload = $("#uploadCompliance").get(0);
+            var files = fileUpload.files;
+            var fileData = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                fileData.append(files[i].name, files[i]);
+
+            }
+            fileData.append('Compliance', "Compliance" + $("#ddlItemType").val().split(" ").join("") + $("#txtMPNumber").val().split(" ").join(""));
+
+            $.ajax({
+                url: '/Master/UploadFileMethod',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                success: function (result) {
+                    var f = result.split('+');
+                    $("#hdCompliance").val(f[1]);
+                    var path = $("#hdCompliance").val();
+                    //---------------------------------------------------------------------------------------
+                    swal({
+                        // title: 'Auto close alert!',
+                        text: f[0],
+                        timer: 5000,
+                        onOpen: function () {
+                            swal.showLoading()
+                        }
+                    }).then(
+                                                function () { UploadScrapping() },
+
+                                                      function (dismiss) {
+                                                          if (dismiss === 'timer') {
+                                                              console.log('I was closed by the timer')
+                                                          }
+                                                      }
+                                                     )
+
+                    //--------------------------------------------------------------------------------------
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        } else {
+            alert("FormData is not supported.");
+        }
+    }
+    function UploadScrapping() {
+        if (window.FormData !== undefined) {
+            var fileUpload = $("#uploadScrapping").get(0);
+            var files = fileUpload.files;
+            var fileData = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                fileData.append(files[i].name, files[i]);
+
+            }
+            fileData.append('Scrapping', "Scrapping" + $("#ddlItemType").val().split(" ").join("") + $("#txtMPNumber").val().split(" ").join(""));
+
+            $.ajax({
+                url: '/Master/UploadFileMethod',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                success: function (result) {
+                    var f = result.split('+');
+                    $("#hdScrapping").val(f[1]);
+                    var path = $("#hdScrapping").val();
+                    //---------------------------------------------------------------------------------------
+                    swal({
+                        // title: 'Auto close alert!',
+                        text: f[0],
+                        timer: 5000,
+                        onOpen: function () {
+                            swal.showLoading()
+                        }
+                    }).then(
+                                                function () { Uploadcertification() },
+
+                                                      function (dismiss) {
+                                                          if (dismiss === 'timer') {
+                                                              console.log('I was closed by the timer')
+                                                          }
+                                                      }
+                                                     )
+
+                    //--------------------------------------------------------------------------------------
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        } else {
+            alert("FormData is not supported.");
+        }
+    }
+    function Uploadcertification() {
+        if (window.FormData !== undefined) {
+            var fileUpload = $("#uploadcertification").get(0);
+            var files = fileUpload.files;
+            var fileData = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                fileData.append(files[i].name, files[i]);
+
+            }
+            fileData.append('Certification', "certification" + $("#ddlItemType").val().split(" ").join("") + $("#txtMPNumber").val().split(" ").join(""));
+
+            $.ajax({
+                url: '/Master/UploadFileMethod',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                success: function (result) {
+                    var f = result.split('+');
+                    $("#hdcertificationfile").val(f[1]);
+                    var path = $("#hdcertificationfile").val();
+                    swal(f[0]);
+                    //alert()
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        } else {
+            alert("FormData is not supported.");
+        }
+    }
+</script>
+<script>
+    $(function () {
+        $('#ddlUOMGroup').on("change", function (e) {
+            e.preventDefault();
+
+            GetUOMAccUOMGroup();
+
+        });
+    });
+    function GetUOMAccUOMGroup() {
+        var ddlUOM = $("#ddlUOM");
+
+        $("#ddlUOM option:selected").remove();
+
+        var objUOMGroup = {};
+        objUOMGroup.UOM_Group_Id = $("#ddlUOMGroup").val();
+        //ddlcity.empty();
+        //alert(objCity.Country_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/UOMListAccUOMGroupId",
+            data: '{objUOMGroup: ' + JSON.stringify(objUOMGroup) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlUOM.empty().append('<option selected="selected" value="0">Select UOM</option>');
+                $.each(response, function () {
+                    ddlUOM.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+
+<script>
+    $(function () {
+        $('#AltddlUOMGroup').on("change", function () {
+            var ddlAltUOM = $("#ddlAltUOM");
+            $("#ddlAltUOM option:selected").remove();
+
+            var objUOMGroup = {};
+            objUOMGroup.UOM_Group_Id = $("#AltddlUOMGroup").val();
+            $.ajax({
+                type: "POST",
+                url: "/Master/UOMListAccUOMGroupId",
+                data: '{objUOMGroup: ' + JSON.stringify(objUOMGroup) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    ddlAltUOM.empty().append('<option selected="selected" value="0">Select Alternate UOM</option>');
+                    $.each(response, function () {
+                        ddlAltUOM.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveDes").click(function (e) {
+            // e.preventDefault();
+            var objItem = {};
+            objItem.Item_Id = $("#hditemid").val();
+            objItem.Item_Manufacturing_Part_Number = $("#hditemMPN").val();
+            objItem.Internal_Item_Code = $("#hditemcode").val();
+            objItem.Item_Request_Description = $("#areadescription").val().charAt(0).toUpperCase() + $("#areadescription").val().slice(1);
+            // alert(objItem.Item_Request_Description);
+
+            if (objItem.Item_Request_Description == "" || objItem.Item_Request_Description == null) {
+
+                swal("Please enter description.");
+                $("#areadescription").focus();
+                return;
+            }
+            // alert();
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddItemRequest",
+                data: '{objItem: ' + JSON.stringify(objItem) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $("#areadescription").val("");
+
+
+                    swal({
+
+                        text: response,
+                        timer: 5000,
+                        onOpen: function () {
+                            swal.showLoading()
+                        }
+                    }).then(
+                                    function () { $("#dialogdiv").modal('hide'); },
+                                          function (dismiss) {
+                                              if (dismiss === 'timer') {
+                                                  console.log('I was closed by the timer')
+                                              }
+                                          });
+
+
+
+
+                    //swal(response);
+                    //$("#dialogdiv").modal('hide');
+                    window.location.replace("/Master/EditItem" );
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        // alert();
+        $('input[type=radio][name="permision"]').on('change', function () {
+            // alert();
+            if (this.value == 'Yes') {
+                $(".divrowno").css('display', 'inherit');
+            }
+            else if (this.value == 'No') {
+                $(".divrowno").css('display', 'none');
+            }
+        });
+    });
+</script>
+<script>
+    $(document).on("click", "a.delete", function () {
+
+        $(this).closest('tr').remove();
+        var table = document.getElementById("EmpInfoalt");
+        var rowcountAfterDelete = document.getElementById("EmpInfoalt").rows.length;
+        // alert(rowcountAfterDelete);
+        for (var i = 1; i < rowcountAfterDelete; i++) {
+            table.rows[i].cells[0].innerHTML = i;
+        }    // Find the row
+
+
+    });
+</script>
+<script type="text/javascript">
+    function checkDec(el) {
+        var ex = /^[0-9]+\.?[0-9]*$/;
+        if (ex.test(el.value) == false) {
+            el.value = el.value.substring(0, el.value.length - 1);
+        }
+    }
+</script>
+<script type="text/javascript">
+    function UOMName() {
+        var ddlUOM = $("#ddlUOM");
+        var ddlAltUOM = $("#ddlAltUOM");
+        ddlUOM.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlAltUOM.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/UOMBaseAltName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlUOM.empty().append('<option selected="selected" value="0">Select UOM</option>');
+                ddlAltUOM.empty().append('<option selected="selected" value="0">Select Alternate UOM</option>');
+                $.each(response, function () {
+                    ddlUOM.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlAltUOM.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+
+    function UOMGroupName() {
+        var ddlUOMGroup = $("#ddlUOMGroup");
+        var AltddlUOMGroup = $("#AltddlUOMGroup");
+        ddlUOMGroup.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        AltddlUOMGroup.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/UOMGroupName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlUOMGroup.empty().append('<option selected="selected" value="0">Select UOM Group</option>');
+                AltddlUOMGroup.empty().append('<option selected="selected" value="0">Select Alternate UOM Group</option>');
+                $.each(response, function () {
+                    ddlUOMGroup.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    AltddlUOMGroup.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+
+    $(function () {
+        GetValuation();
+    });
+    function GetValuation() {
+        var ddlValidationType = $("#ddlValidationType");
+        ddlValidationType.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/ValuationName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlValidationType.empty().append('<option selected="selected" value="0">Select Valuation</option>');
+                $.each(response, function () {
+                    ddlValidationType.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+    $(function () {
+        var ddlItemType = $("#ddlItemType");
+        var ddlItemType1 = $("#ddlitemtype1");
+        ddlItemType.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlItemType1.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/ItemTypeName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlItemType.empty().append('<option selected="selected" value="0">Select Item Type</option>');
+                ddlItemType1.empty().append('<option selected="selected" value="0">Select Item Type</option>');
+                $.each(response, function () {
+                    ddlItemType.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlItemType1.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+
+    $(function () {
+        $('#ddlItemType').on("change", function () {
+
+            var ddlItemSub = $("#ddlItemSub");
+            $("#ddlItemSub option:selected").remove();
+
+            var objSubItemType = {};
+            objSubItemType.Item_Type_Id = $("#ddlItemType").val();
+
+            ddlItemSub.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+            $.ajax({
+                type: "POST",
+                url: "/Master/SubItemTypeNameAccItemType",
+                data: '{objSubItemType: ' + JSON.stringify(objSubItemType) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    ddlItemSub.empty().append('<option selected="selected" value="0">Select Sub Item Type</option>');
+                    $.each(response, function () {
+                        ddlItemSub.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+
+    $(function () {
+        var ddlMaterialCategory = $("#ddlMaterialCategory");
+        ddlMaterialCategory.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/MaterialCategoryName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlMaterialCategory.empty().append('<option selected="selected" value="0">Select Material Category</option>');
+                $.each(response, function () {
+                    ddlMaterialCategory.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+
+    $(function () {
+        GetManageItem();
+    });
+    function GetManageItem() {
+        var ddlManageItem = $("#ddlManageItem");
+        ddlManageItem.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/MamageItemName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlManageItem.empty().append('<option selected="selected" value="0">Select Manage Item</option>');
+                $.each(response, function () {
+                    ddlManageItem.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+    $(function () {
+        var ddlItemSub = $("#ddlItemSub");
+        ddlItemSub.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/SubItemTypeName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlItemSub.empty().append('<option selected="selected" value="0">Select Sub Item Type</option>');
+                $.each(response, function () {
+                    ddlItemSub.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+
+    $(function () {
+        var ddlHSCategory = $("#ddlHSCategory");
+        ddlHSCategory.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/HSCaregoryName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlHSCategory.empty().append('<option selected="selected" value="0">Select HS Category</option>');
+                $.each(response, function () {
+                    ddlHSCategory.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+
+    $(function () {
+        $('#ddlHSCategory').on("change", function () {
+            var val = $("#ddlHSCategory option:selected").text().split('(');
+            var code = val[1].split(')');
+            //  alert(code[0]);
+            $("#txtHSCode").val(code[0]);
+        });
+    });
+    $(function () {
+        GetRack();
+    });
+    function GetRack() {
+        var ddlrack = $("#ddlrack");
+        ddlrack.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/RackName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlrack.empty().append('<option selected="selected" value="0">Select Rack</option>');
+                $.each(response, function () {
+                    ddlrack.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+    $(function () {
+        GetRackNumber();
+    });
+    function GetRackNumber() {
+        var ddlracknumber = $("#ddlracknumber");
+        ddlracknumber.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/RackNumberName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlracknumber.empty().append('<option selected="selected" value="0">Select Bin Number</option>');
+                $.each(response, function () {
+                    ddlracknumber.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+    $(function () {
+        GetStoreLocation();
+    });
+    function GetStoreLocation() {
+        var ddlstoreLocation = $("#ddlstoreLocation");
+        ddlstoreLocation.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/StoreLocationName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlstoreLocation.empty().append('<option selected="selected" value="0">Select Store Location</option>');
+                $.each(response, function () {
+                    ddlstoreLocation.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+    $(function () {
+        $('#ddlstoreLocation').on("change", function () {
+
+            //var val = $("#ddlstoreLocation option:selected").text().split('(');
+            var Objstorelocation = {};
+            Objstorelocation.Store_Location_Id = $("#ddlstoreLocation").val();
+            //  alert();
+            $.ajax({
+                type: "POST",
+                url: "/Master/StoreLocationCodeAccStoreId",
+                data: '{Objstorelocation: ' + JSON.stringify(Objstorelocation) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $("#txtstoreCode").val(response.Store_Location_Code);
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+
+
+
+
+
+
+
+
+
+
+
+        });
+    });
+    $(function () {
+        $('#ddlItemType').on("change", function () {
+
+            GetItemsubTypeAccItemType();
+
+        });
+    });
+    function GetItemsubTypeAccItemType() {
+        var ddlItemSub = $("#ddlItemSub");
+        $("#ddlItemSub option:selected").remove();
+
+        var objSubItemType = {};
+        objSubItemType.Item_Type_Id = $("#ddlItemType").val();
+
+        ddlItemSub.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/SubItemTypeNameAccItemType",
+            data: '{objSubItemType: ' + JSON.stringify(objSubItemType) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlItemSub.empty().append('<option selected="selected" value="0">Select Item Sub Type</option>');
+                $.each(response, function () {
+                    ddlItemSub.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+    $(function () {
+        $('#ddlItemSub').on("change", function () {
+            $("#hdscrapid").val("");
+            $("#hditemFieldCount").val("");
+            $("#hditemFieldoptionType").val("");
+            var SubItemId = $("#ddlItemSub").val();
+            GetSubItemField(SubItemId);
+
+        });
+    });
+</script>
+
+<script>
+    function Getuom(id, groupid) {
+        // alert(id);
+        var objUOMGroup = {};
+        // var ddlUOM = $("#fieldName3");
+        $("#" + id).empty().append('<option selected="selected" value="0">Select UOM</option>');;
+
+        objUOMGroup.UOM_Group_Id = groupid;
+        $.ajax({
+            type: "POST",
+            url: "/Master/UOMNameAccUOmGroupName",
+            data: '{objUOMGroup: ' + JSON.stringify(objUOMGroup) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $("#" + id).empty().append('<option selected="selected" value="0">Select UOM</option>');
+                // ddlUOM.empty().append('<option selected="selected" value="0">Select UOM</option>');
+                $.each(response, function () {
+                    //alert(this['Value']);
+                    $("#" + id).append('<option value="' + this['Text'] + '">' + this['Text'] + '</option>');
+                    // ddlUOM.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+
+    function GetSubItemField(subItemId) {
+
+        $("#generaterowsdiv").empty();
+        var objSubItemTypeField = {};
+        objSubItemTypeField.Sub_item_Type_Id = subItemId;
+        // alert(subItemId);
+
+        $.ajax({
+            type: "POST",
+            url: "/Master/SubItemFieldAccSubItemTypeId",
+            data: '{objSubItemTypeField: ' + JSON.stringify(objSubItemTypeField) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var optiontype = response[0].Sub_Item_Type_Field_Optional;
+
+                $("#hditemFieldCount").val(response.length);
+                // alert(response.length);
+                var optiontypestr = "";
+                var idforscrap = "";
+                //alert(response.length);generaterowsdiv
+                var j = 0;
+                for (var i = 0; i < response.length; i++) {
+                    $("#generaterowsdiv").append("<div  id='divcont" + i + "'></div>");
+                    var optiontype = response[i].Sub_Item_Type_Field_Optional;
+                    var UOMGroupId = response[i].UOM_Group_Id;
+                    if (i == 0) {
+                        optiontypestr = optiontype;
+                    } else {
+                        optiontypestr = optiontypestr + "," + optiontype;
+                    }
+                    var genratebox = "";
+                    if (optiontype == "Optional") {
+                        var optionvalue = response[i].Sub_Item_Type_Field_Optional_Value;
+                        var optionlable = response[i].Sub_Item_Type_Field_Name;
+                        var fieldName = response[i].Sub_Item_Type_Field_Name;
+                        var options = optionvalue.split(",");
+                        if (UOMGroupId != "0") {
+                            genratebox = "<div class='col-xs-6'><div class='form-group'><label class='col-sm-3 control-label no-padding-right' id=lbloptional" + i + ">" + response[i].Sub_Item_Type_Field_Name + "</label><div class='col-sm-4' style='margin-bottom: 6px'><select class='col-xs-10 col-sm-10' id='ddloptionvalue" + i + "' data-toggle='tooltip' title='Select'>";
+                            //genratebox = "<option value='0'>Select</option>"
+                            for (var j = 0; j < options.length; j++) {
+
+                                genratebox += "<option value='" + options[j] + "'>" + options[j] + "</option>"
+                            }
+                            genratebox += "</select></div><div class='col-sm-5' style='margin-bottom: 6px'><select class='col-xs-9 col-sm-9' id='" + (fieldName.split(" ").join("") + i) + "'><option>select</option></select></div></div></div>"
+                            //alert(fieldName+","+i + "," + UOMGroupId);
+                            Getuom((fieldName.split(" ").join("") + i), UOMGroupId);
+                        } else {
+                            genratebox = "<div class='col-xs-6'><div class='form-group'><label class='col-sm-3 control-label no-padding-right' id=lbloptional" + i + ">" + response[i].Sub_Item_Type_Field_Name + "</label><div class='col-sm-9' style='margin-bottom: 6px'><select class='col-xs-10 col-sm-10' id='ddloptionvalue" + i + "' data-toggle='tooltip' title='Select'>";
+                            //genratebox = "<option value='0'>Select</option>"
+                            for (var j = 0; j < options.length; j++) {
+
+                                genratebox += "<option value='" + options[j] + "'>" + options[j] + "</option>"
+                            }
+                            genratebox += "</select></div></div></div>"
+                        }
+                    }
+                    else {
+                        var fieldName = response[i].Sub_Item_Type_Field_Name;
+                        if (idforscrap == "") {
+                            idforscrap = fieldName + ":" + i;
+                        }
+                        else {
+                            idforscrap = idforscrap + "," + fieldName + ":" + i;
+                        }
+                        var inputtype = response[i].Sub_Item_Type_Field_Input_Type;
+                        if (inputtype == "Numeric") {
+                            var fieldName = response[i].Sub_Item_Type_Field_Name;
+                            //if (idforscrap == "") {
+                            //    idforscrap = fieldName + ":" + i;
+                            //}
+                            //else {
+                            //    idforscrap = idforscrap+","+ fieldName + ":" + i;
+                            //}
+                            if (UOMGroupId != "0") {
+                                genratebox = "<div class='col-xs-6'><div class='form-group'><label class='col-sm-3 control-label no-padding-right' id=lbloptional" + i + ">" + response[i].Sub_Item_Type_Field_Name + "</label><div class='col-sm-4' style='margin-bottom: 6px'><input type='text' class='col-xs-9 col-sm-9' id='optionvalue" + i + "' onkeyup='checkDec(this);'/></div><div class='col-sm-5' style='margin-bottom: 6px'><select class='col-xs-9 col-sm-9' id='" + (fieldName.split(" ").join("") + i) + "'><option>select</option></select></div></div></div>";
+                                // Getuom((fieldName + i), fieldName);
+                                Getuom((fieldName.split(" ").join("") + i), UOMGroupId);
+                            }
+                            else {
+                                genratebox = "<div class='col-xs-6'><div class='form-group'><label class='col-sm-3 control-label no-padding-right' id=lbloptional" + i + ">" + response[i].Sub_Item_Type_Field_Name + "</label><div class='col-sm-9' style='margin-bottom: 6px'><input type='text' class='col-xs-10 col-sm-10' id='optionvalue" + i + "' onkeyup='checkDec(this);'/></div></div></div>";
+                            }
+                        }
+                        else {
+                            if (UOMGroupId != "0") {
+                                genratebox = "<div class='col-xs-6'><div class='form-group'><label class='col-sm-3 control-label no-padding-right' id=lbloptional" + i + ">" + response[i].Sub_Item_Type_Field_Name + "</label><div class='col-sm-4' style='margin-bottom: 6px'><input type='text' class='col-xs-9 col-sm-9' id='optionvalue" + i + "'/></div><div class='col-sm-5' style='margin-bottom: 6px'><select class='col-xs-9 col-sm-9' id='" + (fieldName.split(" ").join("") + i) + "'><option>select</option></select></div></div></div>";
+                                // Getuom((fieldName + i), fieldName);
+                                Getuom((fieldName.split(" ").join("") + i), UOMGroupId);
+                            }
+                            else {
+                                genratebox = "<div class='col-xs-6'><div class='form-group'><label class='col-sm-3 control-label no-padding-right' id=lbloptional" + i + ">" + response[i].Sub_Item_Type_Field_Name + "</label><div class='col-sm-9' style='margin-bottom: 6px'><input type='text' class='col-xs-10 col-sm-10' id='optionvalue" + i + "' /></div></div></div>";
+                            }
+                            // genratebox = "<div class='col-xs-6'><div class='form-group'><label class='col-sm-3 control-label no-padding-right' id=lbloptional" + i + ">" + response[i].Sub_Item_Type_Field_Name + "</label><div class='col-sm-9' style='margin-bottom: 6px'><input type='text' class='col-xs-10 col-sm-10' id='optionvalue" + i + "'/></div></div>";
+                        }
+                    }
+                    $("#divcont" + i + "").append(genratebox);
+                    //if (j == (j % 2) || j == (Math.round(j / 2) + 1)) {
+                    //    //alert(i + "<--i,,, j->>" + j + "(j % 2)" + (j % 2) + "(Math.round(j / 2) + 1)- > " + (Math.round(j / 2) + 1));
+                    //    $("#divcont" + i + "").append(genratebox);
+                    //}
+                    //if (j != (j % 2) || j == j + 2) {
+                    //    alert(i + "<--i,,, j->>" + j);
+
+                    //}
+                    j = i + 1
+                    //if (i > 1) {
+                    //    if ((i % 2) == 0) {
+                    //        $("#divcont").append("<div class='space-4'></div>");
+                    //    }
+                    //}
+                }
+                //  alert(optiontypestr);
+                $("#hdscrapid").val(idforscrap);
+                $("#hditemFieldoptionType").val(optiontypestr);
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    function SetDataForUpdate() {
+        var baseUrl = (window.location).href;
+        var ItemId = baseUrl.substring(baseUrl.lastIndexOf('/') + 1);
+        $("#hditem").val(ItemId);
+        //var checkCookie = $.cookie("item-id");
+        // alert(ItemId);
+        var objItem = {};
+        objItem.Item_Id = ItemId;
+        $.ajax({
+            type: "POST",
+            url: "/Master/ItemDetailsForUpdate",
+            data: '{objItem: ' + JSON.stringify(objItem) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $("#hditemid").val(ItemId);
+                // alert(response.Internal_Item_Code);
+                $("#hditemcode").val(response.Internal_Item_Code);
+               // alert(response.Internal_Item_Code)
+                $("#divitemcode").text(response.Internal_Item_Code);
+                $("#hditemMPN").val(response.Item_Manufacturing_Part_Number);
+                $("#ddlUOM").val(response.UOM_Id);
+                $("#ddlItemType").val(response.Item_Type_Id);
+                $("#ddlItemSub").val(response.Item_Sub_Type_Id);
+                $("#ddlrack").val(response.Rack_Id);
+                $("#txtQantity").val(response.Item_Quantity);
+                $("#ddlracknumber").val(response.Rack_Number_Id);
+                $("#hdqrimagepath").val(response.Bar_Code_No)
+                document.getElementById('imgqrcode').src = response.Item_QRCode_path;
+                $("#hddatesheet").val(response.Item_Data_Sheet_Url);
+                $("#ddlUOMGroup").val(response.UOM_Group_Id);
+               
+                $("#ddlValidationType").val(response.Valuation_Id);
+              
+               
+                $("#ddlManageItem").val(response.Item_Manage_Code_Id);
+                $("#txtDUrl").val(response.Designer_URL);
+                $("#txtDescription").val(response.Item_Description);
+                $("#txtManufacture").val(response.Item_Manufacture);
+                $("#txtBrand").val(response.Item_Brand);
+                $("#txtSupplierName").val(response.Supplier_Name);
+                $("#txtPrice").val(parseFloat(response.Item_Price).toFixed(2));
+                $("#txtMOQ").val(parseFloat(response.Item_Min_Order_Qty).toFixed(2));
+                $("#txtThreshold").val(response.Item_Threshold);
+                $("#txtHSCode").val(response.Item_HS_Code);
+                $("#txtURLLink").val(response.Item_URL_Link);
+                $("#txtMPNumber").val(response.Item_Manufacturing_Part_Number);
+                $("#txtCCO").val(response.Item_CoCountry_of_Origin);
+                $("#txtShippingCost").val(parseFloat(response.Item_Shipping_Cost).toFixed(2));
+                $("#txtContactDetails").val(response.Item_Contact_Details);
+                $("#txtEMail").val(response.Item_EMail);
+                $("#txtWeChat").val(response.Item_We_Chat);
+                $("#txtWhatsApp").val(response.Item_WhatsApp);
+                $("#txtOtherContactType").val(response.item_Other_Contact_Type);
+                $("#ddlstatus").val(response.item_Status);
+               
+                $("#hdCompliance").val(response.Item_Compliance_Url);
+                $("#hdCADFile").val(response.item_CAD_File_Url);
+                $("#hdScrapping").val(response.Item_Scrapping_from_WebUrl);
+                $("#hdcertificationfile").val(response.Item_Certification_Url);
+                $("#barcode").val(response.Bar_Code_No);
+                $("#txtName").val(response.Item_Name)
+                $("#ddlcurrency").val(response.Currency_Id);
+
+                $("#AltddlUOMGroup").val(response.Alt_UOM_Group_Id);
+                $("#ddlAltUOM").val(response.Alt_UOM_Id);
+                $("#ddlHSCategory").val(response.HS_Category_Id);
+               
+                $("#ddlstoreLocation").val(response.Store_Location_Id);
+                $("#txtstoreCode").val(response.Store_Location_Code);
+
+               
+                $("#adatesheet").empty();
+                $("#acomplain").empty();
+                $("#acad").empty();
+                $("#aCertification").empty();
+                $("#aScrapping").empty();
+
+
+
+
+                if (response.Item_Data_Sheet_Url != "") {
+                    var s = response.Item_Data_Sheet_Url.split('/')
+                    $("#spndateid").text(s[s.length - 1]);
+                    var link = $("<a>");
+                    link.attr("href", response.Item_Data_Sheet_Url);
+                    link.attr("title", "Datesheet");
+                    link.text("Download");
+                    $("#adatesheet").append("<i class='fa fa-download dwd-icon'></i>");
+                    $("#adatesheet").append(link);
+                }
+                if (response.Item_Compliance_Url != "") {
+
+                    var s1 = response.Item_Compliance_Url.split('/')
+                    $("#spncompid").text(s1[s1.length - 1]);
+
+                    var link = $("<a>");
+                    link.attr("href", response.Item_Compliance_Url);
+                    link.attr("title", "Compliance");
+                    link.text("Download");
+                    $("#acomplain").append("<i class='fa fa-download dwd-icon'></i>");
+                    $("#acomplain").append(link);
+                }
+                if (response.item_CAD_File_Url != "") {
+                    var s1 = response.item_CAD_File_Url.split('/')
+                    $("#spncadid").text(s1[s1.length - 1]);
+
+                    var link = $("<a>");
+                    link.attr("href", response.item_CAD_File_Url);
+                    link.attr("title", "CAD");
+                    link.text("Download");
+                    $("#acad").append("<i class='fa fa-download dwd-icon'></i>");
+                    $("#acad").append(link);
+                }
+                if (response.Item_Certification_Url != "") {
+                    var s1 = response.Item_Certification_Url.split('/')
+                    $("#spncertifid").text(s1[s1.length - 1]);
+                    var link = $("<a>");
+                    link.attr("href", response.Item_Certification_Url);
+                    link.attr("title", "Certification");
+                    link.text("Download");
+                    $("#aCertification").append("<i class='fa fa-download dwd-icon'></i>");
+                    $("#aCertification").append(link);
+                }
+
+                if (response.Item_Scrapping_from_WebUrl != "") {
+                    var s1 = response.Item_Scrapping_from_WebUrl.split('/')
+                    $("#spnscrapid").text(s1[s1.length - 1]);
+                    var link = $("<a>");
+                    link.attr("href", response.Item_Scrapping_from_WebUrl);
+                    link.attr("title", "Scrapping");
+                    link.text("Download");
+
+                    $("#aScrapping").append("<i class='fa fa-download dwd-icon'></i>");
+                    $("#aScrapping").append(link);
+                }
+
+
+                var j = 0;
+                var k = 0;
+
+                var values = response.Sub_Item_Type_Field_values.split(',');
+                var UOMName = response.Sub_Item_Type_Field_UOM.split(',');
+                // alert(response.Sub_Item_Type_Field_UOM);
+                var optiontype = response.Sub_Item_Type_Field_Options.split(',')
+                // alert(values.length);
+                for (var i = 0; i < values.length; i++) {
+                    // var t = $("#lbloptional" + i).text();
+
+                    if (i % 2 == 1) {
+                        var optiont = optiontype[j];
+                        if (optiont == "Optional") {
+
+                            $("#ddloptionvalue" + j).find('option[value="' + values[i] + '"]').attr("selected", true);
+                            // alert(j);
+
+                        }
+                        else {
+                            //alert(values[i - 1] +" u "+ UOMName[i-1]);
+                            $("#optionvalue" + j).val(values[i]);
+
+                            //j = j + 1;
+                        }
+                        for (var l = 0; l < UOMName.length; l++) {
+                            // alert(values[i - 1] + " u " + UOMName[l]);
+                            if (values[i - 1].split(" ").join("") == UOMName[l].split(" ").join("")) {
+                                k = k + 2;
+                                // alert(values[i - 1]+','+UOMName[k - 1]);
+                            }
+                        }
+                        $("#" + values[i - 1].split(" ").join("") + j).find('option[value="' + UOMName[k - 1] + '"]').attr("selected", true);
+                        j = j + 1;
+                    }
+
+
+                }
+
+                var imagepathstr = response.Item_Images_Url;
+                var path = imagepathstr.split(',');
+                $("#div1").empty();
+
+                $("#hdimagdCount").val(path.length);
+                if (imagepathstr != "") {
+                    for (var i = 0; i < path.length; i++) {
+                        if (i == 0) {
+                            PClevel = path[i];
+                        }
+                        else {
+                            PClevel = PClevel + "," + path[i];
+                        }
+                        var li = document.createElement('div');
+                        li.className = "showSlide fade";
+                        var img = document.createElement('img');
+                        var x = Math.floor((Math.random() * 100000000) + 1);
+                        var x1 = Math.floor((Math.random() * 100000000) + 1);
+                        li.id = x;
+                        img.id = x1;
+                        img.className = "img";
+                        //     alert(response[i].Item_Images_Url);
+
+                        document.getElementById('div1').appendChild(li);
+                        document.getElementById(x).appendChild(img);
+                        document.getElementById(x1).src = path[i];
+
+
+                    }
+                   // $("#")
+                    $("#div1").append('<a id="a_left" class="left" onclick="nextSlide(-1)">❮</a>')
+                    $("#div1").append('<a id="a_right" class="right" onclick="nextSlide(1)">❯</a>');
+                  //  $('#a_right').show();
+                   // $('#a_left').show();
+                    $("#hdimagepath").val(PClevel);
+                }
+                else {
+
+                    $("#div1").append("<div id='nodi' class='no-image'>no image</div>");
+                   
+                }
+
+                var slides = document.getElementsByClassName("showSlide");
+
+                currentSlide(1);
+                //alert();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+        //$("#divdin :input").prop('disabled', true);
+        //$("#divdin :select").prop('disabled', true);
+    }
+</script>
+<script>
+    function SetAltDataForUpdate() {
+
+        var baseUrl = (window.location).href;
+        var ItemId = baseUrl.substring(baseUrl.lastIndexOf('/') + 1);
+        var objItem = {};
+        objItem.Item_Id = ItemId;
+        $.ajax({
+            type: "POST",
+            url: "/Master/ItemAltDetailsForUpdate",
+            data: '{objItem: ' + JSON.stringify(objItem) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (json) {
+                //alert(json.length);
+                if (json.length > 0) {
+                    $("#txtNoOfRows").val(json.length);
+                    $("#divrow").show();
+                    $('input:radio[name="permision"][value="Yes"]').prop('checked', true);
+                    $("#EmpInfoalt > tbody").html("");
+                    var row = $("#txtNoOfRows").val();
+                    $("#altrow").show();
+                    var tr;
+                    for (var i = 0; i < json.length; i++) {
+                        tr = $('<tr/>');
+                        tr.append("<td>" + (i + 1) + "</td>");
+
+                        tr.append("<td><input type='text' id='txtmpn" + i + "' value='" + json[i].Alt_Manufacturing_Part_Number + "' /></td>");
+                        tr.append("<td><input type='text' id='txtbrand" + i + "'  value='" + json[i].Alt_Item_Brand + "' class='col-xs-2 col-sm-4'/></td>");
+                        tr.append("<td><input type='text' style='text-transform: lowercase!important;' id='txturl" + i + "'  value='" + json[i].Alt_Item_Url + "' class='col-xs-2 col-sm-4'/></td>");
+                        tr.append("<td><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></td>");
+                        $('#EmpInfoalt').append(tr);
+                    }
+                    $('#EmpInfoalt').DataTable();
+
+                }
+
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+
+    }
+</script>
+@*<script>
+        function Resetdata() {
+
+            $("#ddlUOM").val(0);
+            $("#ddlUOMGroup").val(0);
+            $("#ddlValidationType").val(0);
+            // $("#ddlItemType").val("0");
+            // $("#ddlItemSub").val(0);
+            $("#ddlManageItem").val(0);
+            $("#ddlMaterialCategory").val(0);
+            $("#txtDescription").val("");
+            $("#txtManufacture").val("");
+            $("#txtBrand").val("");
+            $("#txtSupplierName").val("");
+            $("#txtPrice").val("");
+            $("#txtMOQ").val("");
+            $("#txtThreshold").val("");
+            $("#txtHSCode").val("");
+            $("#txtURLLink").val("");
+            $("#txtMPNumber").val("");
+            $("#txtCCO").val("");
+            $("#txtShippingCost").val("");
+            $("#txtContactDetails").val("");
+            $("#txtEMail").val("");
+            $("#txtWeChat").val("");
+
+            $("#hddatesheet").val("");
+            $("#hdCompliance").val("");
+            $("#hdCADFile").val("");
+            $("#ddlselection").val(0);
+            $("#ddlstatus").val(0);
+            $("#hdScrapping").val("");
+            $("#hdcertificationfile").val("");
+            $("#hdimagepath").val("");
+            $('#copypaste').hide();
+            $('#multiuploding').hide();
+            $('#a_right').hide();
+            $('#a_left').hide();
+            $('#btnUploadimage').hide();
+            $("#generaterowsdiv").empty();
+        }
+    </script>*@
+<script>
+    $(document).on("click", "a.delete", function () {
+
+        $(this).closest('tr').remove();
+        var table = document.getElementById("EmpInfoalt");
+        var rowcountAfterDelete = document.getElementById("EmpInfoalt").rows.length;
+        // alert(rowcountAfterDelete);
+        for (var i = 1; i < rowcountAfterDelete; i++) {
+            table.rows[i].cells[0].innerHTML = i;
+        }    // Find the row
+
+
+    });
+</script>
+
+
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnsave").click(function (e) {
+            e.preventDefault();
+            var objItem = {};
+
+            objItem.Item_Id = $("#hditem").val();
+
+            objItem.UOM_Id = $("#ddlUOM").val();
+            objItem.Internal_Item_Code = $("#hditemcode").val();
+            // alert($("#hditemcode").val());
+            objItem.UOM_Group_Id = $("#ddlUOMGroup").val();
+            objItem.Valuation_Id = $("#ddlValidationType").val();
+            objItem.Item_Type_Id = $("#ddlItemType").val();
+            objItem.Item_Sub_Type_Id = $("#ddlItemSub").val();
+            objItem.Item_Manage_Code_Id = $("#ddlManageItem").val();
+            objItem.Valuation_Method_Id = 0;
+            objItem.Material_Category_Id = 0;
+            objItem.Item_Name = $("#txtName").val().charAt(0).toUpperCase() + $("#txtName").val().slice(1);
+            objItem.Item_Description = $("#txtDescription").val().charAt(0).toUpperCase() + $("#txtDescription").val().slice(1);
+            objItem.Item_Manufacture = $("#txtManufacture").val().charAt(0).toUpperCase() + $("#txtManufacture").val().slice(1);
+            objItem.Item_Brand = $("#txtBrand").val().charAt(0).toUpperCase() + $("#txtBrand").val().slice(1);
+            objItem.Supplier_Name = $("#txtSupplierName").val().charAt(0).toUpperCase() + $("#txtSupplierName").val().slice(1);
+            objItem.Item_Price = $("#txtPrice").val();
+            objItem.Item_Min_Order_Qty = $("#txtMOQ").val();
+            objItem.Item_Threshold = $("#txtThreshold").val().charAt(0).toUpperCase() + $("#txtThreshold").val().slice(1);
+            objItem.Item_HS_Code = $("#txtHSCode").val().toUpperCase();
+            objItem.Item_URL_Link = $("#txtURLLink").val();
+            objItem.Item_CoCountry_of_Origin = $("#txtCCO").val().charAt(0).toUpperCase() + $("#txtCCO").val().slice(1);
+            objItem.Item_Manufacturing_Part_Number = $("#txtMPNumber").val().toUpperCase();
+            objItem.Item_Shipping_Cost = $("#txtShippingCost").val();
+            objItem.Item_Contact_Details = $("#txtContactDetails").val();
+            objItem.Item_EMail = $("#txtEMail").val();
+            objItem.Currency_Id = $("#ddlcurrency").val();
+            objItem.Item_We_Chat = $("#txtWeChat").val();
+            objItem.Item_WhatsApp = $("#txtWhatsApp").val();
+            objItem.item_Other_Contact_Type = $("#txtOtherContactType").val();
+            objItem.Item_Quantity = $("#txtQantity").val();
+            objItem.Item_Data_Sheet_Url = $("#hddatesheet").val();
+            // alert();
+            objItem.Item_Compliance_Url = $("#hdCompliance").val();
+            objItem.item_CAD_File_Url = $("#hdCADFile").val();
+
+            objItem.Item_Certification_Url = $("#hdcertificationfile").val();
+            objItem.Item_Scrapping_from_WebUrl = $("#hdScrapping").val();
+            objItem.Item_Images_Url = $("#hdimagepath").val();
+            objItem.item_Status = $("#ddlstatus").val();
+            objItem.Alt_UOM_Id = $("#ddlAltUOM").val();
+
+            objItem.Alt_UOM_Group_Id = $("#AltddlUOMGroup").val();
+
+            objItem.Rack_Id = $("#ddlrack").val();
+            objItem.Rack_Number_Id = $("#ddlracknumber").val();
+            objItem.Store_Location_Id = $("#ddlstoreLocation").val();
+            objItem.Store_Location_Code = $("#txtstoreCode").val();
+            objItem.HS_Category_Id = $("#ddlHSCategory").val();
+            objItem.Designer_URL = $("#txtDUrl").val();
+
+            objItem.Bar_Code_No = $("#barcode").val();
+            var optionType = $("#hditemFieldoptionType").val().split(',');
+
+
+            var altpartno = "";
+            var altbrand = "";
+            var alturl = "";
+            $('#EmpInfoalt tr').each(function (row, tr) {
+                // alert(row);
+                if (altpartno == "") {
+
+                    altpartno = $(tr).find('td:eq(1) input').val();
+                    altbrand = $(tr).find('td:eq(2) input').val();
+                    alturl = $(tr).find('td:eq(3) input').val();
+                    //alert(altpartno);
+
+                }
+                else {
+                    altpartno = altpartno + "," + $(tr).find('td:eq(1) input').val();
+                    altbrand = altbrand + "," + $(tr).find('td:eq(2) input').val();
+                    alturl = alturl + "," + $(tr).find('td:eq(3) input').val();
+                    // alert(altpartno);
+                }
+            });
+            objItem.Alt_Manufacturing_Part_Number = altpartno;
+            objItem.Alt_Item_Brand = altbrand;
+            objItem.Alt_Item_Url = alturl;
+            var fieldvalue = "";
+            var uomname = "";
+
+            var count = $("#hditemFieldCount").val();
+            // alert($("#hditemFieldoptionType").val());
+            for (var i = 0; i < count; i++) {
+                var option = optionType[i];
+                // alert(count);
+                if (i == 0) {
+                    if (option == "Optional") {
+                        var e = document.getElementById("ddloptionvalue" + i);
+                        var yourLabel = e.options[e.selectedIndex].text;
+                        if (yourLabel == "Select") {
+                            swal("Please select " + $("#lbloptional" + i).text());
+                            e.focus();
+                            return;
+                        }
+                        else {
+                            fieldvalue = $("#lbloptional" + i).text() + "," + yourLabel;
+                        }
+                        var e1 = document.getElementById($("#lbloptional" + i).text().split(" ").join("") + i);
+                        // alert(e1);
+                        if (e1 != null) {
+                            var yourLabel1 = e1.options[e1.selectedIndex].text;
+                            // alert(yourLabel1);
+                            if (yourLabel1 == "Select UOM") {
+                                swal("Please select " + $("#lbloptional" + i).text() + " uom");
+                                e.focus();
+                                return;
+                            } else {
+                                uomname = $("#lbloptional" + i).text() + "," + yourLabel1;
+                            }
+                        }
+                    }
+                    else {
+                        fieldvalue = $("#lbloptional" + i).text() + "," + $("#optionvalue" + i).val();
+                        // alert(fieldvalue);
+                        var e = document.getElementById($("#lbloptional" + i).text().split(" ").join("") + i);
+                        // alert(e);
+                        if (e != null) {
+                            var yourLabel1 = e.options[e.selectedIndex].text;
+                            // alert(yourLabel1);
+                            if (yourLabel1 == "Select UOM") {
+                                swal("Please select " + $("#lbloptional" + i).text() + " uom");
+                                e.focus();
+                                return;
+                            } else {
+                                uomname = $("#lbloptional" + i).text() + "," + yourLabel1;
+                            }
+                        }
+
+                    }
+                }
+                else {
+                    // alert();
+                    if (option == "Optional") {
+                        var e = document.getElementById("ddloptionvalue" + i);
+                        var yourLabel = e.options[e.selectedIndex].text;
+                        if (yourLabel == "Select") {
+                            swal("Please select " + $("#lbloptional" + i).text());
+                            e.focus();
+                            return;
+                        }
+                        else {
+                            var text = $("#optionvalue" + i).val();
+                            //  alert(text);
+                            if (text == "" || text == "undefined") {
+                                swal("Please insert " + $("#lbloptional" + i).text());
+                                $("#optionvalue" + i).focus();
+                                return;
+                            }
+                            else {
+                                fieldvalue = fieldvalue + "," + $("#lbloptional" + i).text() + "," + yourLabel;
+
+                            }
+                        }
+                        //alert($("#lbloptional" + i).text().split(" ").join(""));
+                        var e1 = document.getElementById($("#lbloptional" + i).text().split(" ").join("") + i);
+                        // alert(e1);
+                        if (e1 != null) {
+                            var yourLabel1 = e1.options[e1.selectedIndex].text;
+                            // alert(yourLabel1);
+                            if (uomname == "") {
+                                if (yourLabel1 == "Select UOM") {
+                                    swal("Please select " + $("#lbloptional" + i).text() + " uom");
+                                    e.focus();
+                                    return;
+                                } else {
+                                    uomname = $("#lbloptional" + i).text() + "," + yourLabel1;
+                                }
+                            }
+                            else {
+                                if (yourLabel1 == "Select UOM") {
+                                    swal("Please select " + $("#lbloptional" + i).text() + " uom");
+                                    e.focus();
+                                    return;
+                                } else {
+                                    uomname = uomname + "," + $("#lbloptional" + i).text().split(" ").join("") + "," + yourLabel1;
+                                }
+                            }
+                        }
+
+                    }
+                    else {
+                        var text = $("#optionvalue" + i).val();
+                        // alert(text);
+                        if (text == "") {
+                            swal("Please insert " + $("#lbloptional" + i).text());
+                            $("#optionvalue" + i).focus();
+                            return;
+                        }
+                        else {
+                            fieldvalue = fieldvalue + "," + $("#lbloptional" + i).text().split(" ").join("") + "," + $("#optionvalue" + i).val();
+                            //  alert(fieldvalue);
+                            var e = document.getElementById($("#lbloptional" + i).text().split(" ").join("") + i);
+                            if (e != null) {
+                                var yourLabel1 = e.options[e.selectedIndex].text;
+                                // alert(yourLabel1);
+                                if (uomname == "") {
+                                    if (yourLabel1 == "Select UOM") {
+                                        swal("Please select " + $("#lbloptional" + i).text() + " uom");
+                                        e.focus();
+                                        return;
+                                    } else {
+                                        uomname = $("#lbloptional" + i).text().split(" ").join("") + "," + yourLabel1;
+                                    }
+                                }
+                                else {
+                                    if (yourLabel1 == "Select UOM") {
+                                        swal("Please select " + $("#lbloptional" + i).text() + " uom");
+                                        e.focus();
+                                        return;
+                                    } else {
+                                        uomname = uomname + "," + $("#lbloptional" + i).text().split(" ").join("") + "," + yourLabel1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            optionType = $("#hditemFieldoptionType").val();
+            OptionTypeValue = fieldvalue;
+            objItem.Sub_Item_Type_Field_Options = optionType;
+            objItem.Sub_Item_Type_Field_UOM = uomname;
+            objItem.Sub_Item_Type_Field_values = fieldvalue;
+            //alert(objItem.Sub_Item_Type_Field_values);
+            if (objItem.Item_Type_Id == "" || objItem.Item_Type_Id == null) {
+                swal("Please select item type.");
+                $("#ddlItemType").focus();
+                return;
+            }
+            if (objItem.Item_Sub_Type_Id == "0" || objItem.Item_Sub_Type_Id == null) {
+                swal("Please select  sub item type.");
+
+                $("#ddlItemSub").focus();
+                return;
+            }
+            if (objItem.Item_Description == "" || objItem.Item_Description == null) {
+                swal("Please enter item description.");
+                $("#txtDescription").focus();
+                return;
+            }
+            if (objItem.Item_Manufacturing_Part_Number == "" || objItem.Item_Manufacturing_Part_Number == null) {
+                swal("Please enter manufacturing part number.");
+                $("#txtMPNumber").focus();
+                return;
+            }
+            if (objItem.UOM_Id == "0" || objItem.UOM_Id == null) {
+                //swal("Please select uom.");
+                objItem.UOM_Id == "0";
+
+            }
+            if (objItem.UOM_Group_Id == "0" || objItem.UOM_Group_Id == null) {
+                objItem.UOM_Group_Id == "0";
+
+            }
+            if (objItem.Valuation_Id == "0" || objItem.Valuation_Id == null) {
+                objItem.Valuation_Id = 0;
+
+            }
+
+            if (objItem.Item_Manage_Code_Id == "0" || objItem.Item_Manage_Code_Id == null) {
+                objItem.Item_Manage_Code_Id = 0;
+
+            }
+            var value = $("#ddlselection").val();
+
+            objItem.Item_Id = $("#hditem").val();;
+            objItem.Item_Sub_Type_Id = $("#ddlItemSub").val();
+            objItem.Sub_Item_Type_Field_values = fieldvalue;
+            $.ajax({
+                type: "POST",
+                url: "/Master/SubItemFieldValueForCheckDuplicateUpdate",
+                data: '{objItem: ' + JSON.stringify(objItem) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var count = (response.Count);
+
+                    if (count > 0) {
+                        swal("with this parameter already created sub category item. Please change parameter.");
+                    }
+                    else {
+                        $.ajax({
+                            type: "POST",
+                            url: "/Master/AddItem",
+                            data: '{objItem: ' + JSON.stringify(objItem) + '}',
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (response) {
+                                var d = response.split(',');
+                                // alert(d[1]);
+                                if (d[1] == '0') {
+                                    swal({
+
+                                        text: d[0],
+                                        timer: 5000,
+                                        onOpen: function () {
+                                            swal.showLoading()
+                                        }
+                                    }).then(
+                                          function () {
+                                              $('#dialogdiv').modal('show');
+                                              SetDataForUpdate();
+                                          },
+                                                function (dismiss) {
+                                                    if (dismiss === 'timer') {
+                                                        console.log('I was closed by the timer')
+                                                    }
+                                                });
+                                }
+                                else {
+                                    swal({
+
+                                        text: d[0],
+                                        timer: 5000,
+                                        onOpen: function () {
+                                            swal.showLoading()
+                                        }
+                                    })
+                                }
+
+
+                            },
+                            failure: function (response) {
+                                alert(response.responseText);
+                            },
+                            error: function (response) {
+                                alert(response.responseText);
+                            }
+                        });
+                    }
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsavecurrency").click(function (e) {
+            e.preventDefault();
+            var objcurrency = {};
+            objcurrency.Currency_Code = $("#txtcurrencycode").val().toUpperCase();
+            objcurrency.Currency_Name = $("#txtcurrencyname").val().charAt(0).toUpperCase() + $("#txtcurrencyname").val().slice(1);
+            objcurrency.International_Code = $("#txtinternationalcode").val();
+            objcurrency.International_Name = $("#txtinternationalname").val().charAt(0).toUpperCase() + $("#txtinternationalname").val().slice(1);
+            objcurrency.Decimal_Unit = $("#txtdecimalunit").val();
+            objcurrency.Currency_Symbol = $("#txtcurrencysymbol").val();
+            objcurrency.Currency_Id = $("#hdcurrency").val();
+            //  alert();
+            if (objcurrency.Currency_Code == "" || objcurrency.Currency_Code == null) {
+                swal("Please enter currency code.");
+                return;
+                $("#txtcurrencycode").focus();
+
+            }
+            if (objcurrency.Currency_Name == "" || objcurrency.Currency_Name == null) {
+                swal("Please enter currency name.");
+                $("#txtcurrencyname").focus();
+                return;
+            }
+            if (objcurrency.International_Code == "" || objcurrency.International_Code == null) {
+                swal("Please enter international code.");
+
+                $("#txtcurrencycode").focus();
+                return;
+            }
+            if (objcurrency.International_Name == "" || objcurrency.International_Name == null) {
+                swal("Please enter international name.");
+                $("#txtcurrencyname").focus();
+                return;
+            }
+            //if (objcurrency.Decimal_Unit == "" || objcurrency.Decimal_Unit == null) {
+            //    swal("Please enter decimal unit.");
+            //    $("#txtdecimalunit").focus();
+            //    return;
+            //}
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddCurrency",
+                data: '{objcurrency: ' + JSON.stringify(objcurrency) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    swal(response);
+                    CurrencyName();
+                    Resetcurrency();
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+        $("#btnresetcurrency").click(function (e) {
+            Resetcurrency();
+        });
+    });
+    $(document).on("click", "a.clddlcurrency", function () {
+        $('#dialogdivcurrency').modal('show');
+    });
+</script>
+
+@*<script>
+        const queryOpts = { name: 'clipboard-read', allowWithoutGesture: false };
+        const permissionStatus = await navigator.permissions.query(queryOpts);
+        // Will be 'granted', 'denied' or 'prompt':
+        console.log(permissionStatus.state);
+
+        // Listen for changes to the permission state
+        permissionStatus.onchange = () => {
+            console.log(permissionStatus.state);
+        };
+    </script>*@
+<script>
+    var PClevel = '';
+    document.onpaste = function (event) {
+        var txt = $("#nodi").text();
+        //alert(txt);
+        if (txt == "no image") { $("#nodi").remove() }
+        // use event.originalEvent.clipboard for newer chrome versions
+        var items = (event.clipboardData || event.originalEvent.clipboardData).items;
+        console.log(JSON.stringify(items)); // will give you the mime types
+        // find pasted image among pasted items
+        $('#a_right').show();
+        $('#a_left').show();
+        var li = document.createElement('div');
+        li.className = "showSlide fade";
+        var img = document.createElement('img');
+        var x = Math.floor((Math.random() * 100000000) + 1);
+        var x1 = Math.floor((Math.random() * 100000000) + 1);
+        li.id = x;
+        img.id = x1;
+        img.className = "img";
+
+        var blob = null;
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf("image") === 0) {
+                blob = items[i].getAsFile();
+              
+
+                    var fileData = new FormData();
+                    fileData.append('file', blob);
+                    fileData.append('Id', "Permit" + $("#ddlItemType").val().split(" ").join("") + $("#ddlItemSub").val().split(" ").join(""));
+                    // alert($("#ddlItemType").val().split(" ").join(""));
+                    $.ajax({
+                        url: '/Master/UploadItemImage',
+                        type: "POST",
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        data: fileData,
+                        success: function (result) {
+                            var f = result.split('+');
+                            if (PClevel == "") {
+                                if (f[1] != undefined) {
+                                    PClevel = f[1];
+                                }
+                            }
+                            else {
+                                if (f[1] != undefined) {
+                                    PClevel = PClevel + "," + f[1];
+                                }
+                            }
+                            alert(PClevel);
+                            $("#hdimagepath").val(PClevel);
+                            // alert(PClevel);
+
+                        },
+                        error: function (err) {
+                            alert(err.statusText);
+                        }
+                    });
+                
+            }
+        }
+        // load image if there is a pasted image
+        if (blob !== null) {
+            var filename = blob.name;
+            var ext = filename.split('.').reverse()[0].toLowerCase();
+            if ((ext == "jpeg") || (ext == "JPEG") || (ext == "jpg") || (ext == "JPG") || (ext == "png") || (ext == "PNG")) {
+
+            document.getElementById('div1').appendChild(li);
+            document.getElementById(x).appendChild(img);
+            var reader = new FileReader();
+            reader.onload = function (event) {
+                // alert(event.target.result);
+               
+                    document.getElementById(x1).src = event.target.result;
+                // data url!
+            };
+            var slides = document.getElementsByClassName("showSlide");
+
+            var slide_index = slides.length;
+            // alert(slide_index)
+            if (slides.length == 1) {
+                displaySlides(slide_index);
+            }
+            else {
+                for (var i = 0; i < slides.length - 1; i++) {
+                    slides[i].style.display = "none";
+                }
+                slides[slide_index - 1].style.display = "block";
+            }
+
+            // $('#btnUploadimage').show();
+
+            reader.readAsDataURL(blob);
+            }
+        else {
+                    return;
+        }
+        }
+    }
+
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveuomgroup").click(function (e) {
+            e.preventDefault();
+            //  alert();
+            var objUOMGroup = {};
+            objUOMGroup.Group_Code = $("#txtgroupcode1").val().toUpperCase();
+            objUOMGroup.Group_Name = $("#txtgroupname1").val().charAt(0).toUpperCase() + $("#txtgroupname1").val().slice(1);
+            objUOMGroup.UOM_Group_Id = 0;
+
+            if (objUOMGroup.Group_Name == "" || objUOMGroup.Group_Name == null) {
+                swal("Please enter group name.");
+                $("#txtgroupname1").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddUOMGroup",
+                data: '{objUOMGroup: ' + JSON.stringify(objUOMGroup) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    swal(response);
+                    UOMGroupName();
+                    ResetUOMGroup();
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+        $("#btnresetuomgroup").click(function (e) {
+            ResetUOMGroup();
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveuom").click(function (e) {
+            e.preventDefault();
+            var objuom = {};
+            objuom.UOM_Code = $("#txtuomcode").val().toUpperCase();
+            objuom.UOM_Name = $("#txtuomname").val().charAt(0).toUpperCase() + $("#txtuomname").val().slice(1);
+            objuom.UOM_Id = 0;
+
+            if (objuom.UOM_Code == "" || objuom.UOM_Code == null) {
+                swal("Please enter uom code.");
+
+                $("#txtuomcode").focus();
+                return;
+            }
+            //alert();
+            if (objuom.UOM_Name == "" || objuom.UOM_Name == null) {
+                swal("Please enter uom name.");
+                $("#txtuomname").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddUOM",
+                data: '{objuom: ' + JSON.stringify(objuom) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    swal(response);
+                    UOMName();
+                    ResetUOM();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+        $("#btnresetuom").click(function (e) {
+            ResetUOM();
+        });
+    });
+</script>
+<script>
+    function Resetrack() {
+        $("#txtrackname").val("");
+        $("#txtRackNumber").val("");
+    }
+
+    $(document).ready(function () {
+        //  alert();
+        $("#btnresetrack").click(function () {
+            Resetrack();
+        });
+    })
+
+    $(document).ready(function () {
+
+        $("#btnsaverack").click(function (e) {
+            e.preventDefault();
+            var objRack = {};
+            objRack.Rack_Name = $("#txtrackname").val().charAt(0).toUpperCase() + $("#txtrackname").val().slice(1);
+            objRack.Rack_Number = $("#txtRackNumber").val();
+            // alert();
+            objRack.Rack_Id = $("#hdrack").val();
+            if (objRack.Rack_Name == "" || objRack.Rack_Name == null) {
+                swal("Please enter Rack name");
+                $("#txtrackname").focus();
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddRack",
+                data: '{objRack: ' + JSON.stringify(objRack) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    swal(response);
+                    GetRack();
+                    Resetrack();
+
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+<script>
+    function Resetstore() {
+        $("#txtStoreCode").val("");
+        $("#txtStore").val("");
+    }
+
+    $(document).ready(function () {
+        //  alert();
+        $("#btnresetstore").click(function () {
+            Resetstore();
+        });
+    })
+
+    $(document).ready(function () {
+
+        $("#btnsavestore").click(function (e) {
+            var objStoreLocation = {};
+            objStoreLocation.Store_Location_Code = $("#txtStoreCode").val().toUpperCase();
+            objStoreLocation.Store_Location_Name = $("#txtStore").val().charAt(0).toUpperCase() + $("#txtStore").val().slice(1);
+            // alert();
+            objStoreLocation.Store_Location_Id = $("#hdstore").val();
+            if (objStoreLocation.Store_Location_Code == "" || objStoreLocation.Store_Location_Code == null) {
+                swal("Please enter store code");
+                $("#txtStoreCode").focus();
+                return;
+            }
+            objStoreLocation.Store_Location_Id = $("#hdstore").val();
+            if (objStoreLocation.Store_Location_Name == "" || objStoreLocation.Store_Location_Name == null) {
+                swal("Please enter store name");
+                $("#txtStore").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddStoreLocation",
+                data: '{objStoreLocation: ' + JSON.stringify(objStoreLocation) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    swal(response);
+                    GetStoreLocation();
+                    Resetstore();
+                    //var script = document.createElement("script");
+                    //script.type = "text/javascript";
+                    //script.src = "/assets/js/jquery.dataTables.min.js";
+                    //document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+<script>
+    function Resetbin() {
+        $("#txtracknoname").val("");
+        //  $("#txtuomname").val("");
+    }
+
+    $(document).ready(function () {
+        //  alert();
+        $("#btnresetrackno").click(function () {
+            Resetbin();
+        });
+    })
+
+    $(document).ready(function () {
+
+        $("#btnsaverackno").click(function (e) {
+            e.preventDefault();
+            var objRackNumber = {};
+            objRackNumber.Rack_Number_Name = $("#txtracknoname").val().toUpperCase();
+            //objDepartment.Department_Description = $("#txtdepartmentdescription").val();
+            // alert();
+            objRackNumber.Rack_Number_Id = $("#hdracknumber").val();
+            if (objRackNumber.Rack_Number_Name == "" || objRackNumber.Rack_Number_Name == null) {
+                swal("Please enter bin number");
+                $("#txtracknoname").focus();
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddRackNumber",
+                data: '{objRackNumber: ' + JSON.stringify(objRackNumber) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    swal(response);
+                    GetRackNumber();
+                    Resetbin();
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+<script>
+    function Resetmanage() {
+        $("#txtmanageitemcode").val("");
+        $("#txtmanageitemname").val("");
+    }
+
+    $(document).ready(function () {
+        //  alert();
+        $("#btnresetmanageitem").click(function () {
+            Resetmanage();
+        });
+    })
+    $(document).ready(function () {
+        $("#btnsavemanageitem").click(function (e) {
+            e.preventDefault();
+            var objmanageitem = {};
+            objmanageitem.Manage_Item_Code = $("#txtmanageitemcode").val();
+            objmanageitem.Manage_Item_Name = $("#txtmanageitemname").val();
+            objmanageitem.Manage_Item_Id = $("#hdmanageitem").val();
+
+            if (objmanageitem.Manage_Item_Code == "" || objmanageitem.Manage_Item_Code == null) {
+                swal("Please enter manage item code.");
+
+                $("#txtmanageitemcode").focus();
+                return;
+            }
+            //alert();
+            if (objmanageitem.Manage_Item_Name == "" || objmanageitem.Manage_Item_Name == null) {
+                swal("Please enter manage item name.");
+                $("#txtmanageitemname").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddManageItem",
+                data: '{objmanageitem: ' + JSON.stringify(objmanageitem) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    swal(response);
+                    GetManageItem();
+                    Resetmanage();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+<script>
+    function Resetcell() {
+        $("#txtCellno").val("");
+        //  $("#txtuomname").val("");
+    }
+
+    $(document).ready(function () {
+        //  alert();
+        $("#btnresetcellno").click(function () {
+            Resetcell();
+        });
+    })
+
+    $(document).ready(function () {
+
+        $("#btnsavecellno").click(function (e) {
+            e.preventDefault();
+            var objCellNumber = {};
+            objCellNumber.Cell_Number = $("#txtCellno").val().toUpperCase();
+            //objDepartment.Department_Description = $("#txtdepartmentdescription").val();
+            // alert();
+            objCellNumber.Cell_Id = $("#hdcell").val();
+            if (objCellNumber.Cell_Number == "" || objCellNumber.Cell_Number == null) {
+                swal("Please enter cell number");
+                $("#txtCellno").focus();
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddCell",
+                data: '{objCellNumber: ' + JSON.stringify(objCellNumber) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    CellNumber();
+                    Resetcell();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+
+
+
+<script>
+    function Resetvaluation() {
+        $("#txtvaluationcode").val("");
+        $("#txtvaluationname").val("");
+    }
+
+    $(document).ready(function () {
+        //  alert();
+        $("#btnresetvaluation").click(function () {
+            Resetvaluation();
+        });
+    })
+    $(document).ready(function () {
+        //  alert();
+        $("#btnsavevaluation").click(function (e) {
+            e.preventDefault();
+            var objvaluation = {};
+            objvaluation.Valuation_Code = $("#txtvaluationcode").val();
+            objvaluation.Valuation_Name = $("#txtvaluationname").val();
+            objvaluation.Valuation_Id = $("#hdvaluation").val();
+
+            if (objvaluation.Valuation_Code == "" || objvaluation.Valuation_Code == null) {
+                swal("Please enter valuation code.");
+
+                $("#txtvaluationcode").focus();
+                return;
+            }
+            //alert();
+            if (objvaluation.Valuation_Name == "" || objvaluation.Valuation_Name == null) {
+                swal("Please enter valuation name.");
+                $("#txtvaluationname").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddValuation",
+                data: '{objvaluation: ' + JSON.stringify(objvaluation) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    swal(response);
+                    GetValuation();
+                    Resetvaluation();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+<script type="text/javascript">
+    function Resetitemsubtype() {
+        $("#ddlitemtype1").val("0");
+        $("#txtsubitemtypename").val("");
+    }
+
+    $(document).ready(function () {
+        //  alert();
+        $("#btnresetitemsubtype").click(function () {
+            Resetitemsubtype();
+        });
+    })
+    $(function () {
+        $("#btnsavesubitemtype").click(function (e) {
+            e.preventDefault();
+            var objsubitemtype = {};
+            objsubitemtype.Item_Type_Id = $("#ddlitemtype1").val();
+            objsubitemtype.Sub_Item_Type_Name = $("#txtsubitemtypename").val();
+            objsubitemtype.Sub_item_Type_Id = $("#hdsubitemtype").val();
+            //alert(objstate.Country_Id);
+            if (objsubitemtype.Item_Type_Id == "0" || objsubitemtype.Item_Type_Id == null) {
+                swal("Please select Item Type.");
+                $("#ddlitemtype1").focus();
+                return;
+            }
+            if (objsubitemtype.Sub_Item_Type_Name == "" || objsubitemtype.Sub_Item_Type_Name == null) {
+                swal("Please enter sub item type name.");
+                $("#txtsubitemtypename").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddSubItemType",
+                data: '{objsubitemtype: ' + JSON.stringify(objsubitemtype) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    swal(response);
+                    GetItemsubTypeAccItemType();
+                    Resetitemsubtype();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script type="text/javascript">
+    function Resetitemtype() {
+        $("#txtitemtypecode").val("");
+        $("#txtitemtypename").val("");
+    }
+
+    $(document).ready(function () {
+        //  alert();
+        $("#btnresetitemtype").click(function () {
+            Resetitemtype();
+        });
+    })
+    $(document).ready(function () {
+        $("#btnsaveitemtype1").click(function (e) {
+            // e.preventDefault();
+            // alert();
+            var objitemtype = {};
+            objitemtype.Item_Type_Code = $("#txtitemtypecode").val();
+            objitemtype.Item_Type_Name = $("#txtitemtypename").val();
+            objitemtype.Item_Type_Id = $("#hditemtype").val();
+            if (objitemtype.Item_Type_Code == "" || objitemtype.Item_Type_Name == null) {
+                swal("Please enter item type code.");
+                $("#txtitemtypecode").focus();
+                return;
+            }
+            if (objitemtype.Item_Type_Name == "" || objitemtype.Item_Type_Name == null) {
+                swal("Please enter item type name.");
+                $("#txtitemtypename").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddItemType",
+                data: '{objitemtype: ' + JSON.stringify(objitemtype) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    swal(response);
+                    GetItemTyp();
+                    Resetitemtype();
+                    GetItemType1();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script>
+    function ResetUOM() {
+        $("#txtuomcode").val("");
+        $("#txtuomname").val("")
+    }
+    function ResetUOMGroup() {
+        $("#txtgroupcode1").val("");
+        $("#txtgroupname1").val("")
+    }
+    function Resetcurrency() {
+        $("#txtcurrencycode").val("");
+        $("#txtcurrencyname").val("");
+        $("#txtinternationalcode").val("");
+        $("#txtinternationalname").val("");
+        $("#txtdecimalunit").val("");
+        $("#txtcurrencysymbol").val("");
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $("#btnreset").click(function (e) {
+            SetDataForUpdate();
+        });
+    });
+</script>
+
+<style>
+    .clddl_plus {
+        float: right;
+        left: 16px;
+        position: relative;
+        top: -45px;
+        font-size: 14px;
+    }
+</style>
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+<div class="main-content">
+    <div class="main-content-inner top-padding">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs" style=" z-index: -1 !IMPORTANT;">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#">PMS Setting</a>
+                </li>
+
+                <li>
+                    <a href="/Master/ItemMaster">Item Master</a>
+                </li>
+                <li>
+                    <a href="/Master/EditItem">Edit Item</a>
+                </li>
+                <li class="active">Update Item</li>
+            </ul><!-- /.breadcrumb -->
+            @*<div class="nav-search" id="nav-search">
+                <div class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>*@<!-- /.nav-search -->
+        </div>
+
+        <div class="page-content1">
+
+
+            <div class="page-header">
+                <h3 class="item_hedin">
+                    Update Item (<span id="divitemcode" class="code_cl"></span>)
+                </h3>
+
+            </div><!-- /.page-header -->
+            <input type="hidden" id="hditemcode">
+            <div class="bordr_sec" id="divdin">
+                <h4><span class="hed_tit">Designer</span></h4>
+
+                <div class="row">
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Item Type</label>
+
+                            <div class="col-sm-9">
+                                <select class="col-xs-10 col-sm-10" id="ddlItemType" data-toggle="tooltip" title="Select item type name">
+                                    <option>-Select Item Type-</option>
+                                </select><sup style=" top: .5em; left: .5em;"><a class="clddlitemtype cst_add" data-toggle="tooltip" title="Add new item type"><i class="fa fa-plus"></i></a></sup>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Sub Item Type </label>
+
+                            <div class="col-sm-9">
+                                <select class="col-xs-10 col-sm-10" id="ddlItemSub" data-toggle="tooltip" title="Select sub item type">
+                                    <option>-Select Item Sub Type-</option>
+                                </select>
+                                <sup style=" top: .5em; left: .5em;"><a class="clddlitemsub cst_add" data-toggle="tooltip" title="Add new sub item type"><i class="fa fa-plus"></i></a></sup>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+
+                    <div class="col-xs-6" style="display:none">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Item Name <span style="color:red;font-size:14px;">*</span></label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtName" placeholder="Item Name" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for name" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Description <span style="color:red;font-size:14px;">*</span> </label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtDescription" placeholder="Description" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for description" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Manufacturing Part Number <span style="color:red;font-size:14px;">*</span> </label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtMPNumber" style="text-transform:uppercase !important" placeholder="Manufacturing Part Number" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for manufacturing part number" />
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Manufacturer</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtManufacture" style="text-transform:capitalize" placeholder="Manufacturer" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for manufacturer" />
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Brand</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtBrand" style="text-transform:capitalize" placeholder="Brand" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for brand" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Alternate Fields </label>
+
+                            <div class="col-sm-9">
+                                <input type="radio" id="ryes" name="permision" value="Yes">
+                                <label for="Yes">Yes</label>
+                                <input type="radio" id="rNo" name="permision" value="No" checked="checked">
+                                <label for="No">No</label>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6 divrowno" id="divrow" style="display:none">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">No Of Rows </label>
+
+                            <div class="col-sm-4">
+                                <input type="text" id="txtNoOfRows" placeholder="No Of Rows" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="No of rows" />
+
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="button" id="btnaddalt" class="btn" value="Add" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row" id="altrow" style="display:none">
+                    <div class="col-xs-12">
+                        <div class="form-group">
+                            <table id="EmpInfoalt" class="table table-bordered  table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="center">S. No</th>
+
+                                        <th>Part No</th>
+                                        <th>Brand</th>
+                                        <th>URL</th>
+
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="space-4"></div>
+                <div id="generaterowsdiv">
+
+                </div>
+
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-xs-6">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Attach Data Sheet</label>
+
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-9 ">
+                                        <label class="ace-file-input upload_fl1"><input type="file" onchange="loadFile(event)" id="uploaddatesheet"><span class="ace-file-container upload_fl" data-title="Choose"><span class="ace-file-name fnt_smal" data-title="No File ..." id="spndateid"><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                        <input type="hidden" id="hddatesheet" />
+                                    </div>
+                                    <div class="col-sm-2" style="display:none">
+                                        <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                        <input type="button" id="btnUploaddatesheet" class="btn btn-info upload-bt" value="Upload" />
+                                    </div>
+                                    <div class="downl col-sm-2" id="adatesheet"></div>
+                                </div>
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Attach Compliance</label>
+
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-9">
+                                        <label class="ace-file-input upload_fl1"><input type="file" onchange="loadFile(event)" id="uploadCompliance"><span class="ace-file-container upload_fl" data-title="Choose"><span class="ace-file-name fnt_smal" data-title="No File ..." id="spncompid"><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                        <input type="hidden" id="hdCompliance" />
+                                    </div>
+                                    <div class="col-sm-2" style="display:none">
+                                        <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                        <input type="button" id="btnUploadCompliance" class="btn btn-info upload-bt" value="Upload" />
+                                    </div>
+                                    <div class="downl col-sm-2" id="acomplain"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-xs-6">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Attach CAD File</label>
+
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-9">
+                                        <label class="ace-file-input upload_fl1"><input type="file" onchange="loadFile(event)" id="uploadCADFile"><span class="ace-file-container upload_fl" data-title="Choose"><span class="ace-file-name fnt_smal" data-title="No File ..." id="spncadid"><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                        <input type="hidden" id="hdCADFile" />
+                                    </div>
+                                    <div class="col-sm-2" style="display:none">
+                                        <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                        <input type="button" id="btnUploadCAD" class="btn btn-info upload-bt" value="Upload" />
+                                    </div><div class="downl col-sm-2" id="acad"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Attach Scrapping File</label>
+
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-9">
+                                        <label class="ace-file-input upload_fl1"><input type="file" onchange="loadFile(event)" id="uploadScrapping"><span class="ace-file-container upload_fl" data-title="Choose"><span class="ace-file-name fnt_smal" data-title="No File ..." id="spnscrapid"><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                        <input type="hidden" id="hdScrapping" />
+                                    </div>
+                                    <div class="col-sm-2" style="display:none">
+                                        <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                        <input type="button" id="btnUploadScrapping" class="btn btn-info upload-bt" value="Upload" />
+                                    </div><div class="downl col-sm-2"><label id="aScrapping"></label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-xs-6">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Attach Certification </label>
+
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-9">
+                                        <label class="ace-file-input upload_fl1"><input type="file" onchange="loadFile(event)" id="uploadcertification"><span class="ace-file-container upload_fl" data-title="Choose"><span class="ace-file-name fnt_smal" data-title="No File ..." id="spncertifid"><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                        <input type="hidden" id="hdcertificationfile" />
+                                    </div>
+                                    <div class="col-sm-2" style="display:none">
+                                        <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                        <input type="button" id="btnUploadcertification" class="btn btn-info upload-bt" value="Upload" />
+                                    </div> <div class="downl col-sm-2" id="aCertification"> </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Upload All Files</label>
+
+                            <div class="col-sm-9">
+                                <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                <input type="button" id="btnUploadAll" class="btn btn-info upload-bt" value="Upload All" />
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="space-4"></div>
+
+
+            </div>
+            <div class="clear" style="">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">URL</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtDUrl" style="text-transform:lowercase" placeholder="URL" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for url" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Status</label>
+
+                            <div class="col-sm-9">
+
+                                <select class="col-xs-10 col-sm-10" id="ddlstatus" data-toggle="tooltip" title="Select status">
+                                    <option value="0">-Select status-</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                                <input type="hidden" id="hdimagepath" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+
+                            <div class="form-group">
+                                @*<label class="col-sm-3 control-label no-padding-right" for="form-field-1">Attach Images</label>*@
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> <span class="qr_code"> QRCode </span></label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="barcode" name="barcode" autocomplete="off" style="display:none" />
+                                    @*<input type="button" class="button" id="GenerateBarcode" name="GenerateBarcode" value="Generate Barcode">*@
+                                    <img id="imgqrcode" />
+                                    <input type="hidden" id="hdqrimagepath" />
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"></label>
+
+                                @*<div id="multiuploding" class="col-sm-9">
+
+
+
+
+                                        <div id='filecontainer'>
+                                            <input type="file" class="dimmy" id="image-input" multiple />
+                                        </div>
+                                        <div class="col-sm-9" id="divprev" style=" width: 200px;height: 200px;border: dotted 1px;margin-top: 19px;padding-left:0px;">
+                                            <div id="preview-area" style="" class="preview-area w3-content w3-display-container"></div>
+
+                                        </div>
+
+                                        <script>
+                                                var slideIndex = 1;
+                                                showDivs(slideIndex);
+
+                                                function plusDivs(n) {
+                                                    showDivs(slideIndex += n);
+                                                }
+
+                                                function showDivs(n) {
+                                                    var i;
+                                                    var x = document.getElementsByClassName("mySlides");
+                                                    if (n > x.length) { slideIndex = 1 }
+                                                    if (n < 1) { slideIndex = x.length }
+                                                    for (i = 0; i < x.length; i++) {
+                                                        x[i].style.display = "none";
+                                                    }
+                                                    x[slideIndex - 1].style.display = "block";
+                                                }
+                                            </script>
+
+
+                                    </div>*@
+                                <div id="copypaste" class="col-sm-12">
+                                    <div id="div1" class="slidercontainer">
+
+                                        <a id="a_left" class="left" onclick="nextSlide(-1)">❮</a>
+                                        <a id="a_right" class="right" onclick="nextSlide(1)">❯</a>
+                                    </div>
+
+                                    <script type="text/javascript">
+                                                var slide_index = 1;
+                                                displaySlides(slide_index);
+
+                                                function nextSlide(n) {
+                                                    displaySlides(slide_index += n);
+                                                }
+
+                                                function currentSlide(n) {
+                                                    displaySlides(slide_index = n);
+                                                }
+
+                                                function displaySlides(n) {
+                                                    var i;
+                                                    var slides = document.getElementsByClassName("showSlide");
+                                                    if (n > slides.length) { slide_index = 1 }
+                                                    if (n < 1) { slide_index = slides.length }
+                                                    for (i = 0; i < slides.length; i++) {
+                                                        slides[i].style.display = "none";
+                                                    }
+                                                    slides[slide_index - 1].style.display = "block";
+                                                }
+                                    </script>
+                                    <div class="space-8"></div>
+                                    <label class="ctrl_txt">Open image and copy with 'Ctrl + c' and paste with 'Ctrl + v'</label>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+            <div class="space-4"></div>
+            <div class="border-2">
+                <h4><span class="hed_tit">SCM</span></h4>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> UOM Group</label>
+
+                            <div class="col-sm-9">
+                                <select class="col-xs-10 col-sm-10" id="ddlUOMGroup" data-toggle="tooltip" title="Select uom group name">
+                                    <option>-Select UOM Group-</option>
+                                </select><sup style=" top: .5em; left: .5em;"><a class="clddluomgroup cst_add" data-toggle="tooltip" title="Add new uom group"><i class="fa fa-plus"></i></a></sup>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> UOM </label>
+
+                            <div class="col-sm-9">
+                                <select class="col-xs-10 col-sm-10" id="ddlUOM" data-toggle="tooltip" title="Select uom name">
+                                    <option>-Select UOM-</option>
+                                </select>
+                                <sup style=" top: .5em; left: .5em;"><a class="clddluom cst_add" data-toggle="tooltip" title="Add new uom"><i class="fa fa-plus"></i></a></sup>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Alternate UOM Group</label>
+
+                            <div class="col-sm-9">
+                                <select class="col-xs-10 col-sm-10" id="AltddlUOMGroup" data-toggle="tooltip" title="Select alternate uom group name">
+                                    <option>-Select Alternate UOM Group-</option>
+                                </select><sup style=" top: .5em; left: .5em;"><a class="clddluomgroup cst_add" data-toggle="tooltip" title="Add new alternate uom group"><i class="fa fa-plus"></i></a></sup>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Alternate UOM </label>
+
+                            <div class="col-sm-9">
+                                <select class="col-xs-10 col-sm-10" id="ddlAltUOM" data-toggle="tooltip" title="Select alternate uom name">
+                                    <option>-Select Alternate UOM-</option>
+                                </select><sup style=" top: .5em; left: .5em;"><a class="clddluom cst_add" data-toggle="tooltip" title="Add new alternate uom"><i class="fa fa-plus"></i></a></sup>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="space-4"></div>
+                <div class="row">
+
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Supplier Name</label>
+
+                            <div class="col-sm-9">
+
+                                <input type="text" id="txtSupplierName" style="text-transform:capitalize" placeholder="Supplier Name" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for supplier name" />
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Item Price  </label>
+
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-xs-6"><input type="text" id="txtPrice" placeholder="Item Price" class="col-xs-10 col-sm-5" data-toggle="tooltip" title="Field for item price" /></div>
+                                    <div class="col-xs-6">
+                                        <select class="col-xs-10 col-sm-5" id="ddlcurrency" data-toggle="tooltip" title="select currency name">
+                                            <option>-Select Currency-</option>
+
+
+                                        </select><sup style=" top: .5em; left: .5em;"><a class="clddlcurrency clddl_plus" data-toggle='tooltip' title='Add new currency'><i class="fa fa-plus"></i></a></sup>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">MOQ (Min. Order Qty) </label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtMOQ" placeholder="Minimum Order Quantity" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for minimum order quantity" />
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Threshold (MSQ)</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtThreshold" style="text-transform:capitalize" placeholder="Threshold" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for threshold" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">HS Category </label>
+
+                            <div class="col-sm-9">
+                                <select class="col-xs-10 col-sm-10" id="ddlHSCategory" data-toggle="tooltip" title="Select hsn category">
+                                    <option>-Select HSCategory-</option>
+                                </select>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">HS Code</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtHSCode" style="text-transform:uppercase" placeholder="HS Code" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for hs code" />
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Co-Country of Origin</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtCCO" style="text-transform:uppercase" placeholder="Co-Country of Origin (CCO)" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for co-country of origin (CCO)" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Shipping Cost </label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtShippingCost" placeholder="Shipping Cost" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for shipping cost" />
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Contact Details </label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtContactDetails" placeholder="Contact Details" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for contact details " />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">E-Mail</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtEMail" maxlength="255" onkeyup="if(this.length>255) this.value=this.value.substr(0, 255)" onblur="checkemail(this.value)" placeholder="E-Mail" style="text-transform:lowercase !important" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for email" />
+
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+    function checkemail(email) {
+        var regex = /^[a-zA-Z0-9\.\_]+\@@{1}[a-zA-Z0-9]+\.\w{2,4}$/;
+        if (!regex.test(email)) {
+            swal('Please enter valid email id');
+            $('#txtEMail').val("");
+        }
+    }
+                    </script>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">We Chat</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtWeChat" placeholder="We Chat" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for we chat" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">WhatsApp Number</label>
+                            <div class="col-sm-9">
+                                <input type="text" id="txtWhatsApp" placeholder="WhatsApp Number" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for whatsapp number" />
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Other Contact Type</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtOtherContactType" placeholder="Other Contact Type" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for other contact type" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">URL Link</label>
+
+                            <div class="col-sm-9">
+                                <input type="url" id="txtURLLink" style="text-transform:lowercase !important;" onblur="myFunction(this.value)" placeholder="URL Link" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for url link" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+    function myFunction(url) {
+       // var txt = $('#txtURLLink').val();
+        var re = /(http(s)?:\\)?([\w-]+\.)+[\w-]+[.com|.in|.org]+(\[\?%&=]*)?/;
+        if (!re.test(url)) {
+            swal('Please Enter Valid URL');
+            $('#txtURLLink').val("");
+        }
+
+    }
+                    </script>
+                </div>
+
+            </div>
+            <div class="border-3">
+                <h4><span class="hed_tit">WAREHOUSE</span></h4>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Valuation Type </label>
+
+                            <div class="col-sm-9">
+                                <select class="col-xs-10 col-sm-10" id="ddlValidationType" data-toggle="tooltip" title="Select valuation type">
+                                    <option>-Select Valuation Type-</option>
+                                </select>
+                                <sup style=" top: .5em; left: .5em;"><a class="clddluomvaluation cst_add" data-toggle='tooltip' title='Add new valuation type'><i class="fa fa-plus"></i></a></sup>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Manage Item</label>
+
+                            <div class="col-sm-9">
+                                <select class="col-xs-10 col-sm-10" id="ddlManageItem" data-toggle="tooltip" title="Select Manage Item name">
+                                    <option>-Select Manage Item-</option>
+                                </select><sup style=" top: .5em; left: .5em;"><a class="clddlmanageitem cst_add" data-toggle='tooltip' title='Add new manage item'><i class="fa fa-plus"></i></a></sup>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Quantity </label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtQantity" placeholder="Quantity" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for quantity" />
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Store Location</label>
+
+                            <div class="col-sm-9">
+                                <select class="col-xs-10 col-sm-10" id="ddlstoreLocation" data-toggle="tooltip" title="Select store location">
+                                    <option>-Select Store Location-</option>
+                                </select><sup style=" top: .5em; left: .5em;"><a class="clddlstore cst_add"><i class="fa fa-plus" data-toggle="tooltip" title="Add new store location"></i></a></sup>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Store Location Code </label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="txtstoreCode" placeholder="Store location Code" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for store location code" disabled="disabled" />
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Rack</label>
+
+                            <div class="col-sm-9">
+                                <select class="col-xs-10 col-sm-10" id="ddlrack" data-toggle="tooltip" title="Select rack">
+                                    <option>-Select Rack-</option>
+                                </select><sup style=" top: .5em; left: .5em;"><a class="clddlrack cst_add" data-toggle="tooltip" title="Add new rack"><i class="fa fa-plus"></i></a></sup>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Cell Number </label>
+
+                            <div class="col-sm-9">
+                                <select class="col-xs-10 col-sm-10" id="ddlcellnumber" data-toggle="tooltip" title="Select cell number">
+                                    <option>-Select cell Number-</option>
+                                </select>
+                                <sup style=" top: .5em; left: .5em;"><a class="clddlcellno cst_add"><i class="fa fa-plus" data-toggle="tooltip" title="Add new cell number"></i></a></sup>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Bin Number </label>
+
+                            <div class="col-sm-9">
+                                <select class="col-xs-10 col-sm-10" id="ddlracknumber" data-toggle="tooltip" title="Select bin number">
+                                    <option>-Select Bin Number-</option>
+                                </select>
+                                <sup style=" top: .5em; left: .5em;"><a class="clddlrackno cst_add"><i class="fa fa-plus" data-toggle="tooltip" title="Add new bin number"></i></a></sup>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+
+
+                </div>
+                <div class="space-4"></div>
+                <input type="hidden" id="hditemFieldoptionType" />
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="hidden" id="hditem" />
+
+
+                        <div class="clearfix form-actions">
+
+                            <div class="col-md-offset-6 col-md-6">
+                                <a href="/Master/ItemMaster" class="back_home text-left top_left-a top_left-a1">Back to home</a>
+                                <button class="btn btn-info" id="btnsave" type="button" data-toggle="tooltip" title="Button for save data">
+                                    <i class="ace-icon fa fa-floppy-o"></i>
+                                    Submit
+                                </button>
+
+                                &nbsp; &nbsp; &nbsp;
+                                <button class="btn" id="btnreset" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                    Reset
+                                </button>
+
+                            </div>
+                        </div>
+
+
+
+
+
+
+                    </div><!-- /.col -->
+                </div>
+                @*----------------------------------------------------------------description form-----------------------------------------------*@
+                <div id="dialogdiv" class="modal fade des_upd">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                @*<a href="#" class="close" data-dismiss="modal">×</a>*@
+                                <h3>Add Description</h3>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="form-horizontal txt_ar">
+                                        <input type="hidden" id="hditemid" />
+                                        <input type="hidden" id="hditemcode" />
+                                        <input type="hidden" id="hditemMPN" />
+                                        <textarea class="col-xs-12 col-sm-12" style=" text-transform: none !important;height: 97px !IMPORTANT;" rows="5" id="areadescription"></textarea>
+                                    </div>
+                                </div><!-- /.span -->
+
+                            </div><!-- /.col -->
+
+
+                            <div class="space-8"></div>
+                            <div class="row">
+
+                                <div class="col-md-12">
+                                    <button class="btn btn-info text-center" style="text-align: center !important; display: block; margin: auto;" id="btnsaveDes" type="button" data-toggle="tooltip" title="Button for save data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Submit
+                                    </button><br />
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*-----------------------------------------------------------------Master form----------------------------------------------------------*@
+
+                <div class="modal fade" id="dialogdivcurrency">
+                    <div class="modal-dialog modal-md modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h3 class="item_hedin">Add Currency </h3>
+                            </div>
+                            <div class="modal-body" style="padding: 13px;">
+                                <div class="row">
+                                    <div class="col-md-3">Currency Code<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtcurrencycode" style="text-transform:uppercase" placeholder="Currency Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency code" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">Courrency Name<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtcurrencyname" style="text-transform:capitalize" placeholder="Currency Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency name" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">International Code<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtinternationalcode" placeholder="International Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for international code" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">International Name<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtinternationalname" style="text-transform:capitalize;" placeholder="International Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for international Name" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">Decimal Unit<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtdecimalunit" placeholder="Decimal Unit" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for decimal unit" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">Currency Symbol<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtcurrencysymbol" placeholder="Currency Symbol" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency symbol" />
+                                    </div>
+                                </div>
+
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <button class="btn btn-info" id="btnsavecurrency" type="button" data-toggle="tooltip" title="Button for save data">
+                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                            Submit
+                                        </button>
+                                        <button class="btn master-page-reset" id="btnresetcurrency" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="dialogdivddlstore">
+
+                    <div class="modal-dialog modal-md modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h3 class="item_hedin">Add Store Location </h3>
+                            </div>
+
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-4">Store Location Code<span> : </span></div>
+                                    <div class="col-md-8">
+                                        <input type="text" id="txtStoreCode" style="text-transform:capitalize" placeholder="Store Location Code" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for store location code" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">Store Location Name<span> : </span></div>
+                                    <div class="col-md-8">
+                                        <input type="text" id="txtStore" style="text-transform:capitalize" placeholder="Store Location Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for store location name" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-4"></div>
+                                    <div class="col-md-8">
+                                        <button class="btn btn-info" id="btnsavestore" type="button" data-toggle="tooltip" title="Button for save data">
+                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                            Submit
+                                        </button>
+                                        <button class="btn master-page-reset" id="btnresetstore" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="dialogdivddlrack">
+                    <div class="modal-dialog modal-md modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h3 class="item_hedin">Add Rack </h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-3">Rack Name<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtrackname" style="text-transform:capitalize" placeholder="Rack Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for rack name" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3">Rack Number<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtRackNumber" style="text-transform:capitalize" placeholder="Rack Number" maxlength="100" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for rack number" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <button class="btn btn-info" id="btnsaverack" type="button" data-toggle="tooltip" title="Button for save data">
+                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                            Submit
+                                        </button>
+                                        <button class="btn master-page-reset" id="btnresetrack" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="dialogdivddlrackno">
+                    <div class="modal-dialog modal-md modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h3 class="item_hedin">Add Bin Number</h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-3">Bin Number<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtracknoname" style="text-transform:capitalize" placeholder="Bin Number" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for bin number" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <button class="btn btn-info" id="btnsaverackno" type="button" data-toggle="tooltip" title="Button for save data">
+                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                            Submit
+                                        </button>
+                                        <button class="btn master-page-reset" id="btnresetrackno" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="dialogdivddlItemType">
+                    <div class="modal-dialog modal-dialog-centered modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h3 class="item_hedin">Add Item Type </h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-3">Item Type Code<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtitemtypecode" style="text-transform:uppercase" placeholder="Item Type Code" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for Item Type code" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">Item Type Name<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtitemtypename" style="text-transform:capitalize" placeholder="Item Type  Name" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for Item Type name" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <button class="btn btn-info" id="btnsaveitemtype1" type="button" data-toggle="tooltip" title="Button for save data">
+                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                            Submit
+                                        </button>
+                                        <button class="btn master-page-reset" id="btnresetitemtype" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="dialogdivddlItemSub">
+                    <div class="modal-dialog modal-dialog-centered modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h3 class="item_hedin">Add Sub Item Type </h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-3">Item Type Name<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <select class="col-xs-10 col-sm-10" id="ddlitemtype1" data-toggle="tooltip" title="Select item type">
+                                            <option>-Select Item Type-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">Sub Item Type Name<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtsubitemtypename" style="text-transform:capitalize" placeholder="Sub Item Type Name" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for sub item type name" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <button class="btn btn-info" id="btnsavesubitemtype" type="button" data-toggle="tooltip" title="Button for save data">
+                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                            Submit
+                                        </button>
+                                        <button class="btn master-page-reset" id="btnresetitemsubtype" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="dialogdivddlUom">
+                    <div class="modal-dialog modal-dialog-centered modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h3 class="item_hedin">Add UOM </h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-3">UOM Code<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtuomcode" style="text-transform:uppercase" placeholder="UOM Code" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for uom code" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">UOM Name<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtuomname" style="text-transform:capitalize" placeholder="UOM Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for uom name" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <button class="btn btn-info" id="btnsaveuom" type="button" data-toggle="tooltip" title="Button for save data">
+                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                            Submit
+                                        </button>
+                                        <button class="btn master-page-reset" id="btnresetuom" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="dialogdivddlUOMGroup">
+                    <div class="modal-dialog modal-dialog-centered modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h3 class="item_hedin">Add UOM Group </h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-3">Group Code<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtgroupcode1" style="text-transform:uppercase" placeholder="Group Code" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for group code" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">Group Name<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtgroupname1" style="text-transform:capitalize" placeholder="Group  Name" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for group  name" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <button class="btn btn-info" id="btnsaveuomgroup" type="button" data-toggle="tooltip" title="Button for save data">
+                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                            Submit
+                                        </button>
+                                        <button class="btn master-page-reset" id="btnresetuomgroup" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="dialogdivddlValidationType">
+                    <div class="modal-dialog modal-dialog-centered modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h3 class="item_hedin">Add Valuation </h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-3">Valuation Code<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtvaluationcode" style="text-transform:uppercase" placeholder="Valuation Code" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for Valuation code" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">Valuation Name<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtvaluationname" style="text-transform:capitalize" placeholder="Valuation  Name" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for Valuation name" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <button class="btn btn-info" id="btnsavevaluation" type="button" data-toggle="tooltip" title="Button for save data">
+                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                            Submit
+                                        </button>
+                                        <button class="btn master-page-reset" id="btnresetvaluation" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="dialogdivddlManageItem">
+                    <div class="modal-dialog modal-dialog-centered modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h3 class="item_hedin">Add Manage Item </h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-3" style="padding-left:3px">Manage Item Code<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtmanageitemcode" style="text-transform:uppercase" placeholder="Manage Item Code" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for manage item code" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3" style="padding-left:3px">Manage Item Name<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtmanageitemname" style="text-transform:capitalize" placeholder="Manage Item  Name" class="col-xs-10 col-sm-10" data-toggle="tooltip" title="Field for manage item name" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <button class="btn btn-info" id="btnsavemanageitem" type="button" data-toggle="tooltip" title="Button for save data">
+                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                            Submit
+                                        </button>
+                                        <button class="btn master-page-reset" id="btnresetmanageitem" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="dialogdivddlcellno">
+                    <div class="modal-dialog modal-md modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h3 class="item_hedin">Add Cell Number</h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-3">Cell Number<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtCellno" style="text-transform:capitalize" placeholder="Cell Number" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for cell number" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <button class="btn btn-info" id="btnsavecellno" type="button" data-toggle="tooltip" title="Button for save data">
+                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                            Submit
+                                        </button>
+                                        <button class="btn master-page-reset" id="btnresetcellno" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .cst_add {
+        font-size: 12px !important;
+        position: absolute !important;
+        top: 8px !important;
+        color: #276d9b !important;
+        display: inline-block;
+        z-index: 1;
+        right: -9px;
+    }
+
+    .txt_ar {
+        padding: 20px !important;
+    }
+</style>
+<script>
+    $(document).on("click", "a.clddlstore", function () {
+        $('#dialogdivddlstore').modal('show');
+    });
+    $(document).on("click", "a.clddlrackno", function () {
+        $('#dialogdivddlrackno').modal('show');
+    });
+    $(document).on("click", "a.clddlcellno", function () {
+        $('#dialogdivddlcellno').modal('show');
+    });
+    $(document).on("click", "a.clddlrack", function () {
+        $('#dialogdivddlrack').modal('show');
+    });
+    $(document).on("click", "a.clddluom", function () {
+        $('#dialogdivddlUom').modal('show');
+    });
+    $(document).on("click", "a.clddluomgroup", function () {
+        $('#dialogdivddlUOMGroup').modal('show');
+    });
+    $(document).on("click", "a.clddluomvaluation", function () {
+        $('#dialogdivddlValidationType').modal('show');
+    });
+    $(document).on("click", "a.clddlitemtype", function () {
+        $('#dialogdivddlItemType').modal('show');
+    });
+    $(document).on("click", "a.clddlitemsub", function () {
+        $('#dialogdivddlItemSub').modal('show');
+    });
+    $(document).on("click", "a.clddlmanageitem", function () {
+        $('#dialogdivddlManageItem').modal('show');
+    });
+</script>
+
+
+
+

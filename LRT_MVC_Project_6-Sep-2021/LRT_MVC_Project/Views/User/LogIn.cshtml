@@ -1,0 +1,316 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Log In</title>
+    <link rel="shortcut icon" href="Images/LDR_Ico.ico"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="~/Template/AceAdmin/css/ace.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <script src="~/Scripts/jquery-1.12.4.min.js"></script>
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+  
+    <style>
+        .navbar {
+            background: #438EB9 !important;
+        }
+        .navbar .navbar-brand {
+    color: #FFF !important;}
+    #btnlogin {
+    font-family: 'Open Sans', sans-serif !important;
+    padding-left: 15px !important;
+    padding-top: 8px !important;
+    font-weight: 500 !important;
+    padding-bottom: 7px;
+}
+            .login_form .form-control {
+            width: 100% !important;
+        }
+
+        input[type=email], input[type=url], input[type=search], input[type=tel], input[type=color], input[type=text], input[type=password], input[type=datetime], input[type=datetime-local], input[type=date], input[type=month], input[type=time], input[type=week], input[type=number], textarea {
+            border-radius: 0 !important;
+            color: #858585;
+            width: 100%;
+            background-color: #FFF;
+            border: 1px solid #D5D5D5;
+            padding: 5px 4px 6px;
+            font-size: 14px;
+            font-family: inherit;
+            -webkit-box-shadow: none !important;
+            box-shadow: none !important;
+            -webkit-transition-duration: .1s;
+            transition-duration: .1s;
+        }
+
+        .key_custom {
+            position: absolute;
+            margin-left: 21px;
+            float: right;
+        }
+
+        .fa-key:before {
+            content: "\f084";
+            position: absolute;
+            z-index: 9999;
+            margin-top: 11px;
+            margin-left: -5px;
+            color: #fff;
+        }
+
+        .btn-primary, .btn-primary.focus, .btn-primary:focus {
+            background-color: #428BCA !important;
+            border-color: #428BCA;
+            width: 109px;
+            border-radius: 3px;
+            float: right !important;
+            /* left: 0px; */
+            /* position: absolute; */
+            margin-left: 55px;
+            margin-top: -1px;
+        }
+
+        .forgot_btn {
+            background: #5090C1;
+            width: 100%;
+            padding: 12px 0px;
+            color: #FE9;
+            display: block;
+            padding-left: 13px;
+            font-size: 17px;
+            display: block;
+        }
+
+            .forgot_btn:hover {
+                text-decoration: none;
+                color: #fff;
+                cursor: pointer;
+                background: #69AA46;
+            }
+    </style>
+    <script>
+        $(document).ready(function () {
+            $("#txtemail").focus();
+            var uId = localStorage.getItem("UserId");
+            var pwd = localStorage.getItem("pwd");
+            $("#txtemail").val(uId);
+            $("#txtpwd").val(pwd);
+        })
+    </script>
+
+
+    <script type="text/javascript">
+        $(function () {
+            $('#btnlogin').click(function () {
+                if ($('#chkRemember').is(':checked')) {
+                  //  alert();
+                    localStorage.setItem("UserId", $("#txtemail").val());
+                    localStorage.setItem("pwd", $("#txtpwd").val());
+                }
+                //else
+                //{
+                //    localStorage.removeItem("UserId");
+                //    localStorage.removeItem("pwd");
+                //}
+                var objUserRegistration = {};
+                objUserRegistration.User_Email = $("#txtemail").val();
+                objUserRegistration.User_Pssword = $("#txtpwd").val();
+                var pwd = $("#txtpwd").val();
+                if (objUserRegistration.User_Email == "" || objUserRegistration.User_Email == null) {
+                    swal("Please enter email");
+                    $("#txtemail").focus();
+                    return;
+                }
+                if (objUserRegistration.User_Pssword == "" || objUserRegistration.User_Pssword == null) {
+
+                    swal("Please enter password");
+                    $("#txtpwd").focus();
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    url: "/User/CheckLogin",
+                    data: '{objUserRegistration: ' + JSON.stringify(objUserRegistration) + '}',
+                    dataType: "json",
+                    success: function (data) {
+                        if (data == 1) {
+                            window.location.href = "/Master/Index/";
+                        }
+                        else {
+                            alert("EmailId or pwd is wrong");
+                        }
+                        $("#txtemail").val("");
+                        $("#txtpwd").val("");
+                    },
+                    error: function (result) {
+                        alert("Error");
+                    }
+                });
+            });
+        });
+    </script>
+  <script>
+      $(document).on('keypress', function (e) {
+          if (e.which == 13) {
+              if ($('#chkRemember').is(':checked')) {
+                 
+                  localStorage.setItem("UserId", $("#txtemail").val());
+                  localStorage.setItem("pwd", $("#txtpwd").val());
+              }
+              var objUserRegistration = {};
+              objUserRegistration.User_Email = $("#txtemail").val();
+              objUserRegistration.User_Pssword = $("#txtpwd").val();
+              var pwd = $("#txtpwd").val();
+              if (objUserRegistration.User_Email == "" || objUserRegistration.User_Email == null) {
+                  swal("Please enter email");
+                  $("#txtemail").focus();
+                  return;
+              }
+              if (objUserRegistration.User_Pssword == "" || objUserRegistration.User_Pssword == null) {
+
+                  swal("Please enter password");
+                  $("#txtpwd").focus();
+                  return;
+              }
+              $.ajax({
+                  type: "POST",
+                  contentType: "application/json; charset=utf-8",
+                  url: "/User/CheckLogin",
+                  data: '{objUserRegistration: ' + JSON.stringify(objUserRegistration) + '}',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data == 1) {
+                          window.location.href = "/Master/Index/";
+                      }
+                      else {
+                          alert("EmailId or pwd is wrong");
+                      }
+                      $("#txtemail").val("");
+                      $("#txtpwd").val("");
+                  },
+                  error: function (result) {
+                      alert("Error");
+                  }
+              });
+          }
+      });
+  </script>
+    <script>
+
+        $(function () {
+
+            $('#eye').click(function () {
+                if ($(this).hasClass('fa-eye-slash')) {
+
+                    $(this).removeClass('fa-eye-slash');
+
+                    $(this).addClass('fa-eye');
+
+                    $('#txtpwd').attr('type', 'text');
+
+                } else {
+
+                    $(this).removeClass('fa-eye');
+
+                    $(this).addClass('fa-eye-slash');
+
+                    $('#txtpwd').attr('type', 'password');
+                }
+            });
+        });
+
+    </script>
+</head>
+<body class="login-layout light-login">
+    <div class="navbar navbar-default" id="navbar">
+        <div class="navbar-container container-fluid" id="navbar-container">
+            <div class="navbar-header pull-left">
+                <a href="#" class="navbar-brand">
+                    <small>
+                        <input type="image" src="~/Images/ldr_logo_24.png" alt=""/>
+
+                        Leader Range Technology
+                    </small>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="main-container">
+        <div class="main-content">
+            <div class="row">
+                <div class="col-sm-10 col-sm-offset-1">
+                    <div class="login-container">
+                        <div class="center">
+                            <h1>
+                                <i class="ace-icon fa fa-laptop green"></i>
+                                <span class="red">Workcell Login</span>
+                                <span class="white"></span>
+                            </h1>
+                        </div>
+                        <div class="space-6"></div>
+
+                        <div class="position-relative">
+                            <div id="login-box" class="login-box visible widget-box no-border">
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <h4 class="header blue lighter bigger">
+                                            <i class="ace-icon fa fa-coffee green"></i>
+                                            Please Enter Your Information
+                                        </h4>
+
+                                        <div class="space-6"></div>
+
+                                        <fieldset class="login_form">
+                                            <label class="block clearfix ">
+                                                <span class="input-group">
+                                                    <span class="input-group-addon">
+
+                                                        <i class="ace-icon fa fa-envelope-o fa-fw"></i>
+                                                    </span>
+                                                    <input type="email" id="txtemail" cssclass="form-control" data-toggle="tooltip" title="Field for email id" />
+                                                  
+                                                </span>
+                                            </label>
+                                            <label class="block clearfix">
+                                                <span class="input-group">
+                                                    <span class="input-group-addon">
+                                                       
+                                                        <i class="fa fa-fw fa-eye-slash" id="eye"></i>
+                                                    </span>
+                                                    <input type="password" id="txtpwd" cssclass="form-control" data-toggle="tooltip" title="Field for password" />
+
+                                                </span>
+                                            </label>
+                                            <div class="space"></div>
+
+                                            <div class="clearfix">
+                                                <label class="inline">
+                                                    <input id="chkRemember" type="checkbox" class="ace" />
+                                                    <span class="lbl"> Remember Me</span>
+                                                </label>
+                                                <i class='ace-icon fa key_custom fa-key'><input type="button" id="btnlogin" class="width-160 pull-right btn btn-sm btn-primary" data-toggle="tooltip" title="Button for log in" value="Log In"> </i>
+                                            </div>
+                                            <div class="space-4"></div>
+
+                                        </fieldset>
+
+
+                                    </div>
+                                </div>
+                                <a href="ForgetPassword" class="forgot_btn"> <i class="ace-icon fa fa-arrow-left"></i> I Forgot My Password </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

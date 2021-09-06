@@ -1,0 +1,1060 @@
+﻿
+@{
+    ViewBag.Title = "CurrencyMaster";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+@*<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+<style>
+    .loader {
+        display: none;
+        top: 251px;
+        position: absolute;
+        margin-left: -193px;
+        margin-bottom: 117px;
+        z-index: 99999;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+
+        $("#txtcurrencycode").focus();
+      
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "/assets/js/jquery.dataTables.min.js";
+        document.getElementsByTagName("body")[0].appendChild(script);
+    })
+</script>
+@*------------------------------------reset data-------------------------------------------*@
+<script>
+    function Resetdata1() {
+        $("#txtupcurrencycode").val("");
+        $("#txtupcurrencyname").val("");
+        $("#txtupinternationalcode").val("");
+        $("#txtupinternationalname").val("");
+        $("#txtupdecimalunit").val("");
+        $("#txtupcurrencysymbol").val("");
+    }
+</script>
+<script>
+    function Resetdata() {
+        $("#txtcurrencycode").val("");
+        $("#txtcurrencyname").val("");
+        $("#txtinternationalcode").val("");
+        $("#txtinternationalname").val("");
+        $("#txtdecimalunit").val("");
+        $("#txtcurrencysymbol").val("");
+      
+        $("#hdcurrency").val("");
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Submit");
+        $("#txtcurrencycode").focus();
+
+        var objRolePermission = {};
+        objRolePermission.Sub_To_Sub_Menu_Id = sessionStorage.getItem("sid");
+        //alert(objRolePermission.Sub_To_Sub_To_Menu_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/AddRolePermission",
+            data: '{objRolePermission: ' + JSON.stringify(objRolePermission) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //if (response.Is_Add == false) {
+                //    $("#btnsave").css('visibility', 'hidden');
+                //    $("#btnreset").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Edit == false) {
+                //    $("a.remove").css('visibility', 'hidden');
+                //}
+                ////alert(response.Is_Delete);
+                //if (response.Is_Delete == false) {
+                //    $("a.delete").css('visibility', 'hidden');
+                //}
+                //if (response.Is_View == false) {
+                //    $("#EmpInfo_wrapper").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Approve == false) {
+                //    $("a.approve").css('visibility', 'hidden');
+                //}
+                //$('script[src=~/assets/js/jquery.dataTables.min.js]').remove();
+                //$('script[src=/assets/js/jquery.dataTables.min.js]').remove();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnreset").click(function () {
+            Resetdata();
+        });
+        $("#btnresetupdate").click(function () {
+            Resetdata1();
+        });
+    })
+</script>
+@*------------------------------------get data-------------------------------------------*@
+<script>
+    var myVar;
+    $(document).ready(function () {
+        Getdata();
+        myVar = setTimeout(Resetdata, 50);
+        // Resetdata();
+    });
+</script>
+
+<script>
+    function Getdata() {
+        $("#divtbl").append('<table id="EmpInfo" class="table table-bordered  table-hover"><thead> <tr><th class="left_c w61_i">S. No</th><th class="left_c">Currency Code</th> <th class="left_c">Currency Name</th><th class="left_c">International Code</th> <th class="left_c">International Name</th><th class="left_c">Decimal Unit</th><th class="left_c">Currency Symbol</th><th style="display:none"></th><th class="w155_i">Action</th></tr></thead><tbody></tbody></table>')
+        $("#EmpInfo > tbody").html("");
+        //Call EmpDetails jsonResult Method
+        // alert();
+        $.getJSON("/Master/CurrencyDetails",
+            function (json) {
+                var tr;
+
+                //Append each row to html table
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Currency_Code + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Currency_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].International_Code + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].International_Name + "</td>");
+                    tr.append("<td class='left_c'>" + parseFloat(json[i].Decimal_Unit).toFixed(4) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Currency_Symbol + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Currency_Id + "</td>");
+                    var status = json[i].Approve_Status;
+                    var status1 = "";
+                    if (status == 1) {
+                        status1 = "<i class='menu-icon fa fa-check bigger-120 green'  data-toggle='tooltip' title='Approved'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-clock-o bigger-120 green' data-toggle='tooltip' title='Pending'></i>";
+                    }
+
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a href='javascript:void(0);' class='approve tooltip-error comn_inline grn' data-rel='tooltip' >" + status1 + "</a></li><li><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip' title='Edit'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i></a></li><li><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='Delete'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+                    $('#EmpInfo').append(tr);
+
+                }
+                $('#EmpInfo').DataTable();
+            });
+
+    }
+</script>
+@*------------------------------------approve data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.approve", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(7)').text();
+        var objCurrency = {};
+        objCurrency.Currency_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Master/CurrencyApproveStatus",
+            data: '{objCurrency: ' + JSON.stringify(objCurrency) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //$(".dataTables_length").remove();
+                //$(".dataTables_filter").remove();
+                //$(".dataTables_info").remove();
+                //$(".dataTables_paginate").remove();
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                Getdata();
+                Resetdata();
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+@*------------------------------------save data-------------------------------------------*@
+<script type="text/javascript">
+    $(function () {
+        $("#btnsave").click(function (e) {
+            e.preventDefault();
+            var objcurrency = {};
+            objcurrency.Currency_Code = $("#txtcurrencycode").val().toUpperCase();
+            objcurrency.Currency_Name = $("#txtcurrencyname").val().charAt(0).toUpperCase() + $("#txtcurrencyname").val().slice(1);
+            objcurrency.International_Code = $("#txtinternationalcode").val();
+            objcurrency.International_Name = $("#txtinternationalname").val().charAt(0).toUpperCase() + $("#txtinternationalname").val().slice(1);
+            objcurrency.Decimal_Unit = $("#txtdecimalunit").val();
+            objcurrency.Currency_Symbol = $("#txtcurrencysymbol").val();
+            objcurrency.Currency_Id = $("#hdcurrency").val();
+            //  alert();
+            if (objcurrency.Currency_Code == "" || objcurrency.Currency_Code == null) {
+                swal("Please enter currency code.");
+                return;
+                $("#txtcurrencycode").focus();
+
+            }
+            if (objcurrency.Currency_Name == "" || objcurrency.Currency_Name == null) {
+                swal("Please enter currency name.");
+                $("#txtcurrencyname").focus();
+                return;
+            }
+            if (objcurrency.International_Code == "" || objcurrency.International_Code == null) {
+                swal("Please enter international code.");
+
+                $("#txtcurrencycode").focus();
+                return;
+            }
+            if (objcurrency.International_Name == "" || objcurrency.International_Name == null) {
+                swal("Please enter international name.");
+                $("#txtcurrencyname").focus();
+                return;
+            }
+            //if (objcurrency.Decimal_Unit == "" || objcurrency.Decimal_Unit == null) {
+            //    swal("Please enter decimal unit.");
+            //    $("#txtdecimalunit").focus();
+            //    return;
+            //}
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddCurrency",
+                data: '{objcurrency: ' + JSON.stringify(objcurrency) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnupdatecurrency").click(function (e) {
+            e.preventDefault();
+            var objcurrency = {};
+            objcurrency.Currency_Code = $("#txtupcurrencycode").val().toUpperCase();
+            objcurrency.Currency_Name = $("#txtupcurrencyname").val().charAt(0).toUpperCase() + $("#txtupcurrencyname").val().slice(1);
+            objcurrency.International_Code = $("#txtupinternationalcode").val();
+            objcurrency.International_Name = $("#txtupinternationalname").val().charAt(0).toUpperCase() + $("#txtupinternationalname").val().slice(1);
+            objcurrency.Decimal_Unit = $("#txtupdecimalunit").val();
+            objcurrency.Currency_Symbol = $("#txtupcurrencysymbol").val();
+            objcurrency.Currency_Id = $("#hdcurrency").val();
+            //  alert();
+            if (objcurrency.Currency_Code == "" || objcurrency.Currency_Code == null) {
+                swal("Please enter currency code.");
+                return;
+                $("#txtupcurrencycode").focus();
+
+            }
+            if (objcurrency.Currency_Name == "" || objcurrency.Currency_Name == null) {
+                swal("Please enter currency name.");
+                $("#txtupcurrencyname").focus();
+                return;
+            }
+            if (objcurrency.International_Code == "" || objcurrency.International_Code == null) {
+                swal("Please enter international code.");
+
+                $("#txtupcurrencycode").focus();
+                return;
+            }
+            if (objcurrency.International_Name == "" || objcurrency.International_Name == null) {
+                swal("Please enter international name.");
+                $("#txtupcurrencyname").focus();
+                return;
+            }
+            //if (objcurrency.Decimal_Unit == "" || objcurrency.Decimal_Unit == null) {
+            //    swal("Please enter decimal unit.");
+            //    $("#txtdecimalunit").focus();
+            //    return;
+            //}
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddCurrency",
+                data: '{objcurrency: ' + JSON.stringify(objcurrency) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata1();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+@*------------------------------------edit data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.remove", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $curcode = $row.find('td:eq(1)').text();
+        var $curname = $row.find('td:eq(2)').text();
+        var $icode = $row.find('td:eq(3)').text();
+        var $iname = $row.find('td:eq(4)').text();
+        var $decunit = $row.find('td:eq(5)').text();
+        var $cursymbol = $row.find('td:eq(6)').text();
+        var $id = $row.find('td:eq(7)').text()
+        $("#dialogdivupdatecurrency").modal("show");
+        $("#txtupcurrencycode").val($curcode);
+        $("#txtupcurrencyname").val($curname);
+        $("#txtupinternationalcode").val($icode);
+        $("#txtupinternationalname").val($iname);
+        $("#txtupdecimalunit").val($decunit);
+        $('#txtupcurrencysymbol').val($cursymbol);
+
+        $("#hdcurrency").val($id);
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Update");
+        //$("#btnsave").css('visibility', 'visible');
+        //$("#btnreset").css('visibility', 'visible');
+    });
+</script>
+@*------------------------------------delete data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.delete", function (e) {
+
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(7)').text();
+
+        swal({
+            title: 'Are you sure?',
+            text: '*You want to delete this data?*',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function (value) {
+            if (value) {
+                var objcurrency = {};
+                objcurrency.Currency_Id = $id;
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/DeleteCurrency",
+                    data: '{objcurrency: ' + JSON.stringify(objcurrency) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        Getdata();
+                        Resetdata();
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "/assets/js/jquery.dataTables.min.js";
+                        document.getElementsByTagName("body")[0].appendChild(script);
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+                swal("*Your data is safe*");
+            }
+        });
+
+    });
+</script>
+@*------------------------------------------------------------------------------upload excel file-----------------------------------------*@
+<script>
+    $(function () {
+        $("#btnexcel").click(function () {
+            $('#dialogdivexcel').modal('show');
+        });
+    });
+</script>
+<script type="text/javascript">
+    $("body").on("click", "#uploadExcel", function () {
+        Resettable();
+        //Reference the FileUpload element.
+        var fileUpload = $("#fileUpload")[0];
+
+        //Validate whether File is valid Excel file.
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx)$/;
+        if (regex.test(fileUpload.value.toLowerCase())) {
+            if (typeof (FileReader) != "undefined") {
+                var reader = new FileReader();
+
+                //For Browsers other than IE.
+                if (reader.readAsBinaryString) {
+                    reader.onload = function (e) {
+                        ProcessExcel(e.target.result);
+                    };
+                    reader.readAsBinaryString(fileUpload.files[0]);
+                } else {
+                    //For IE Browser.
+                    reader.onload = function (e) {
+                        var data = "";
+                        var bytes = new Uint8Array(e.target.result);
+                        for (var i = 0; i < bytes.byteLength; i++) {
+                            data += String.fromCharCode(bytes[i]);
+                        }
+                        ProcessExcel(data);
+                    };
+                    reader.readAsArrayBuffer(fileUpload.files[0]);
+                }
+            } else {
+                alert("This browser does not support HTML5.");
+            }
+        } else {
+            alert("Please upload a valid Excel file.");
+        }
+    });
+    function ProcessExcel(data) {
+        $('#ExcelDataLoader').show();
+        var workbook = XLSX.read(data, {
+            type: 'binary'
+        });
+        var firstSheet = workbook.SheetNames[0];
+        var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[firstSheet]);
+        // $("#dvExcel").empty();
+        $("#dvExcel").append('<table id="EmpInfocurency" class="table table-bordered table-hover"><thead><tr><th class="left_c w61_i">S. No</th> <th class="left_c">Currency Code</th> <th class="left_c">Currency Name</th><th class="left_c">International Code</th> <th class="left_c">International Name</th><th class="left_c">Decimal Unit</th><th class="left_c">Currency Symbol</th><th class="w155_i">Action</th> </tr></thead><tbody></tbody> </table>')
+        $("#EmpInfocurency > tbody").html("");
+        var count = excelRows.length;
+        localStorage.setItem("count", count);
+        for (var i = 0; i < excelRows.length; i++) {
+            var currency_code = "";
+            var Currency_Name = "";
+            var International_Code = "";
+            var International_Name = "";
+            var Decimal_Unit = "";
+            var Currency_Symbol = "";
+
+            if (excelRows[i].CurrencyCode == undefined) {
+
+                currency_code = "";
+            }
+            else {
+                currency_code = excelRows[i].CurrencyCode;
+
+            }
+
+            if (excelRows[i].CurrencyName == undefined) {
+
+                Currency_Name = "";
+            }
+            else {
+                Currency_Name = excelRows[i].CurrencyName;
+
+            }
+            if (excelRows[i].InternationalCode == undefined) {
+
+                International_Code = "";
+            }
+            else {
+                International_Code = excelRows[i].InternationalCode;
+
+            }
+
+            if (excelRows[i].InternationalName == undefined) {
+
+                International_Name = "";
+            }
+            else {
+                International_Name = excelRows[i].InternationalName;
+
+            }
+
+            if (excelRows[i].DecimalUnit == undefined) {
+
+                Decimal_Unit = "";
+            }
+            else {
+                Decimal_Unit = parseFloat(excelRows[i].DecimalUnit).toFixed(4);
+
+            }
+            if (excelRows[i].CurrencySymbol == undefined) {
+
+                Currency_Symbol = "";
+            }
+            else {
+                Currency_Symbol = excelRows[i].CurrencySymbol;
+
+            }
+
+            tr = $('<tr/>');
+            tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+            tr.append("<td class='left_c'>" + currency_code + "</td>");
+            tr.append("<td class='left_c'>" + Currency_Name + "</td>");
+            tr.append("<td class='left_c'>" + International_Code + "</td>");
+            tr.append("<td class='left_c'>" + International_Name + "</td>");
+            tr.append("<td class='left_c'>" + Decimal_Unit + "</td>");
+            tr.append("<td class='left_c'>" + Currency_Symbol + "</td>");
+            tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a  href='javascript:void(0);' class='deletecurrency tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+            $('#EmpInfocurency').append(tr);
+        }
+        $('#EmpInfocurency').DataTable();
+        $('#EmpInfocurency').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count + " entries";
+            }
+        });
+        sessionStorage.setItem("item-count", count);
+        $('#ExcelDataLoader').hide();
+    };
+</script>
+<script>
+    
+    $(document).on("click", "a.deletecurrency", function () {
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(0)').text();
+        // $row.hide();
+        //$row.remove();
+        $row.remove().draw(false);
+       var oTable = $('#EmpInfocurency').dataTable();
+
+        var rowcollection = oTable.$("tr", { "page": "all" });
+        var table = document.getElementById("EmpInfocurency");
+
+        var count = sessionStorage.getItem("item-count");
+        //alert(count);
+        sessionStorage.setItem("item-count", (count-1));
+        
+        var count1 = count - 1;
+        // $("#example").dataTable().fnDestroy();
+        var table = $('#EmpInfocurency').DataTable({
+            destroy: true,
+            rowReorder: true
+        });
+        table.on('row-reorder', function (e, diff, edit) {
+            var res = '';
+            for (var i = 0, ien = diff.length ; i < ien ; i++) {
+                res += diff[i].newData + '=';
+            }
+            res = res.substring(0, res.length - 1);
+            getVal(res);
+        });
+        $('#EmpInfocurency').dataTable({  destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count1 + " entries";
+            }
+        });
+        if (count <= 1) {
+            Resettable();
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveuploaddb").click(function () {
+            $('#ExcelDataLoader').show();
+            var objcurrency = {};
+            objcurrency.Currency_Code = "";
+            objcurrency.Currency_Name = "";
+            objcurrency.International_Code = "";
+            objcurrency.International_Name ="";
+            objcurrency.Decimal_Unit ="";
+            objcurrency.Currency_Symbol ="";
+            objcurrency.Currency_Id = 0;
+           
+            var oTable = $('#EmpInfocurency').dataTable();
+            var rowcollection = oTable.$("tr", { "page": "all" });
+
+            rowcollection.each(function (index, elem) {
+                var row = $(elem).closest("tr");
+              
+                if (objcurrency.Currency_Name == "") {
+                    objcurrency.Currency_Code = row.find('td:eq(1)').text().toUpperCase();
+                   
+                    objcurrency.Currency_Name = row.find('td:eq(2)').text().charAt(0).toUpperCase() + row.find('td:eq(2)').text().slice(1);
+                  
+                    objcurrency.International_Code = row.find('td:eq(3)').text().toUpperCase();
+                    objcurrency.International_Name = row.find('td:eq(4)').text().toUpperCase();
+                   
+                    objcurrency.Decimal_Unit = row.find('td:eq(5)').text().toUpperCase();
+                    objcurrency.Currency_Symbol = row.find('td:eq(6)').text().toUpperCase();
+                  
+                }
+                else {
+                   
+                    objcurrency.Currency_Code = objcurrency.Currency_Code + "," + row.find('td:eq(1)').text().toUpperCase();
+                    objcurrency.Currency_Name = objcurrency.Currency_Name + "," + row.find('td:eq(2)').text().charAt(0).toUpperCase() + row.find('td:eq(2)').text().slice(1);
+                    objcurrency.International_Code = objcurrency.International_Code + "," + row.find('td:eq(3)').text().toUpperCase();
+                    objcurrency.International_Name = objcurrency.International_Name + "," + row.find('td:eq(4)').text().toUpperCase();
+                    objcurrency.Decimal_Unit = objcurrency.Decimal_Unit + "," + row.find('td:eq(5)').text().toUpperCase();
+                    objcurrency.Currency_Symbol = objcurrency.Currency_Symbol + "," + row.find('td:eq(6)').text().toUpperCase();
+                }
+            });
+            var rowCount = $('#EmpInfocurency tr').length;
+            if (rowCount <=1)
+            {
+                swal("please upload excel file for data upload.");
+                return;
+            }
+            if (rowCount > 1 && objcurrency.Currency_Name == "") {
+                swal("no data in table.");
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddBulkCurrency",
+                data: '{objcurrency: ' + JSON.stringify(objcurrency) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resettable();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+                    $('#ExcelDataLoader').hide();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+        $("#btnresetcurrency").click(function () {
+            Resettable();
+        });
+        $('#fileUpload').change(function (e) {
+
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+    });
+</script>
+<script>
+    function Resettable() {
+        $("#dvExcel").empty();
+        $('#spnfile').text("");
+        $('#spnfile').append('<span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span>')
+    }
+</script>
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+        <div class="main-content">
+            <div class="main-content-inner top-padding">
+                <div class="breadcrumbs ace-save-state" id="breadcrumbs" style=" z-index: -1 !IMPORTANT;">
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="ace-icon fa fa-home home-icon"></i>
+                            <a href="#">PMS Setting</a>
+                        </li>
+
+                        <li>
+                            <a href="#">Finance Setting</a>
+                        </li>
+                        <li class="active">Currency</li>
+                    </ul><!-- /.breadcrumb -->
+                    @*<div class="nav-search" id="nav-search">
+                <div class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>*@<!-- /.nav-search -->
+                </div>
+
+                @*-----------------------------------------------update currency---------------------------------------------------------*@
+                <div class="modal fade" id="dialogdivupdatecurrency">
+                    <div class="modal-dialog modal-md modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h3 class="item_hedin">Update Currency </h3>
+                            </div>
+                            <div class="modal-body" style="padding-left:14px !important;">
+
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">Currency Code <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtupcurrencycode" style="text-transform:uppercase" placeholder="Currency Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency code" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">Currency Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtupcurrencyname" style="text-transform:capitalize" placeholder="Currency Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency name" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3" style="padding-right: 0px !important">International Code <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtupinternationalcode" placeholder="International Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for international code" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3" style="padding-right: 0px !important">International Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtupinternationalname" style="text-transform:capitalize;" placeholder="International Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for international Name" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">Decimal Unit<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtupdecimalunit" placeholder="Decimal Unit" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for decimal unit" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3">Currency Symbol<span> : </span></div>
+                                    <div class="col-md-9">
+                                        <input type="text" id="txtupcurrencysymbol" placeholder="Currency Symbol" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency symbol" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <button class="btn btn-info" id="btnupdatecurrency" type="button" data-toggle="tooltip" title="Button for update data">
+                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                            Update
+                                        </button>
+                                        <button class="btn master-page-reset" id="btnresetupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*---------------------------------------------------------------------------------------------------------------------*@
+
+                <div id="dialogdivexcel" class="modal fade" style="margin-top:0px!important;overflow:auto!important">
+                    <div class="modal-dialog modal-lg modal-dialog-centered " style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
+                        <div class="modal-content" style="width:100% !important;padding-bottom:22px">
+                            <div class="modal-header">
+                                <a href="#" class="close" data-dismiss="modal">×</a>
+                                <h3 class="item_hedin">Upload Excel File </h3>
+                            </div>
+                            <div class="modal-body">
+
+                                <div class="row">
+
+                                    <div class="col-md-3">Choose excel file <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                    <div class="col-sm-9">
+                                        <div class="col-xs-8 pr-0">
+
+                                            <label class="ace-file-input upload_fl1"><input type="file" id="fileUpload" accept=".xls,.xlsx"><span class="ace-file-container upload_fl" id="spnfile" data-title="Choose"><span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                            <input type="button" id="uploadExcel" class="btn btn-info upload-bt" value="Upload" onclick="ExportToTable()" />
+                                            <div id="ExcelDataLoader" class="loader">
+                                                <img src="~/Images/1.gif" height="70" width="60" />
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
+                                    <div class="space-6"></div>
+                                    <div class="row" style="padding-top:45px">
+                                        <div class="col-xs-12">
+                                            <div class="form-horizontal">
+                                                <div id="dvExcel"></div>
+
+                                            </div>
+
+                                        </div><!-- /.span -->
+                                    </div><!-- /.row -->
+                                </div>
+
+                                <div class="space-4"></div>
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-9">
+                                        <button class="btn btn-info" id="btnsaveuploaddb" type="button" data-toggle="tooltip" title="Button for save data">
+                                            <i class="ace-icon fa fa-floppy-o"></i>
+                                            Submit
+                                        </button>
+                                        <button class="btn master-page-reset" id="btnresetcurrency" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-content1">
+
+
+                    <div class="page-header">
+                        <h3 class="item_hedin">
+                            Currency
+                        </h3>
+                    </div><!-- /.page-header -->
+
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <!-- PAGE CONTENT BEGINS -->
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Currency Code <span style="color:red;font-size:14px;">*</span></label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtcurrencycode" style="text-transform:uppercase" placeholder="Currency Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency code" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Currency Name <span style="color:red;font-size:14px;">*</span></label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtcurrencyname" style="text-transform:capitalize" placeholder="Currency Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency name" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> International Code <span style="color:red;font-size:14px;">*</span></label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtinternationalcode" placeholder="International Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for international code" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> International Name <span style="color:red;font-size:14px;">*</span></label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtinternationalname" style="text-transform:capitalize;" placeholder="International Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for international Name" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Decimal Unit </label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtdecimalunit" placeholder="Decimal Unit" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for decimal unit" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Currency Symbol </label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtcurrencysymbol" placeholder="Currency Symbol" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency symbol" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="space-4"></div>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="hidden" id="hdcurrency" />
+                            <div class="clearfix form-actions">
+                                <div class="col-md-offset-0 col-md-12">
+                                    <a href="~/excelFile/currencymaster.xlsx">Download Template</a>
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn btn-info" id="btnexcel" type="button" data-toggle="tooltip" style="width: auto;" title="Button for excel data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Upload Excel File
+                                    </button>
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn btn-info" id="btnsave" type="button" data-toggle="tooltip" title="Button for save data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Submit
+                                    </button>
+
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn" type="reset" id="btnreset" data-toggle="tooltip" title="Button for reset data">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+
+
+
+
+
+
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+
+
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="form-horizontal">
+                                <div class="table-header">
+                                    Current Record
+                                </div>
+                                <div id="divtbl"></div>
+
+
+                            </div>
+
+
+                        </div><!-- /.span -->
+                    </div><!-- /.row -->
+
+
+                </div>
+            </div>
+        </div>
+ @*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>
+@*<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<link href="~/assets/css/colReorder.dataTables.css" rel="stylesheet" />
+<link href="~/assets/css/responsive.dataTables.css" rel="stylesheet" />
+<script src="~/assets/js/dataTables.colReorder.js"></script>
+<script src="~/assets/js/dataTables.responsive.js"></script>
+
+<link href="~/assets/css/rowReorder.dataTables.min.css" rel="stylesheet" />
+
+
+<script>
+
+    $(document).ready(function () {
+        // GetData1();
+        //$('#pending_from').dataTable({
+        //    colReorder: {
+        //        order: [4, 3, 2, 1, 0, ]
+        //    }
+        //});
+        $('#EmpInfo').dataTable({
+            colReorder: {
+                order: [0, 1, 2, 3, 4]
+            }
+        });
+    });
+
+
+
+</script>

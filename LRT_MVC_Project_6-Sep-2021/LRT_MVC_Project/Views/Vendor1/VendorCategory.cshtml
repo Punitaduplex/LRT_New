@@ -1,0 +1,767 @@
+﻿
+@{
+    ViewBag.Title = "VendorCategory";
+    Layout = "~/_Layout.cshtml";
+}
+
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+<style>
+    .loader {
+        display: none;
+        top: 251px;
+        position: absolute;
+        margin-left: -193px;
+        margin-bottom: 117px;
+        z-index: 99999;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $("#txtVendorCategory").focus();
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "/assets/js/jquery.dataTables.min.js";
+        document.getElementsByTagName("body")[0].appendChild(script);
+    })
+</script>
+@*------------------------------------reset data-------------------------------------------*@
+<script>
+    function Resetdata1() {
+        $("#txtupVendorCategory").val("");
+    }
+</script>
+<script>
+    function Resetdata() {
+
+        $("#txtVendorCategory").val("");
+       
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Submit");
+        $("#hdCategory").val("");
+        $("#txtVendorCategory").focus();
+
+        var objRolePermission = {};
+        objRolePermission.Sub_To_Sub_Menu_Id = sessionStorage.getItem("sid");
+        //alert(objRolePermission.Sub_To_Sub_Menu_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/AddRolePermission",
+            data: '{objRolePermission: ' + JSON.stringify(objRolePermission) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //if (response.Is_Add == false) {
+                //    $("#btnsave").css('visibility', 'hidden');
+                //    $("#btnreset").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Edit == false) {
+                //    $("a.remove").css('visibility', 'hidden');
+                //}
+                ////alert(response.Is_Delete);
+                //if (response.Is_Delete == false) {
+                //    $("a.delete").css('visibility', 'hidden');
+                //}
+                //if (response.Is_View == false) {
+                //    $("#EmpInfo_wrapper").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Approve == false) {
+                //    $("a.approve").css('visibility', 'hidden');
+                //}
+                //$('script[src=~/assets/js/jquery.dataTables.min.js]').remove();
+                //$('script[src=/assets/js/jquery.dataTables.min.js]').remove();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnreset").click(function () {
+            Resetdata();
+        });
+        $("#btnresetupdate").click(function () {
+            Resetdata1();
+        });
+    })
+</script>
+@*------------------------------------get data-------------------------------------------*@
+<script>
+    var myVar;
+    $(document).ready(function () {
+        Getdata();
+        myVar = setTimeout(Resetdata, 50);
+        // Resetdata();
+    });
+</script>
+
+<script>
+    function Getdata() {
+        $("#divtbl").append('<table id="EmpInfo" class="table table-bordered  table-hover"><thead><tr><th class="left_c w61_i">S. No</th> <th class="left_c">Vendor Category Name</th><th style="display:none"></th><th class="w155_i">Action</th> </tr></thead><tbody></tbody></table>');
+        $("#EmpInfo > tbody").html("");
+        $.getJSON("/Vendor/VendorCategoryDetails",
+            function (json) {
+                var tr;
+
+                //Append each row to html table
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Vendor_Category_Name + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Vendor_Category_Id + "</td>");
+                    var status = json[i].Approve_Status;
+                    var status1 = "";
+                    if (status == 1) {
+                        status1 = "<i class='menu-icon fa fa-check bigger-120 green' data-rel='tooltip' title='Approved'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-clock-o bigger-120 green' data-rel='tooltip' title='Pending'></i>";
+                    }
+
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a href='javascript:void(0);' class='approve tooltip-error comn_inline grn' data-rel='tooltip'>" + status1 + "</a></li><li><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip' title='Edit'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i></a></li><li><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='Delete'><i class='menu-icon fa fa-trash bigger-120 red' title='Delete'></i></a></li></ul></td>");
+
+                    $('#EmpInfo').append(tr);
+
+                }
+                $('#EmpInfo').DataTable();
+            });
+
+    };
+</script>
+@*------------------------------------approve data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.approve", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(2)').text();
+        var objVendorCategory = {};
+        objVendorCategory.Vendor_Category_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/VendorCategoryApproveStatus",
+            data: '{objVendorCategory: ' + JSON.stringify(objVendorCategory) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //$(".dataTables_length").remove();
+                //$(".dataTables_filter").remove();
+                //$(".dataTables_info").remove();
+                //$(".dataTables_paginate").remove();
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                Getdata();
+                Resetdata();
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+@*------------------------------------save data-------------------------------------------*@
+<script>
+    $(document).ready(function () {
+        //alert();
+        $("#btnsave").click(function (e) {
+            e.preventDefault();
+            var objVendorCategory = {};
+            // objPriority.UOM_Code = $("#txtuomcode").val();
+            objVendorCategory.Vendor_Category_Name = $("#txtVendorCategory").val().charAt(0).toUpperCase() + $("#txtVendorCategory").val().slice(1);
+            objVendorCategory.Vendor_Category_Id = $("#hdCategory").val();
+
+
+            if (objVendorCategory.Vendor_Category_Name == "" || objVendorCategory.Vendor_Category_Name == null) {
+                swal("Please enter vendor category name.");
+                $("#txtVendorCategory").focus();
+                return;
+            }
+            //alert();
+            $.ajax({
+                type: "POST",
+                url: "/Vendor/AddVendorCategory",
+                data: '{objVendorCategory: ' + JSON.stringify(objVendorCategory) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        //alert();
+        $("#btnupdatecategory").click(function (e) {
+            e.preventDefault();
+            var objVendorCategory = {};
+            // objPriority.UOM_Code = $("#txtuomcode").val();
+            objVendorCategory.Vendor_Category_Name = $("#txtupVendorCategory").val().charAt(0).toUpperCase() + $("#txtupVendorCategory").val().slice(1);
+            objVendorCategory.Vendor_Category_Id = $("#hdCategory").val();
+
+
+            if (objVendorCategory.Vendor_Category_Name == "" || objVendorCategory.Vendor_Category_Name == null) {
+                swal("Please enter vendor category name.");
+                $("#txtupVendorCategory").focus();
+                return;
+            }
+            //alert();
+            $.ajax({
+                type: "POST",
+                url: "/Vendor/AddVendorCategory",
+                data: '{objVendorCategory: ' + JSON.stringify(objVendorCategory) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata1();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+@*------------------------------------edit data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.remove", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        // var $code = $row.find('td:eq(1)').text();
+        var $name = $row.find('td:eq(1)').text();
+        var $id = $row.find('td:eq(2)').text()
+        $("#dialogdivupdatecategory").modal("show");
+        $("#txtupVendorCategory").val($name);
+
+        $("#hdCategory").val($id);
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Update");
+        //$("#btnsave").css('visibility', 'visible');
+        //$("#btnreset").css('visibility', 'visible');
+    });
+</script>
+
+@*------------------------------------delete data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.delete", function (e) {
+
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(2)').text();
+        swal({
+            title: 'Are you sure?',
+            text: '*You want to delete this data?*',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function (value) {
+            if (value) {
+                var objVendorCategory = {};
+                objVendorCategory.Vendor_Category_Id = $id;
+                $.ajax({
+                    type: "POST",
+                    url: "/Vendor/DeleteVendorCategory",
+                    data: '{objVendorCategory: ' + JSON.stringify(objVendorCategory) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        Getdata();
+                        Resetdata();
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "/assets/js/jquery.dataTables.min.js";
+                        document.getElementsByTagName("body")[0].appendChild(script);
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+                swal("*Your data is safe*");
+            }
+        });
+
+    });
+</script>
+@*------------------------------------------------------------------------------upload excel file-----------------------------------------*@
+<script>
+    $(function () {
+        $("#btnexcel").click(function () {
+            $('#dialogdivexcel').modal('show');
+        });
+    });
+</script>
+<script type="text/javascript">
+    $("body").on("click", "#uploadExcel", function () {
+        Resettable();
+        //Reference the FileUpload element.
+        var fileUpload = $("#fileUpload")[0];
+
+        //Validate whether File is valid Excel file.
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx)$/;
+        if (regex.test(fileUpload.value.toLowerCase())) {
+            if (typeof (FileReader) != "undefined") {
+                var reader = new FileReader();
+
+                //For Browsers other than IE.
+                if (reader.readAsBinaryString) {
+                    reader.onload = function (e) {
+                        ProcessExcel(e.target.result);
+                    };
+                    reader.readAsBinaryString(fileUpload.files[0]);
+                } else {
+                    //For IE Browser.
+                    reader.onload = function (e) {
+                        var data = "";
+                        var bytes = new Uint8Array(e.target.result);
+                        for (var i = 0; i < bytes.byteLength; i++) {
+                            data += String.fromCharCode(bytes[i]);
+                        }
+                        ProcessExcel(data);
+                    };
+                    reader.readAsArrayBuffer(fileUpload.files[0]);
+                }
+            } else {
+                alert("This browser does not support HTML5.");
+            }
+        } else {
+            alert("Please upload a valid Excel file.");
+        }
+    });
+    function ProcessExcel(data) {
+        $('#ExcelDataLoader').show();
+        var workbook = XLSX.read(data, {
+            type: 'binary'
+        });
+        var firstSheet = workbook.SheetNames[0];
+        var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[firstSheet]);
+        // $("#dvExcel").empty();
+        $("#dvExcel").append('<table id="EmpInfocategory" class="table table-bordered table-hover"><thead><tr><th class="left_c w61_i">S. No</th> <th class="left_c edit">Category Name</th> <th class="w155_i">Action</th> </tr></thead><tbody></tbody> </table>')
+        $("#EmpInfocategory > tbody").html("");
+        var count = excelRows.length;
+        for (var i = 0; i < excelRows.length; i++) {
+            var Category_Name = "";
+            if (excelRows[i].CategoryName == undefined) {
+
+                Category_Name = "";
+            }
+            else {
+                Category_Name = excelRows[i].CategoryName;
+
+            }
+            tr = $('<tr/>');
+            tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+            tr.append("<td class='left_c'>" + Category_Name + "</td>");
+
+            tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a  href='javascript:void(0);' class='deletecategory tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+            $('#EmpInfocategory').append(tr);
+        }
+        $('#EmpInfocategory').DataTable();
+        $('#EmpInfocategory').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count + " entries";
+            }
+        });
+        sessionStorage.setItem("vendor-count1", count);
+        $('#ExcelDataLoader').hide();
+    };
+</script>
+<script>
+    $(document).on("click", "a.deletecategory", function () {
+
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(0)').text();
+         $row.hide();
+       
+        $row.remove().draw(false);
+        var oTable = $('#EmpInfocategory').dataTable();
+        //var aPos = oTable.fnGetPosition($row);
+        //oTable.fnDeleteRow(aPos);
+        var rowcollection = oTable.$("tr", { "page": "all" });
+
+        var count = sessionStorage.getItem("vendor-count1");
+
+        sessionStorage.setItem("vendor-count1", (count - 1));
+
+        var count1 = count - 1;
+
+        var table = $('#EmpInfocategory').DataTable({
+            destroy: true,
+            rowReorder: true
+        });
+        table.on('row-reorder', function (e, diff, edit) {
+            var res = '';
+            for (var i = 0, ien = diff.length ; i < ien ; i++) {
+                res += diff[i].newData + '=';
+            }
+            res = res.substring(0, res.length - 1);
+            getVal(res);
+        });
+        $('#EmpInfocategory').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count1 + " entries";
+            }
+        });
+        if (count <= 1) {
+            Resettable();
+        }
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveuploaddb").click(function () {
+            $('#ExcelDataLoader').show();
+            var objVendorCategory = {};
+            objVendorCategory.Vendor_Category_Name = "";
+            
+            var oTable = $('#EmpInfocategory').dataTable();
+            var rowcollection = oTable.$("tr", { "page": "all" });
+
+            rowcollection.each(function (index, elem) {
+                var row = $(elem).closest("tr");
+                if (objVendorCategory.Vendor_Category_Name == "") {
+                    objVendorCategory.Vendor_Category_Name = row.find('td:eq(1)').text().charAt(0).toUpperCase() + row.find('td:eq(1)').text().slice(1);;
+                }
+                else {
+                    objVendorCategory.Vendor_Category_Name = objVendorCategory.Vendor_Category_Name + "," + row.find('td:eq(1)').text().charAt(0).toUpperCase() + row.find('td:eq(1)').text().slice(1);;
+                }
+            });
+           
+            objVendorCategory.Vendor_Category_Id = 0;
+
+            var rowCount = $('#EmpInfocategory tr').length;
+            if (rowCount <= 1) {
+                swal("please upload excel file for data upload.");
+                return;
+            }
+            if (rowCount > 1 && objVendorCategory.Vendor_Category_Name == "") {
+                swal("no data in table.");
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Vendor/AddBulkVendorCategory",
+                data: '{objVendorCategory: ' + JSON.stringify(objVendorCategory) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resettable();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+                    $('#ExcelDataLoader').hide();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+        $("#btnresetcategory").click(function () {
+            Resettable();
+        });
+        $('#fileUpload').change(function (e) {
+
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+    });
+</script>
+<script>
+    function Resettable() {
+        $("#dvExcel").empty();
+        $('#spnfile').text("");
+        $('#spnfile').append('<span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span>')
+    }
+</script>
+<div style="width:100%" class="m_27">
+    <div style="width:18% ; float:left" class="menu_border">
+        <div class="side_bar_main">
+
+            @{ Html.RenderAction("SideMenu", "Master");}
+
+        </div>
+
+    </div><div style="width:82% ; float:left">
+        <div class="main-content">
+            <div class="main-content-inner">
+                <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="ace-icon fa fa-home home-icon"></i>
+                            <a href="#">Vendor</a>
+                        </li>
+
+                        <li>
+                            <a href="/Vendor/Dashboard">Vendor Master</a>
+                        </li>
+                        <li class="active">Vendor Category Master</li>
+                    </ul><!-- /.breadcrumb -->
+
+                    @*<div class="nav-search" id="nav-search">
+                        <div class="form-search">
+                            <span class="input-icon">
+                                <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                                <i class="ace-icon fa fa-search nav-search-icon"></i>
+                            </span>
+                        </div>
+                    </div>*@<!-- /.nav-search -->
+                </div>
+
+                <div class="page-content">
+
+
+                    <div class="page-header">
+                        <h3 class="item_hedin">
+                            Vendor Category Master
+                        </h3>
+                    </div><!-- /.page-header -->
+                    @*-----------------------------------------------update Cayegory---------------------------------------------------------*@
+                    <div class="modal fade" id="dialogdivupdatecategory">
+                        <div class="modal-dialog modal-md modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">×</a>
+                                    <h3 class="item_hedin">Update Category</h3>
+                                </div>
+                                <div class="modal-body">
+
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3">Category Name  <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtupVendorCategory" style="text-transform:capitalize" placeholder="Vendor Category Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for vendor category name" />
+                                        </div>
+                                    </div>
+
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9">
+                                            <button class="btn btn-info" id="btnupdatecategory" type="button" data-toggle="tooltip" title="Button for update data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Update
+                                            </button>
+                                            <button class="btn master-page-reset" id="btnresetupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @*---------------------------------------------------------------------------------------------------------------------*@
+                    <div class="space-4"></div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Category Name  <span style="color:red;font-size:14px;">*</span></label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" id="txtVendorCategory" style="text-transform:capitalize" placeholder="Vendor Category Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for vendor category name" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="space-4"></div>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="hidden" id="hdCategory" />
+                            <div class="clearfix form-actions">
+                                <div class="col-md-offset-0 col-md-12">
+                                    <a href="~/excelFile/vendorcategorymaster.xlsx">Download Template</a>
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn btn-info" id="btnexcel" type="button" data-toggle="tooltip" style="width: auto;" title="Button for excel data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Upload Excel File
+                                    </button>
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn btn-info" id="btnsave" type="button" data-toggle="tooltip" title="Button for save data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Submit
+                                    </button>
+
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn" id="btnreset" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+
+
+                            @*----------------------------------------------------popup for upload master data--------------------------------------------------------------*@
+                            <div id="dialogdivexcel" class="modal fade" style="margin-top:0px!important;overflow:auto!important">
+                                <div class="modal-dialog modal-lg modal-dialog-centered " style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
+                                    <div class="modal-content" style="width:100% !important;padding-bottom:22px">
+                                        <div class="modal-header">
+                                            <a href="#" class="close" data-dismiss="modal">×</a>
+                                            <h3 class="item_hedin">Upload Excel File </h3>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            <div class="row">
+
+                                                <div class="col-md-3">Choose excel file <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                                <div class="col-sm-9">
+                                                    <div class="col-xs-8 pr-0">
+
+                                                        <label class="ace-file-input upload_fl1"><input type="file" id="fileUpload" accept=".xls,.xlsx"><span class="ace-file-container upload_fl" id="spnfile" data-title="Choose"><span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                                    </div>
+                                                    <div class="col-xs-4">
+                                                        <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                                        <input type="button" id="uploadExcel" class="btn btn-info upload-bt" value="Upload" onclick="ExportToTable()" />
+                                                        <div id="ExcelDataLoader" class="loader">
+                                                            <img src="~/Images/1.gif" height="70" width="60" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="space-6"></div>
+                                                <div class="row" style="padding-top:45px">
+                                                    <div class="col-xs-12">
+                                                        <div class="form-horizontal">
+                                                            <div id="dvExcel"></div>
+
+                                                        </div>
+
+                                                    </div><!-- /.span -->
+                                                </div><!-- /.row -->
+                                            </div>
+
+                                            <div class="space-4"></div>
+                                            <div class="row">
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-9">
+                                                    <button class="btn btn-info" id="btnsaveuploaddb" type="button" data-toggle="tooltip" title="Button for save data">
+                                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                                        Submit
+                                                    </button>
+                                                    <button class="btn master-page-reset" id="btnresetcategory" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                        Reset
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*---------------------------------------------------------------------------------------------------------------------------------------*@
+
+
+
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <!-- PAGE CONTENT BEGINS -->
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="form-horizontal">
+                                        <div class="table-header">
+                                            Current Record
+                                        </div>
+                                        <div id="divtbl"></div>
+                                        
+
+                                    </div>
+
+                                </div><!-- /.span -->
+                            </div><!-- /.row -->
+
+                            <div class="hr hr-18 dotted hr-double"></div>
+
+
+
+
+
+                            <!-- PAGE CONTENT ENDS -->
+                        </div><!-- /.col -->
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

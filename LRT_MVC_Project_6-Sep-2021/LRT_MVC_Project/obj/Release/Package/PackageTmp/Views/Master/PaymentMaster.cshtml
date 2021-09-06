@@ -1,0 +1,1083 @@
+﻿@{
+    ViewBag.Title = "PaymentMaster";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+@*<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+@*------------------------------------fill currency-------------------------------------------*@
+<style>
+    .loader {
+        display: none;
+        top: 251px;
+        position: absolute;
+        margin-left: -193px;
+        margin-bottom: 117px;
+        z-index: 99999;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        var ddlcurrency = $("#ddlcurrency");
+        ddlcurrency.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/CurrencyName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlcurrency.empty().append('<option selected="selected" value="0">Select currency name</option>');
+                $.each(response, function () {
+                    ddlcurrency.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        $("#txtpaymenttermcode").focus();
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "/assets/js/jquery.dataTables.min.js";
+        document.getElementsByTagName("body")[0].appendChild(script);
+    })
+</script>
+@*------------------------------------reset data-------------------------------------------*@
+<script>
+    function Resetdata1() {
+        $("#txtuppaymenttermcode").val("");
+        $("#txtuppaymenttermname").val("");
+        $("#txtupcreditdays").val("");
+        $("#txtupTolerance").val("");
+        $("#ddluprelatedto").val(0);
+    }
+</script>
+<script>
+    function Resetdata() {
+        $("#txtpaymenttermcode").val("");
+        $("#txtpaymenttermname").val("");
+        $("#txtcreditdays").val("");
+        $("#txtTolerance").val("");
+        $("#ddlrelatedto").val(0);
+
+
+        $("#hdpayment").val("");
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Submit");
+
+        $("#txtpaymenttermcode").focus();
+
+
+        var objRolePermission = {};
+        objRolePermission.Sub_To_Sub_Menu_Id = sessionStorage.getItem("sid");
+        //alert(objRolePermission.Sub_To_Sub_Menu_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/AddRolePermission",
+            data: '{objRolePermission: ' + JSON.stringify(objRolePermission) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //if (response.Is_Add == false) {
+                //    $("#btnsave").css('visibility', 'hidden');
+                //    $("#btnreset").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Edit == false) {
+                //    $("a.remove").css('visibility', 'hidden');
+                //}
+                ////alert(response.Is_Delete);
+                //if (response.Is_Delete == false) {
+                //    $("a.delete").css('visibility', 'hidden');
+                //}
+                //if (response.Is_View == false) {
+                //    $("#EmpInfo_wrapper").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Approve == false) {
+                //    $("a.approve").css('visibility', 'hidden');
+                //}
+                //$('script[src=~/assets/js/jquery.dataTables.min.js]').remove();
+                //$('script[src=/assets/js/jquery.dataTables.min.js]').remove();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+
+        $("#btnreset").click(function () {
+            Resetdata();
+        });
+        $("#btnresetupdate").click(function () {
+            Resetdata1();
+        });
+    })
+</script>
+@*------------------------------------get data-------------------------------------------*@
+<script>
+    var myVar;
+    $(document).ready(function () {
+        Getdata();
+        myVar = setTimeout(Resetdata, 50);
+        // Resetdata();
+    });
+</script>
+<script>
+    function Getdata() {
+        $("#divtbl").append('<table id="EmpInfo" class="table table-bordered  table-hover"><thead><tr><th class="left_c w61_i">S. No</th><th class="left_c">Payment Term Code</th><th class="left_c">Payment Term Name</th><th class="left_c">Credit Days</th><th class="left_c">Tolerance Days</th><th class="left_c">Relate To</th><th style="display:none"></th><th class="w155_i">Action</th></tr></thead><tbody></tbody></table>')
+        $("#EmpInfo > tbody").html("");
+        $.getJSON("/Master/PaymentDetails",
+            function (json) {
+                var tr;
+
+                //Append each row to html table
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Payment_Term_Code + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Payment_Term_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Credit_Days + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Tolerance_Days + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Relate_To + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Payment_Id + "</td>");
+                    var status = json[i].Approve_Status;
+                    var status1 = "";
+                    if (status == 1) {
+                        status1 = "<i class='menu-icon fa fa-check bigger-120 green'  data-toggle='tooltip' title='Approved'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-clock-o bigger-120 green' data-toggle='tooltip' title='Pending'></i>";
+                    }
+
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a href='javascript:void(0);' class='approve tooltip-error comn_inline grn' data-rel='tooltip' >" + status1 + "</a></li><li><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip' title='Edit'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i></a></li><li><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='Delete'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+                    $('#EmpInfo').append(tr);
+
+                }
+                $('#EmpInfo').DataTable();
+            });
+
+    };
+</script>
+@*------------------------------------approve data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.approve", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(6)').text();
+        var objPayment = {};
+        objPayment.Payment_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Master/PaymentApproveStatus",
+            data: '{objPayment: ' + JSON.stringify(objPayment) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //$(".dataTables_length").remove();
+                //$(".dataTables_filter").remove();
+                //$(".dataTables_info").remove();
+                //$(".dataTables_paginate").remove();
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                Getdata();
+                Resetdata();
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+@*------------------------------------save data-------------------------------------------*@
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnsave").click(function (e) {
+            e.preventDefault();
+            var objPayment = {};
+            objPayment.Payment_Term_Code = $("#txtpaymenttermcode").val().toUpperCase();
+            objPayment.Payment_Term_Name = $("#txtpaymenttermname").val().charAt(0).toUpperCase() + $("#txtpaymenttermname").val().slice(1);
+            objPayment.Credit_Days = $("#txtcreditdays").val();
+            objPayment.Tolerance_Days = $("#txtTolerance").val();
+            objPayment.Relate_To = $("#ddlrelatedto").val();
+
+            objPayment.Payment_Id = $("#hdpayment").val();
+
+            if (objPayment.Payment_Term_Code == "" || objPayment.Payment_Term_Code == null) {
+                swal("Please enter payment term code.");
+
+                $("#txtpaymenttermcode").focus();
+                return;
+            }
+            if (objPayment.Payment_Term_Name == "" || objPayment.Payment_Term_Name == null) {
+                swal("Please enter payment term name.");
+
+                $("#txtpaymenttermname").focus();
+                return;
+            }
+
+            if (objPayment.Relate_To == 0 || objPayment.Relate_To == null) {
+                swal("Please select relate to.");
+                $("#ddlrelatedto").focus();
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddPayment",
+                data: '{objPayment: ' + JSON.stringify(objPayment) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnupdatePayment").click(function (e) {
+            e.preventDefault();
+            var objPayment = {};
+            objPayment.Payment_Term_Code = $("#txtuppaymenttermcode").val().toUpperCase();
+            objPayment.Payment_Term_Name = $("#txtuppaymenttermname").val().charAt(0).toUpperCase() + $("#txtuppaymenttermname").val().slice(1);
+            objPayment.Credit_Days = $("#txtupcreditdays").val();
+            objPayment.Tolerance_Days = $("#txtupTolerance").val();
+            objPayment.Relate_To = $("#ddluprelatedto").val();
+            objPayment.Payment_Id = $("#hdpayment").val();
+
+            if (objPayment.Payment_Term_Code == "0" || objPayment.Payment_Term_Code == null) {
+                swal("Please Payment Term Code.");
+
+                $("#txtuppaymenttermcode").focus();
+                return;
+            }
+
+            if (objPayment.Payment_Term_Name == "" || objPayment.Payment_Term_Name == null) {
+                swal("Please select Payment Term Name.");
+                $("#txtuppaymenttermname").focus();
+                return;
+            }
+
+
+            if (objPayment.Credit_Days == "" || objPayment.Credit_Days == null) {
+                swal("Please select Creditdays.");
+                $("#txtupcreditdays").focus();
+                return;
+            }
+
+            if (objPayment.Tolerance_Days == "" || objPayment.Tolerance_Days == null) {
+                swal("Please select Tolerance Days.");
+                $("#txtupTolerance").focus();
+                return;
+            }
+
+
+
+            if (objPayment.Relate_To == 0 || objPayment.Relate_To == null) {
+                swal("Please select Relate To.");
+                $("#ddluprelatedto").focus();
+                return;
+            }
+
+
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddPayment",
+                data: '{objPayment: ' + JSON.stringify(objPayment) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata1();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+@*------------------------------------edit data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.remove", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $code = $row.find('td:eq(1)').text();
+        var $name = $row.find('td:eq(2)').text();
+        var $creditdays = $row.find('td:eq(3)').text();
+        var $Tolerance = $row.find('td:eq(4)').text();
+        var $relatedto = $row.find('td:eq(5)').text();
+
+        var $id = $row.find('td:eq(6)').text()
+        $("#dialogdivupdatePayment").modal("show");
+
+        $("#txtuppaymenttermcode").val($code);
+        $("#txtuppaymenttermname").val($name);
+        $("#txtupcreditdays").val($creditdays);
+        $("#txtupTolerance").val($Tolerance);
+        $("#ddluprelatedto").val($relatedto);
+
+        $("#hdpayment").val($id);
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Update");
+        //$("#btnsave").css('visibility', 'visible');
+        //$("#btnreset").css('visibility', 'visible');
+    });
+</script>
+@*------------------------------------delete data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.delete", function (e) {
+
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(6)').text();
+
+        swal({
+            title: 'Are you sure?',
+            text: '*You want to delete this data?*',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function (value) {
+            if (value) {
+                var objPayment = {};
+                objPayment.Payment_Id = $id;
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/DeletePayment",
+                    data: '{objPayment: ' + JSON.stringify(objPayment) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        Getdata();
+                        Resetdata();
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "/assets/js/jquery.dataTables.min.js";
+                        document.getElementsByTagName("body")[0].appendChild(script);
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+                swal("*Your data is safe*");
+            }
+        });
+
+    });
+</script>
+@*------------------------------------------------------------------------------upload excel file-----------------------------------------*@
+<script>
+    $(function () {
+        $("#btnexcel").click(function () {
+            $('#dialogdivexcel').modal('show');
+        });
+    });
+</script>
+<script type="text/javascript">
+    $("body").on("click", "#uploadExcel", function () {
+        Resettable();
+        //Reference the FileUpload element.
+        var fileUpload = $("#fileUpload")[0];
+
+        //Validate whether File is valid Excel file.
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx)$/;
+        if (regex.test(fileUpload.value.toLowerCase())) {
+            if (typeof (FileReader) != "undefined") {
+                var reader = new FileReader();
+
+                //For Browsers other than IE.
+                if (reader.readAsBinaryString) {
+                    reader.onload = function (e) {
+                        ProcessExcel(e.target.result);
+                    };
+                    reader.readAsBinaryString(fileUpload.files[0]);
+                } else {
+                    //For IE Browser.
+                    reader.onload = function (e) {
+                        var data = "";
+                        var bytes = new Uint8Array(e.target.result);
+                        for (var i = 0; i < bytes.byteLength; i++) {
+                            data += String.fromCharCode(bytes[i]);
+                        }
+                        ProcessExcel(data);
+                    };
+                    reader.readAsArrayBuffer(fileUpload.files[0]);
+                }
+            } else {
+                alert("This browser does not support HTML5.");
+            }
+        } else {
+            alert("Please upload a valid Excel file.");
+        }
+    });
+    function ProcessExcel(data) {
+        $('#ExcelDataLoader').show();
+        var workbook = XLSX.read(data, {
+            type: 'binary'
+        });
+        var firstSheet = workbook.SheetNames[0];
+        var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[firstSheet]);
+        // $("#dvExcel").empty();
+        $("#dvExcel").append('<table id="EmpInfopayment" class="table table-bordered table-hover"><thead><tr><th class="left_c w61_i">S. No</th> <th class="left_c">Payment Term Code</th> <th class="left_c">Payment Term Name</th><th class="left_c">Credit Days</th> <th class="left_c">Tolerance Days</th><th class="left_c">Relate To</th><th class="w155_i">Action</th> </tr></thead><tbody></tbody> </table>')
+        $("#EmpInfopayment > tbody").html("");
+        var count = excelRows.length;
+        for (var i = 0; i < excelRows.length; i++) {
+            var Payment_Term_Code = "";
+            var Payment_Term_Name = "";
+            var Credit_Days = "";
+            var Tolerance_Days = "";
+            var Relate_To = "";
+
+
+            if (excelRows[i].PaymentTermCode == undefined) {
+
+                Payment_Term_Code = "";
+            }
+            else {
+                Payment_Term_Code = excelRows[i].PaymentTermCode;
+
+            }
+
+
+            if (excelRows[i].PaymentTermName == undefined) {
+
+                Payment_Term_Name = "";
+            }
+            else {
+                Payment_Term_Name = excelRows[i].PaymentTermName;
+
+            }
+
+            if (excelRows[i].CreditDays == undefined) {
+
+                Credit_Days = "";
+            }
+            else {
+                Credit_Days = excelRows[i].CreditDays;
+
+            }
+
+
+            if (excelRows[i].ToleranceDays == undefined) {
+
+                Tolerance_Days = "";
+            }
+            else {
+                Tolerance_Days = excelRows[i].ToleranceDays;
+
+            }
+
+
+
+            if (excelRows[i].RelateTo == undefined) {
+
+                Relate_To = "";
+            }
+            else {
+                Relate_To = excelRows[i].RelateTo;
+
+            }
+            tr = $('<tr/>');
+            tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+            tr.append("<td class='left_c'>" + Payment_Term_Code + "</td>");
+            tr.append("<td class='left_c'>" + Payment_Term_Name + "</td>");
+            tr.append("<td class='left_c'>" + Credit_Days + "</td>");
+            tr.append("<td class='left_c'>" + Tolerance_Days + "</td>");
+            tr.append("<td class='left_c'>" + Relate_To + "</td>");
+
+            tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a  href='javascript:void(0);' class='deletepayment tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+            $('#EmpInfopayment').append(tr);
+        }
+        $('#EmpInfopayment').DataTable();
+        $('#EmpInfopayment').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count + " entries";
+            }
+        });
+        sessionStorage.setItem("item-count20", count);
+        $('#ExcelDataLoader').hide();
+    };
+</script>
+<script>
+    $(document).on("click", "a.deletepayment", function () {
+
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(0)').text();
+        // $row.hide();
+        //$row.remove();
+        $row.remove().draw(false);
+        var oTable = $('#EmpInfopayment').dataTable();
+
+        var rowcollection = oTable.$("tr", { "page": "all" });
+
+        var count = sessionStorage.getItem("item-count20");
+
+        sessionStorage.setItem("item-count20", (count - 1));
+
+        var count1 = count - 1;
+
+        var table = $('#EmpInfopayment').DataTable({
+            destroy: true,
+            rowReorder: true
+        });
+        table.on('row-reorder', function (e, diff, edit) {
+            var res = '';
+            for (var i = 0, ien = diff.length ; i < ien ; i++) {
+                res += diff[i].newData + '=';
+            }
+            res = res.substring(0, res.length - 1);
+            getVal(res);
+        });
+        $('#EmpInfopayment').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count1 + " entries";
+            }
+        });
+        if (count <= 1) {
+            Resettable();
+        }
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveuploaddb").click(function () {
+            $('#ExcelDataLoader').show();
+            var objPayment = {};
+            objPayment.Payment_Term_Code = "";
+            objPayment.Payment_Term_Name = "";
+            objPayment.Credit_Days = "";
+            objPayment.Tolerance_Days = "";
+            objPayment.Relate_To = "";
+
+            objPayment.Payment_Id = 0;
+
+            var oTable = $('#EmpInfopayment').dataTable();
+            var rowcollection = oTable.$("tr", { "page": "all" });
+
+            rowcollection.each(function (index, elem) {
+                var row = $(elem).closest("tr");
+
+                if (objPayment.Payment_Term_Name == "") {
+                    objPayment.Payment_Term_Code = row.find('td:eq(1)').text().toUpperCase();
+
+                    objPayment.Payment_Term_Name = row.find('td:eq(2)').text().charAt(0).toUpperCase() + row.find('td:eq(2)').text().slice(1);
+
+                    objPayment.Credit_Days = row.find('td:eq(3)').text().toUpperCase();
+                    objPayment.Tolerance_Days = row.find('td:eq(4)').text().toUpperCase();
+
+                    objPayment.Relate_To = row.find('td:eq(5)').text().toUpperCase();
+
+                }
+                else {
+
+                    objPayment.Payment_Term_Code = objPayment.Payment_Term_Code + "," + row.find('td:eq(1)').text().toUpperCase();
+                    objPayment.Payment_Term_Name = objPayment.Payment_Term_Name + "," + row.find('td:eq(2)').text().charAt(0).toUpperCase() + row.find('td:eq(2)').text().slice(1);
+                    objPayment.Credit_Days = objPayment.Credit_Days + "," + row.find('td:eq(3)').text().toUpperCase();
+                    objPayment.Tolerance_Days = objPayment.Tolerance_Days + "," + row.find('td:eq(4)').text().toUpperCase();
+                    objPayment.Relate_To = objPayment.Relate_To + "," + row.find('td:eq(5)').text().toUpperCase();
+
+                }
+            });
+            var rowCount = $('#EmpInfopayment tr').length;
+            if (rowCount <= 1) {
+                swal("please upload excel file for data upload.");
+                return;
+            }
+            if (rowCount <= 1) {
+                swal("please upload excel file for data upload.");
+                return;
+            }
+            if (rowCount > 1 && objPayment.Payment_Term_Name == "") {
+                swal("no data in table.");
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddBulkPayment",
+                data: '{objPayment: ' + JSON.stringify(objPayment) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resettable();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+                    $('#ExcelDataLoader').hide();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+        $("#btnresetpayment").click(function () {
+            Resettable();
+        });
+        $('#fileUpload').change(function (e) {
+
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+    });
+</script>
+<script>
+    function Resettable() {
+        $("#dvExcel").empty();
+        $('#spnfile').text("");
+        $('#spnfile').append('<span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span>')
+
+    }
+</script>
+<style>
+    .clddl_plus {
+        float: right;
+        left: 8px;
+        position: absolute !important;
+        top: 19px;
+        font-size: 14px;
+    }
+</style>
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+<div class="main-content">
+    <div class="main-content-inner top-padding">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs" style=" z-index: -1 !IMPORTANT;">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#">PMS Setting</a>
+                </li>
+
+                <li>
+                    <a href="#">Finance Setting</a>
+                </li>
+                <li class="active">Payment</li>
+            </ul><!-- /.breadcrumb -->
+            @*<div class="nav-search" id="nav-search">
+                <div class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>*@<!-- /.nav-search -->
+        </div>
+
+        <div class="page-content1">
+            @*--------------------------------------------------------update Payment-------------------------------------------------------*@
+            <div class="modal fade" id="dialogdivupdatePayment">
+                <div class="modal-dialog modal-md modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <a href="#" class="close" data-dismiss="modal">×</a>
+                            <h3 class="item_hedin">Update Payment</h3>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3">Payment Term Code <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                <div class="col-md-9">
+                                    <input type="text" id="txtuppaymenttermcode" style="text-transform:uppercase" placeholder="Payment Term Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for Payment Term Code" />
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3">Payment Term Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                <div class="col-md-9">
+                                    <input type="text" id="txtuppaymenttermname" style="text-transform:capitalize" placeholder="Payment Term Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for Payment Term Name" />
+                                </div>
+                            </div>
+
+
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3">Credit Days<span> : </span></div>
+                                <div class="col-md-9">
+                                    <input type="text" id="txtupcreditdays" style="text-transform:capitalize" placeholder="Credit Days" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for Credit Days " />
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3">Tolerance Days<span> : </span></div>
+                                <div class="col-md-9">
+                                    <input type="text" id="txtupTolerance" style="text-transform:capitalize" placeholder="Tolerance Days" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for Tolerance Days" />
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3">Relate To <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                <div class="col-md-9">
+
+                                    <select class="col-xs-10 col-sm-8" id="ddluprelatedto" data-toggle="tooltip" title="Select Relate To">
+                                        <option value="0">-Select Relate To-</option>
+                                        <option value="Customer">Customer</option>
+                                        <option value="Vendor">Vendor</option>
+
+                                    </select>
+
+
+                                </div>
+                            </div>
+
+
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3"></div>
+                                <div class="col-md-9">
+                                    <button class="btn btn-info" id="btnupdatePayment" type="button" data-toggle="tooltip" title="Button for update data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Update
+                                    </button>
+                                    <button class="btn master-page-reset" id="btnresetupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*-------------------------------------------------------------------------------------------------------------------------------*@
+
+            <div class="page-header">
+                <h3 class="item_hedin">
+                    Payment
+                </h3>
+            </div><!-- /.page-header -->
+
+            <div class="row">
+                <div class="col-xs-6">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Payment Term Code <span style="color:red;font-size:14px;">*</span></label>
+
+                        <div class="col-sm-9">
+                            <input type="text" id="txtpaymenttermcode" style="text-transform:uppercase" placeholder="Payment Term Code" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for payment term code" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Payment Term Name <span style="color:red;font-size:14px;">*</span></label>
+
+                        <div class="col-sm-9">
+                            <input type="text" id="txtpaymenttermname" style="text-transform:capitalize" placeholder="Payment Term Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for payment term name" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="space-4"></div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Credit Days </label>
+
+                        <div class="col-sm-9">
+                            <input type="text" id="txtcreditdays" placeholder="Credit Days" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for credit days" onkeypress="return event.charCode >= 48 && event.charCode <= 57" onpast="return false" />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Tolerance Days </label>
+
+                        <div class="col-sm-9">
+                            <input type="text" id="txtTolerance" placeholder="Tolerance Days" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for tolerance days" onkeypress="return event.charCode >= 48 && event.charCode <= 57" onpast="return false" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="space-4"></div>
+
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Relate To <span style="color:red;font-size:14px;">*</span></label>
+
+
+                        <div class="col-sm-9">
+                            <select class="col-xs-10 col-sm-9" id="ddlrelatedto" data-toggle="tooltip" title="select relate to">
+                                <option value="0">-Select Relate To-</option>
+                                <option value="Customer">Customer</option>
+                                <option value="Vendor">Vendor</option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="space-4"></div>
+            @*----------------------------------------------------popup for upload master data--------------------------------------------------------------*@
+            <div id="dialogdivexcel" class="modal fade" style="margin-top:0px!important;overflow:auto!important">
+                <div class="modal-dialog modal-lg modal-dialog-centered " style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
+                    <div class="modal-content" style="width:100% !important;padding-bottom:22px">
+                        <div class="modal-header">
+                            <a href="#" class="close" data-dismiss="modal">×</a>
+                            <h3 class="item_hedin">Upload Excel File </h3>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="row">
+
+                                <div class="col-md-3">Choose excel file <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                <div class="col-sm-9">
+                                    <div class="col-xs-8 pr-0">
+
+                                        <label class="ace-file-input upload_fl1"><input type="file" id="fileUpload" accept=".xls,.xlsx"><span class="ace-file-container upload_fl" id="spnfile" data-title="Choose"><span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                        <input type="button" id="uploadExcel" class="btn btn-info upload-bt" value="Upload" onclick="ExportToTable()" />
+                                        <div id="ExcelDataLoader" class="loader">
+                                            <img src="~/Images/1.gif" height="70" width="60" />
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                                <div class="space-6"></div>
+                                <div class="row" style="padding-top:45px">
+                                    <div class="col-xs-12">
+                                        <div class="form-horizontal">
+                                            <div id="dvExcel"></div>
+
+                                        </div>
+
+                                    </div><!-- /.span -->
+                                </div><!-- /.row -->
+                            </div>
+
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3"></div>
+                                <div class="col-md-9">
+                                    <button class="btn btn-info" id="btnsaveuploaddb" type="button" data-toggle="tooltip" title="Button for save data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Submit
+                                    </button>
+                                    <button class="btn master-page-reset" id="btnresetpayment" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @*---------------------------------------------------------------------------------------------------------------------------------------*@
+
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <input type="hidden" id="hdpayment" />
+                    <div class="clearfix form-actions">
+                        <div class="col-md-offset-0 col-md-12">
+                            <a href="~/excelFile/paymentmaster.xlsx">Download Template</a>
+                            &nbsp; &nbsp; &nbsp;
+                            <button class="btn btn-info" id="btnexcel" type="button" data-toggle="tooltip" style="width: auto;" title="Button for excel data">
+                                <i class="ace-icon fa fa-floppy-o"></i>
+                                Upload Excel File
+                            </button>
+                            &nbsp; &nbsp; &nbsp;
+                            <button class="btn btn-info" id="btnsave" type="button" data-toggle="tooltip" title="Button for save data">
+                                <i class="ace-icon fa fa-floppy-o"></i>
+                                Submit
+                            </button>
+
+                            &nbsp; &nbsp; &nbsp;
+                            <button class="btn" id="btnreset" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="form-horizontal">
+                        <div class="table-header">
+                            Current Record
+                        </div>
+                        <div id="divtbl"></div>
+
+
+                    </div>
+
+                </div><!-- /.span -->
+            </div><!-- /.row -->
+
+        </div>
+
+    </div>
+</div>
+@*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>
+@*<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<link href="~/assets/css/colReorder.dataTables.css" rel="stylesheet" />
+<link href="~/assets/css/responsive.dataTables.css" rel="stylesheet" />
+<script src="~/assets/js/dataTables.colReorder.js"></script>
+<script src="~/assets/js/dataTables.responsive.js"></script>
+
+<link href="~/assets/css/rowReorder.dataTables.min.css" rel="stylesheet" />
+
+
+<script>
+
+    $(document).ready(function () {
+        // GetData1();
+        //$('#pending_from').dataTable({
+        //    colReorder: {
+        //        order: [4, 3, 2, 1, 0, ]
+        //    }
+        //});
+        $('#EmpInfo').dataTable({
+            colReorder: {
+                order: [0, 1, 2, 3, 4]
+            }
+        });
+    });
+
+
+
+</script>

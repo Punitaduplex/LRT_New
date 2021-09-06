@@ -1,0 +1,1855 @@
+﻿
+@{
+    ViewBag.Title = "CompanyGroupMaster";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+@*<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+<style>
+    .inputfile {
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+    }
+
+    .upload-ic {
+        margin-left: 5px;
+        position: absolute;
+        z-index: 9;
+        color: #fff;
+        top: 10px;
+    }
+
+    .upload-bt {
+        padding-left: 30px;
+        width: 125px !important;
+        /* text-align: center; */
+    }
+
+    .c_file {
+        font-size: 17px;
+        margin-top: -2px;
+        color: #0893e2;
+    }
+</style>
+<style>
+    .loader {
+        display: none;
+        top: 251px;
+        position: absolute;
+        margin-left: -193px;
+        margin-bottom: 117px;
+        z-index: 99999;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $("#txtcompanygroupcode").focus();
+       // $("#btnUploadimage").hide();
+        CurrencyName();
+        LangaugeName();
+      //  Getdata();
+        //var output = document.getElementById('profile-img-tag');
+        //output.visibility = "hidden";
+       // $("#profile-img-tag").hide();
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "/assets/js/jquery.dataTables.min.js";
+        document.getElementsByTagName("body")[0].appendChild(script);
+    })
+</script>
+@*---------------------------------------upload image---------------------------------------------------*@
+<script>
+    //var loadFile = function (event) {
+
+    //    var reader = new FileReader();
+    //    reader.onload = function () {
+    //        var output = document.getElementById('profile-img-tag');
+    //        output.style.visibility = "visible";
+    //        output.src = reader.result;
+    //        $('#btnUploadimage').show();
+    //    };
+    //    reader.readAsDataURL(event.target.files[0]);
+    //    $('#btnUploadimage').show();
+
+    //    $("#profile-img-tag").show();
+    //};
+</script>
+<script>
+    //$(document).ready(function () {
+    //    $('#btnUploadimage').click(function () {
+    //        if (window.FormData !== undefined) {
+    //            var fileUpload = $("#profile-img").get(0);
+    //            var files = fileUpload.files;
+    //            var fileData = new FormData();
+    //            for (var i = 0; i < files.length; i++) {
+    //                fileData.append(files[i].name, files[i]);
+
+    //            }
+    //            fileData.append('Id', "Permit" + $("#txtcompanygroupcode").val().split(" ").join("") + $("#txtcompanygroupname").val().split(" ").join(""));
+
+    //            $.ajax({
+    //                url: '/Master/UploadCompanyGroupImage',
+    //                type: "POST",
+    //                contentType: false, // Not to set any content header
+    //                processData: false, // Not to process data
+    //                data: fileData,
+    //                success: function (result) {
+    //                    var f = result.split('+');
+    //                    $("#hdcompanygroupimg").val(f[1]);
+    //                    //swal(f[1]);
+    //                    var path = $("#hdcompanygroupimg").val();
+
+    //                    swal(f[0]);
+
+    //                },
+    //                error: function (err) {
+    //                    alert(err.statusText);
+    //                }
+    //            });
+    //        } else {
+    //            alert("FormData is not supported.");
+    //        }
+    //    });
+    //});
+</script>
+@*-----------------------------------------------------------------fill currency-------------------------------------------------*@
+<script type="text/javascript">
+    function CurrencyName() {
+        var ddlcurrency = $("#ddlcurrency");
+        var ddlupcurrency = $("#ddlupcurrency");
+        ddlcurrency.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlupcurrency.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/CurrencyName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlcurrency.empty().append('<option selected="selected" value="0">Select currency name</option>');
+                ddlupcurrency.empty().append('<option selected="selected" value="0">Select currency name</option>');
+                $.each(response, function () {
+                    ddlcurrency.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlupcurrency.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+<script type="text/javascript">
+    function LangaugeName() {
+        var ddllanguage = $("#ddllanguage");
+        var ddluplanguage = $("#ddluplanguage");
+        ddllanguage.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddluplanguage.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/LanguageName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddllanguage.empty().append('<option selected="selected" value="0">Select language name</option>');
+                ddluplanguage.empty().append('<option selected="selected" value="0">Select language name</option>');
+                $.each(response, function () {
+                    ddllanguage.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddluplanguage.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+@*-----------------------------------------------------------------reset data---------------------------------------------------*@
+<script>
+    function Resetdata1() {
+        $("#txtupcompanygroupcode").val("");
+        $("#txtupcompanygroupname").val("");
+        $("#ddlupcurrency").val(0);
+        $("#ddluplanguage").val(0);
+        $("#txtupcompanygroupname").val("");
+        $("#div4").hide();
+        var output1 = document.getElementById('imgupcompany');
+        output1.src = "";
+    }
+</script>
+<script>
+    function Resetdata() {
+      
+        $("#txtcompanygroupcode").val("");
+        $("#txtcompanygroupname").val("");
+        $("#ddlcurrency").val(0);
+        $("#ddllanguage").val(0);
+        $("#txtcompanygroupname").val("");
+        var output = document.getElementById('imgcompany');
+        output.src = "";
+       
+        $("#div2").hide();
+       
+        $("#hdprofileimg").val("");
+        $("#hdcompanygroup").val("");
+        $("#txtcompanygroupcode").focus();
+       // $("btnUploadimage").hide();
+        $("#hdcompanygroupimg").val("");
+      //  $("#btnUploadimage").hide();
+        $("#div2").hide();
+        var output = document.getElementById('imgcompany');
+        output.src = "";
+       // var output = document.getElementById('profile-img-tag');
+        //output.visibility = "hidden";
+
+        var objRolePermission = {};
+        objRolePermission.Sub_To_Sub_Menu_Id = sessionStorage.getItem("sid");
+        //alert(objRolePermission.Sub_To_Sub_To_Menu_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/AddRolePermission",
+            data: '{objRolePermission: ' + JSON.stringify(objRolePermission) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //if (response.Is_Add == false) {
+                //    $("#btnsave").css('visibility', 'hidden');
+                //    $("#btnreset").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Edit == false) {
+                //    $("a.remove").css('visibility', 'hidden');
+                //}
+                ////alert(response.Is_Delete);
+                //if (response.Is_Delete == false) {
+                //    $("a.delete").css('visibility', 'hidden');
+                //}
+                //if (response.Is_View == false) {
+                //    $("#EmpInfo_wrapper").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Approve == false) {
+                //    $("a.approve").css('visibility', 'hidden');
+                //}
+                //$('script[src=~/assets/js/jquery.dataTables.min.js]').remove();
+                //$('script[src=/assets/js/jquery.dataTables.min.js]').remove();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnreset").click(function () {
+            Resetdata();
+        });
+        $("#btnresetupdate").click(function () {
+            Resetdata1();
+        });
+    })
+</script>
+
+@*-----------------------------------------------------------------get data---------------------------------------------------*@
+<script>
+    var myVar;
+    $(document).ready(function () {
+        Getdata();
+        myVar = setTimeout(Resetdata, 50);
+    });
+</script>
+<style>
+     .img_wid {width: 53px;
+    height: 48px;}
+     .img_wid img{width: 53px;
+    height: 48px;}
+</style>
+<script>
+    function Getdata() {
+        //alert();
+        // $("#divtbl").empty();
+        $("#EmpInfo > tbody").html("");
+      //  $("#EmpInfo > tr").html("");
+        $("#divtbl").append('<table id="EmpInfo" class="table table-bordered  table-hover"><thead><tr><th class="left_c w61_i">S. No</th><th class="left_c">Company Group Code</th><th class="left_c">Company Group Name</th><th class="left_c">Currency</th><th class="left_c">Language</th><th>Company Group Image</th><th style="display:none"><th style="display:none"></th><th style="display:none"></th><th style="display:none"></th><th>Action</th></tr></thead><tbody></tbody> </table>')
+       
+        //Call EmpDetails jsonResult Method
+        
+        $.getJSON("/Master/CompanyGroupDetails",
+            function (json) {
+                var tr;
+
+                //Append each row to html table
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Company_Group_Code + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Company_Group_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Currency + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Language_Name + "</td>");
+                    tr.append("<td><span class='img_wid'><img src=" + json[i].Company_Image + "></span></td>");
+
+                    tr.append("<td style='display:none;'>" + json[i].Company_Group_Id + "</td>");
+                    tr.append("<td style='display:none;'>" + json[i].Currency_Id + "</td>");
+                    tr.append("<td style='display:none;'>" + json[i].Company_Image + "</td>");
+                    tr.append("<td style='display:none;'>" + json[i].Language_Id + "</td>");
+                    var status = json[i].Approve_Status;
+                    var status1 = "";
+                    if (status == 1) {
+                        status1 = "<i class='menu-icon fa fa-check bigger-120 green'  data-toggle='tooltip' title='Approved'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-clock-o bigger-120 green' data-toggle='tooltip' title='Pending'></i>";
+                    }
+
+                    tr.append("<td class='lst_td'><ul class='list_main'><li><a href='javascript:void(0);' class='approve tooltip-error comn_inline grn' data-rel='tooltip' >" + status1 + "</a></li><li><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip' title='Edit'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i></a></li><li><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='Delete'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+                    $('#EmpInfo').append(tr);
+
+                }
+                $('#EmpInfo').DataTable();
+            });
+
+    }
+</script>
+@*-----------------------------------------------------------------approve data---------------------------------------------------*@
+<script>
+    $(document).on("click", "a.approve", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(6)').text();
+        var objCompanyGroup = {};
+        objCompanyGroup.Company_Group_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Master/CompanyGroupApproveStatus",
+            data: '{objCompanyGroup: ' + JSON.stringify(objCompanyGroup) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //$(".dataTables_length").remove();
+                //$(".dataTables_filter").remove();
+                //$(".dataTables_info").remove();
+                //$(".dataTables_paginate").remove();
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                Getdata();
+                Resetdata();
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+@*-----------------------------------------------------------------save data---------------------------------------------------*@
+<script type="text/javascript">
+    $(function () {
+        $("#btnsave").click(function (e) {
+            e.preventDefault();
+            var objcompanygroup = {};
+            objcompanygroup.Company_Group_Code = $("#txtcompanygroupcode").val().toUpperCase();
+            objcompanygroup.Company_Group_Name = $("#txtcompanygroupname").val().charAt(0).toUpperCase() + $("#txtcompanygroupname").val().slice(1);
+            objcompanygroup.Currency_Id = $("#ddlcurrency").val();
+            objcompanygroup.Language_Id = $("#ddllanguage").val();
+            objcompanygroup.Company_Image = $("#hdcompanygroupimg").val();
+            // alert(objcompanygroup.Company_Image)
+            objcompanygroup.Company_Group_Id = $("#hdcompanygroup").val();
+            // alert(objcompanygroup.Company_Group_Id)
+            if (objcompanygroup.Company_Group_Code == "" || objcompanygroup.Company_Group_Code == null) {
+                swal("Please enter company group code.");
+
+                $("#txtcompanygroupcode").focus();
+                return;
+            }
+            if (objcompanygroup.Company_Group_Name == "" || objcompanygroup.Company_Group_Name == null) {
+                swal("Please select company group name.");
+
+                $("#txtcompanygroupname").focus();
+                return;
+            }
+            if (objcompanygroup.Currency_Id == "0" || objcompanygroup.Currency_Id == null) {
+                swal("Please select currency.");
+
+                $("#ddlcurrency").focus();
+                return;
+            }
+            if (objcompanygroup.Language_Id == "" || objcompanygroup.Language_Id == null) {
+                swal("Please select company language.");
+
+                $("#ddllanguage").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddCompanyGroup",
+                data: '{objcompanygroup: ' + JSON.stringify(objcompanygroup) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnupdateCompanyGroup").click(function (e) {
+            e.preventDefault();
+            var objcompanygroup = {};
+            objcompanygroup.Company_Group_Code = $("#txtupcompanygroupcode").val().charAt(0).toUpperCase() + $("#txtupcompanygroupcode").val().slice(1);
+            objcompanygroup.Company_Group_Name = $("#txtupcompanygroupname").val().charAt(0).toUpperCase() + $("#txtupcompanygroupname").val().slice(1);
+            objcompanygroup.Currency_Id = $("#ddlupcurrency").val();
+            objcompanygroup.Language_Id = $("#ddluplanguage").val();
+            objcompanygroup.Company_Image = $("#hdcompanygroupimg").val();
+           // alert(objcompanygroup.Company_Image);
+            objcompanygroup.Company_Group_Id = $("#hdcompanygroup").val();
+            if (objcompanygroup.Company_Group_Code == "" || objcompanygroup.Company_Group_Code == null) {
+                swal("Please enter Company Group  Code.");
+                return;
+                $("#txtupcompanygroupcode").focus();
+
+            }
+            if (objcompanygroup.Company_Group_Name == "" || objcompanygroup.Company_Group_Name == null) {
+                swal("Please enter Company Group Name");
+                $("#txtupcompanygroupname").focus();
+                return;
+            }
+
+            if (objcompanygroup.Currency_Id == "" || objcompanygroup.Currency_Id == null) {
+                swal("Please enter Currency Name");
+                $("#ddlupcurrency").focus();
+                return;
+            }
+
+            if (objcompanygroup.Language_Id == "" || objcompanygroup.Language_Id == null) {
+                swal("Please enter Language  Name");
+                $("#ddluplanguage").focus();
+                return;
+            }
+
+
+
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddCompanyGroup",
+                data: '{objcompanygroup: ' + JSON.stringify(objcompanygroup) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata1();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+@*-----------------------------------------------------------------edit data---------------------------------------------------*@
+<script>
+    $(document).on("click", "a.remove", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $companygroupcode = $row.find('td:eq(1)').text();
+        var $name = $row.find('td:eq(2)').text();
+        //var $currency = $row.find('td:eq(3)').text();
+        var $language = $row.find('td:eq(9)').text();
+        var $companyimage = $row.find('td:eq(8)').text();
+        var $id = $row.find('td:eq(6)').text();
+        var $currencyid = $row.find('td:eq(7)').text();
+  
+        $("#div4").show();
+        var output = document.getElementById('imgupcompany');
+        output.src = $companyimage;
+        //}
+        //var output = document.getElementById('profile-img-tag');
+        //output.visibility = "visible";
+        //output.src = companyimage;
+        $("#dialogdivupdateCompanyGroup").modal("show");
+        $("#txtupcompanygroupcode").val($companygroupcode);
+        $("#txtupcompanygroupname").val($name);
+        $("#ddlupcurrency").val($currencyid);
+        $("#ddluplanguage").val($language);
+
+
+        $("#hdcompanygroup").val($id);
+
+        //  alert();
+        $("#hdcompanygroupimg").val($companyimage);
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Update");
+        //$("#btnsave").css('visibility', 'visible');
+        //$("#btnreset").css('visibility', 'visible');
+    });
+</script>
+
+@*-----------------------------------------------------------------delete data---------------------------------------------------*@
+<script>
+    $(document).on("click", "a.delete", function (e) {
+
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(6)').text();
+
+        swal({
+            title: 'Are you sure?',
+            text: '*You want to delete this data?*',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function (value) {
+            if (value) {
+                var objCompanyGroup = {};
+                objCompanyGroup.Company_Group_Id = $id;
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/DeleteCompanyGroup",
+                    data: '{objCompanyGroup: ' + JSON.stringify(objCompanyGroup) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        Getdata();
+                        Resetdata();
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "/assets/js/jquery.dataTables.min.js";
+                        document.getElementsByTagName("body")[0].appendChild(script);
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+                swal("*Your data is safe*");
+            }
+        });
+
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsavecurrency").click(function (e) {
+            e.preventDefault();
+            var objcurrency = {};
+            objcurrency.Currency_Code = $("#txtcurrencycode").val().toUpperCase();
+            objcurrency.Currency_Name = $("#txtcurrencyname").val().charAt(0).toUpperCase() + $("#txtcurrencyname").val().slice(1);
+            objcurrency.International_Code = $("#txtinternationalcode").val();
+            objcurrency.International_Name = $("#txtinternationalname").val().charAt(0).toUpperCase() + $("#txtinternationalname").val().slice(1);
+            objcurrency.Decimal_Unit = $("#txtdecimalunit").val();
+            objcurrency.Currency_Symbol = $("#txtcurrencysymbol").val();
+            objcurrency.Currency_Id = $("#hdcurrency").val();
+            //  alert();
+            if (objcurrency.Currency_Code == "" || objcurrency.Currency_Code == null) {
+                swal("Please enter currency code.");
+                return;
+                $("#txtcurrencycode").focus();
+
+            }
+            if (objcurrency.Currency_Name == "" || objcurrency.Currency_Name == null) {
+                swal("Please enter currency name.");
+                $("#txtcurrencyname").focus();
+                return;
+            }
+            if (objcurrency.International_Code == "" || objcurrency.International_Code == null) {
+                swal("Please enter international code.");
+
+                $("#txtcurrencycode").focus();
+                return;
+            }
+            if (objcurrency.International_Name == "" || objcurrency.International_Name == null) {
+                swal("Please enter international name.");
+                $("#txtcurrencyname").focus();
+                return;
+            }
+            //if (objcurrency.Decimal_Unit == "" || objcurrency.Decimal_Unit == null) {
+            //    swal("Please enter decimal unit.");
+            //    $("#txtdecimalunit").focus();
+            //    return;
+            //}
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddCurrency",
+                data: '{objcurrency: ' + JSON.stringify(objcurrency) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    swal(response);
+                    CurrencyName();
+                    ResetCurrency();
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsavelanguage").click(function (e) {
+            e.preventDefault();
+            var objLanguage = {};
+            objLanguage.Language_Name = $("#txtLanguageName").val().toUpperCase();
+            //objDepartment.Department_Description = $("#txtdepartmentdescription").val();
+            // alert();
+            objLanguage.Language_Id = $("#hdlanguage").val();
+            if (objLanguage.Language_Name == "" || objLanguage.Language_Name == null) {
+                swal("Please enter language name");
+                $("#txtLanguageName").focus();
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddLanguage",
+                data: '{objLanguage: ' + JSON.stringify(objLanguage) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    swal(response);
+                    LangaugeName();
+                    ResetLanguage();
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script>
+    function ResetCurrency() {
+        $("#txtcurrencycode").val("");
+        $("#txtcurrencyname").val("");
+        $("#txtinternationalcode").val("");
+        $("#txtinternationalname").val("");
+        $("#txtdecimalunit").val("");
+        $("#txtcurrencysymbol").val("");
+    }
+    function ResetLanguage() {
+
+        $("#txtLanguageName").val("");
+    }
+</script>
+<script>
+    $(document).on("click", "a.clddlcurrency", function () {
+        $('#dialogdivcurrency').modal('show');
+    });
+    $(document).on("click", "a.clddllanguage", function () {
+        $('#dialogdivlanguage').modal('show');
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $("#btnresetcurrency").click(function (e) {
+          
+            ResetCurrency();
+        });
+        $("#btnresetlanguage").click(function (e) {
+            ResetLanguage();
+        });
+    });
+</script>
+@*------------------------------------------------------------------------------upload excel file-----------------------------------------*@
+<script>
+    $(function () {
+        $("#btnexcel").click(function () {
+            $('#dialogdivexcel').modal('show');
+        });
+    });
+</script>
+<script type="text/javascript">
+    $("body").on("click", "#uploadExcel", function () {
+        Resettable();
+        //Reference the FileUpload element.
+        var fileUpload = $("#fileUpload")[0];
+
+        //Validate whether File is valid Excel file.
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx)$/;
+        if (regex.test(fileUpload.value.toLowerCase())) {
+            if (typeof (FileReader) != "undefined") {
+                var reader = new FileReader();
+
+                //For Browsers other than IE.
+                if (reader.readAsBinaryString) {
+                    reader.onload = function (e) {
+                        ProcessExcel(e.target.result);
+                    };
+                    reader.readAsBinaryString(fileUpload.files[0]);
+                } else {
+                    //For IE Browser.
+                    reader.onload = function (e) {
+                        var data = "";
+                        var bytes = new Uint8Array(e.target.result);
+                        for (var i = 0; i < bytes.byteLength; i++) {
+                            data += String.fromCharCode(bytes[i]);
+                        }
+                        ProcessExcel(data);
+                    };
+                    reader.readAsArrayBuffer(fileUpload.files[0]);
+                }
+            } else {
+                alert("This browser does not support HTML5.");
+            }
+        } else {
+            alert("Please upload a valid Excel file.");
+        }
+    });
+    function ProcessExcel(data) {
+        $('#ExcelDataLoader').show();
+        var workbook = XLSX.read(data, {
+            type: 'binary'
+        });
+        var firstSheet = workbook.SheetNames[0];
+        var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[firstSheet]);
+        // $("#dvExcel").empty();
+        $("#dvExcel").append('<table id="EmpInfocompanygroup" class="table table-bordered table-hover"><thead><tr><th class="left_c w61_i">S. No</th> <th class="left_c">Company Group Code</th> <th class="left_c">Company Group Name</th><th class="left_c">Currency</th> <th class="left_c">Language</th><th class="w155_i">Action</th> </tr></thead><tbody></tbody> </table>')
+        $("#EmpInfocompanygroup > tbody").html("");
+        var count = excelRows.length;
+        for (var i = 0; i < excelRows.length; i++) {
+            var Company_Group_Code = "";
+            var Company_Group_Name = "";
+            var C_Currency = "";
+            var L_Language = ""
+
+            if (excelRows[i].CompanyGroupCode == undefined) {
+
+                Company_Group_Code = "";
+            }
+            else {
+                Company_Group_Code = excelRows[i].CompanyGroupCode;
+
+            }
+
+            if (excelRows[i].CompanyGroupName == undefined) {
+
+                Company_Group_Name = "";
+            }
+            else {
+                Company_Group_Name = excelRows[i].CompanyGroupName;
+
+            }
+            if (excelRows[i].Currency == undefined) {
+
+                C_Currency = "";
+            }
+            else {
+                C_Currency = excelRows[i].Currency;
+
+            }
+
+            if (excelRows[i].Language == undefined) {
+
+                L_Language = "";
+            }
+            else {
+                L_Language = excelRows[i].Language;
+
+            }
+            tr = $('<tr/>');
+            tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+            tr.append("<td class='left_c'>" + Company_Group_Code + "</td>");
+            tr.append("<td class='left_c'>" + Company_Group_Name + "</td>");
+            tr.append("<td class='left_c'>" + C_Currency + "</td>");
+            tr.append("<td class='left_c'>" + L_Language + "</td>");
+            tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a  href='javascript:void(0);' class='deletecompanygroup tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+            $('#EmpInfocompanygroup').append(tr);
+        }
+        $('#EmpInfocompanygroup').DataTable();
+        $('#EmpInfocompanygroup').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count + " entries";
+            }
+        });
+        sessionStorage.setItem("item-count9", count);
+        $('#ExcelDataLoader').hide();
+    };
+</script>
+<script>
+    $(document).on("click", "a.deletecompanygroup", function () {
+
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(0)').text();
+        // $row.hide();
+        //$row.remove();
+        $row.remove().draw(false);
+        var oTable = $('#EmpInfocompanygroup').dataTable();
+
+        var rowcollection = oTable.$("tr", { "page": "all" });
+
+        var count = sessionStorage.getItem("item-count9");
+
+        sessionStorage.setItem("item-count9", (count - 1));
+
+        var count1 = count - 1;
+
+        var table = $('#EmpInfocompanygroup').DataTable({
+            destroy: true,
+            rowReorder: true
+        });
+        table.on('row-reorder', function (e, diff, edit) {
+            var res = '';
+            for (var i = 0, ien = diff.length ; i < ien ; i++) {
+                res += diff[i].newData + '=';
+            }
+            res = res.substring(0, res.length - 1);
+            getVal(res);
+        });
+        $('#EmpInfocompanygroup').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count1 + " entries";
+            }
+        });
+        if (count <= 1) {
+            Resettable();
+        }
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveuploaddb").click(function () {
+            $('#ExcelDataLoader').show();
+            var objcompanygroup = {};
+            objcompanygroup.Company_Group_Code = "";
+            objcompanygroup.Company_Group_Name = "";
+            objcompanygroup.Currency = "";
+            objcompanygroup.Language_Name ="";
+            objcompanygroup.Company_Image ="";
+            objcompanygroup.Company_Group_Id = 0;
+            var oTable = $('#EmpInfocompanygroup').dataTable();
+            var rowcollection = oTable.$("tr", { "page": "all" });
+
+            rowcollection.each(function (index, elem) {
+                var row = $(elem).closest("tr");
+
+                if (objcompanygroup.Company_Group_Name == "") {
+                    objcompanygroup.Company_Group_Code = row.find('td:eq(1)').text().toUpperCase();
+
+                    objcompanygroup.Company_Group_Name = row.find('td:eq(2)').text().charAt(0).toUpperCase() + row.find('td:eq(2)').text().slice(1);
+
+                    objcompanygroup.Currency = row.find('td:eq(3)').text().charAt(0).toUpperCase() + row.find('td:eq(3)').text().slice(1);
+                    objcompanygroup.Language_Name = row.find('td:eq(4)').text().charAt(0).toUpperCase() + row.find('td:eq(4)').text().slice(1);
+
+                }
+                else {
+
+                    objcompanygroup.Company_Group_Code = objcompanygroup.Company_Group_Code + "," + row.find('td:eq(1)').text().toUpperCase();
+                    objcompanygroup.Company_Group_Name = objcompanygroup.Company_Group_Name + "," + row.find('td:eq(2)').text().charAt(0).toUpperCase() + row.find('td:eq(2)').text().slice(1);
+                    objcompanygroup.Currency = objcompanygroup.Currency + "," + row.find('td:eq(3)').text().charAt(0).toUpperCase() + row.find('td:eq(3)').text().slice(1)
+                    objcompanygroup.Language_Name = objcompanygroup.Language_Name + "," + row.find('td:eq(4)').text().charAt(0).toUpperCase() + row.find('td:eq(4)').text().slice(1)
+            
+                }
+            });
+            var rowCount = $('#EmpInfocompanygroup tr').length;
+            if (rowCount <= 1) {
+                swal("please upload excel file for data upload.");
+                return;
+            }
+            if (rowCount > 1 && objcompanygroup.Company_Group_Name == "") {
+                swal("no data in table.");
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddBulkCompanyGroup",
+                data: '{objcompanygroup: ' + JSON.stringify(objcompanygroup) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    CurrencyName();
+                    LangaugeName();
+                    Resettable();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+                    $('#ExcelDataLoader').hide();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+        $("#btnresetcompanygroup").click(function () {
+            Resettable();
+        });
+        $('#fileUpload').change(function (e) {
+
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+    });
+</script>
+<script>
+    function Resettable() {
+        $("#dvExcel").empty();
+        $('#spnfile').text("");
+        $('#spnfile').append('<span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span>')
+    }
+</script>
+<style>
+.clddl_plus {
+    float: right;
+    left: 5px;
+    position: absolute!important;
+    top: 9px;
+    font-size: 13px;
+}  
+</style>
+<style type="text/css">
+    body {
+        margin: 0;
+        background: #e6e6e6;
+    }
+
+    .img {
+        width: 200px;
+        height: 200px;
+    }
+
+    .showSlide {
+        display: none;
+    }
+
+    /* .showSlide img {
+            width: 100%;
+        }*/
+
+    .slidercontainer {
+        max-width: 1000px;
+        position: relative;
+        margin: auto;
+        border: dotted 1px;
+        width: 200px;
+        height: 200px;
+        margin-left: 129px;
+    }
+
+    .left, .right {
+        cursor: pointer;
+        position: absolute;
+        top: 100%;
+        width: auto;
+        padding: 16px;
+        margin-top: -22px;
+        font-weight: bold;
+        font-size: 18px;
+        transition: 0.6s ease;
+        border-radius: 0 3px 3px 0;
+    }
+
+    .right {
+        right: 0;
+        border-radius: 3px 0 0 3px;
+    }
+
+    /* .left:hover, .right:hover {
+            background-color: rgba(115, 115, 115, 0.8);
+        }*/
+
+    .content {
+        color: #eff5d4;
+        font-size: 30px;
+        padding: 8px 12px;
+        position: absolute;
+        top: 10px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .showSlide .active {
+        background-color: #717171;
+    }
+    /* Fading animation */
+    .fade {
+        -webkit-animation-name: fade;
+        -webkit-animation-duration: 10000000.5s;
+        animation-name: fade;
+        animation-duration: 1000000.5s;
+    }
+
+    .img {
+        width: 100%;
+        height: 200px;
+    }
+
+    @@-webkit-keyframes fade {
+        from {
+            opacity: .4;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @@keyframes fade {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    .space-4, [class*=vspace-4] {
+        max-height: 1px;
+        min-height: 1px;
+        overflow: hidden;
+        margin: 0px 0 0px;
+    }
+</style>
+<style type="text/css">
+    body {
+        margin: 0;
+        background: #e6e6e6;
+    }
+
+    .img {
+        width: 200px;
+        height: 200px;
+    }
+
+    .showSlide1 {
+        display: none;
+    }
+
+    /* .showSlide img {
+            width: 100%;
+        }*/
+
+    .slidercontainer1 {
+        max-width: 1000px;
+        position: relative;
+        margin: auto;
+        border: dotted 1px;
+        width: 200px;
+        height: 200px;
+        margin-left: 129px;
+    }
+
+    .left, .right {
+        cursor: pointer;
+        position: absolute;
+        top: 100%;
+        width: auto;
+        padding: 16px;
+        margin-top: -22px;
+        font-weight: bold;
+        font-size: 18px;
+        transition: 0.6s ease;
+        border-radius: 0 3px 3px 0;
+    }
+
+    .right {
+        right: 0;
+        border-radius: 3px 0 0 3px;
+    }
+
+    /* .left:hover, .right:hover {
+            background-color: rgba(115, 115, 115, 0.8);
+        }*/
+
+    .content1 {
+        color: #eff5d4;
+        font-size: 30px;
+        padding: 8px 12px;
+        position: absolute;
+        top: 10px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .showSlide1 .active {
+        background-color: #717171;
+    }
+    /* Fading animation */
+    .fade {
+        -webkit-animation-name: fade;
+        -webkit-animation-duration: 10000000.5s;
+        animation-name: fade;
+        animation-duration: 1000000.5s;
+    }
+
+    .img {
+        width: 100%;
+        height: 200px;
+    }
+
+    @@-webkit-keyframes fade {
+        from {
+            opacity: .4;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @@keyframes fade {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    .space-4, [class*=vspace-4] {
+        max-height: 1px;
+        min-height: 1px;
+        overflow: hidden;
+        margin: 0px 0 0px;
+    }
+</style>
+<script>
+    var PClevel = '';
+    document.onpaste = function (event) {
+        //$("#div2").show();
+
+        var items = (event.clipboardData || event.originalEvent.clipboardData).items;
+        console.log(JSON.stringify(items));
+        var val1 = $("#txtupcompanygroupcode").val();
+        var val2 = $("#txtupcompanygroupname").val();
+        $("#div2").show();
+        $("#div4").hide();
+        if (val1 == "") {
+            val1 = $("#txtcompanygroupcode").val();
+            val2 = $("#txtcompanygroupname").val();
+
+        }
+        else {
+            val1 = $("#txtupcompanygroupcode").val();
+            val2 = $("#txtupcompanygroupname").val();
+            $("#div2").hide();
+            $("#div4").show();
+        }
+        var blob = null;
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf("image") === 0) {
+                blob = items[i].getAsFile();
+                var filename = blob.name;
+                var ext = filename.split('.').reverse()[0].toLowerCase();
+
+                var fileData = new FormData();
+                fileData.append('file', blob);
+                fileData.append('Id', "company" + val1.split(" ").join("").trim() + val2.split(" ").join("").trim());
+
+                $.ajax({
+                    url: '/Master/UploadCompanyImage',
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    success: function (result) {
+                        //PClevel = $("#hdcompanygroupimg").val();
+                        var f = result.split('+');
+                        //if (PClevel == "") {
+                        PClevel = f[1];
+                        // }
+                        //else {
+                        //    PClevel = PClevel + "," + f[1];
+                        //}
+                        // alert(PClevel);
+                        $("#hdcompanygroupimg").val(PClevel);
+
+
+                    },
+                    error: function (err) {
+                        alert(err.statusText);
+                    }
+                });
+            }
+        }
+        if (blob !== null) {
+
+            var reader = new FileReader();
+            reader.onload = function (event) {
+                //if (val1 == "") {
+                    document.getElementById('imgcompany').src = event.target.result;
+                    //$("#div2").show();
+                //}
+                //else {
+                    //$("#div2").hide();
+                    document.getElementById('imgupcompany').src = event.target.result;
+
+               // }// data url!
+               
+            };
+            var slides = document.getElementsByClassName("showSlide1");
+
+            currentSlide(1);
+
+
+            reader.readAsDataURL(blob);
+        }
+    }
+
+</script>
+
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+        <div class="main-content">
+            <div class="main-content-inner top-padding">
+
+                <div class="breadcrumbs ace-save-state" id="breadcrumbs" style=" z-index: -1 !IMPORTANT;">
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="ace-icon fa fa-home home-icon"></i>
+                            <a href="#">PMS Setting</a>
+                        </li>
+
+                        <li>
+                            <a href="#">Administration Setting</a>
+                        </li>
+                        <li class="active">Company Grouping</li>
+                    </ul><!-- /.breadcrumb -->
+                    @*<div class="nav-search" id="nav-search">
+                <div class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>*@<!-- /.nav-search -->
+                </div>
+
+                <div class="page-content1">
+
+                    @*------------------------------------------start currency popup---------------------------------------------------*@
+                    <div class="modal fade" id="dialogdivcurrency">
+                        <div class="modal-dialog modal-md modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">×</a>
+                                    <h3 class="item_hedin">Add Currency </h3>
+                                </div>
+                                <div class="modal-body" style="padding-left:5px">
+                                    <div class="row">
+                                        <div class="col-md-3">Currency Code <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtcurrencycode" style="text-transform:uppercase" placeholder="Currency Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency code" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3">Currency Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtcurrencyname" style="text-transform:capitalize" placeholder="Currency Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency name" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3" style="padding-right:2px">International Code <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtinternationalcode" placeholder="International Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for international code" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3" style="padding-right:2px">International Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtinternationalname" style="text-transform:capitalize;" placeholder="International Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for international Name" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3">Decimal Unit <span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtdecimalunit" placeholder="Decimal Unit" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for decimal unit" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3">Currency Symbol <span> : </span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtcurrencysymbol" placeholder="Currency Symbol" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency symbol" />
+                                        </div>
+                                    </div>
+
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9">
+                                            <button class="btn btn-info" id="btnsavecurrency" type="button" data-toggle="tooltip" title="Button for save data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Submit
+                                            </button>
+                                            <button class="btn master-page-reset" id="btnresetcurrency" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="dialogdivlanguage">
+                        <div class="modal-dialog modal-md modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">×</a>
+                                    <h3 class="item_hedin">Add Language </h3>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-3">Language Name <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                        <div class="col-md-9">
+                                            <input type="text" id="txtLanguageName" style="text-transform:uppercase" placeholder="Language Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for language name " />
+                                        </div>
+                                    </div>
+
+
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9">
+                                            <button class="btn btn-info" id="btnsavelanguage" type="button" data-toggle="tooltip" title="Button for save data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Submit
+                                            </button>
+                                            <button class="btn master-page-reset" id="btnresetlanguage" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @*-----------------------------------------/end Currency master-----------------------------------------------------------*@
+                    @*--------------------------------------------------------update Company Group -------------------------------------------------------*@
+                    <div class="modal fade" id="dialogdivupdateCompanyGroup">
+                        <div class="modal-dialog modal-md modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">×</a>
+                                    <h3 class="item_hedin">Update Company Group </h3>
+                                </div>
+                                <div class="modal-body">
+
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-4">Company Group Code <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-8">
+                                            <input type="text" id="txtupcompanygroupcode" style="text-transform:uppercase" placeholder="Company Group Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for Company Group Code" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-4">Company Group Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                        <div class="col-md-8">
+                                            <input type="text" id="txtupcompanygroupname" style="text-transform:capitalize" placeholder="Company Group Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for Company Group Name" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-4">Currency <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                        <div class="col-md-8">
+
+                                            <select class="col-xs-10 col-sm-8" id="ddlupcurrency" data-toggle="tooltip" title="Select Currency">
+                                                <option>-Select Currency-</option>
+
+                                            </select>
+
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-4">Language <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                        <div class="col-md-8">
+
+                                            <select class="col-xs-10 col-sm-8" id="ddluplanguage" data-toggle="tooltip" title="Select Language">
+                                                <option>-Select Language-</option>
+
+                                            </select>
+
+
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-4">Image<span> : </span></div>
+                                        <div class="col-md-8">
+                                            <div id="copypaste" class="col-sm-12">
+                                                <div id="div3" class="slidercontainer1">
+                                                    <div id="div4" class="showSlide1 fade">
+                                                        <img id="imgupcompany" class="img" />
+                                                    </div>
+
+                                                </div>
+
+                                                <script type="text/javascript">
+                                                    var slide_index = 1;
+                                                    displaySlides(slide_index);
+
+                                                    function nextSlide(n) {
+                                                        displaySlides(slide_index += n);
+                                                    }
+
+                                                    function currentSlide(n) {
+                                                        displaySlides(slide_index = n);
+                                                    }
+
+                                                    function displaySlides(n) {
+                                                        var i;
+                                                        var slides = document.getElementsByClassName("showSlide1");
+                                                        if (n > slides.length) { slide_index = 1 }
+                                                        if (n < 1) { slide_index = slides.length }
+                                                        for (i = 0; i < slides.length; i++) {
+                                                            slides[i].style.display = "none";
+                                                        }
+                                                        slides[slide_index - 1].style.display = "block";
+                                                    }
+                                                </script>
+                                                @*<div class="space-8"></div>*@
+                                                <label class="ctrl_txt1">Open image and copy with 'Ctrl + c' and paste with 'Ctrl + v'</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9">
+                                            <button class="btn btn-info" id="btnupdateCompanyGroup" type="button" data-toggle="tooltip" title="Button for update data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Update
+                                            </button>
+                                            <button class="btn master-page-reset" id="btnresetupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-header">
+                        <h3 class="item_hedin">
+                            Company Grouping
+                        </h3>
+                    </div><!-- /.page-header -->
+                    <div style="width:100%">
+                        <div style="width: 75%;float: left;">
+                            <div class="row">
+                                <div class="col-xs-8">
+                                    <!-- PAGE CONTENT BEGINS -->
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label no-padding-right" for="form-field-1"> Company Group Code <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-8">
+                                            <input type="text" id="txtcompanygroupcode" style="text-transform:uppercase" placeholder="Company Group Code" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for company group code" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-xs-8">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label no-padding-right" for="form-field-1"> Company Group Name <span style="color:red;font-size:14px;">*</span></label>
+
+                                        <div class="col-sm-8">
+                                            <input type="text" id="txtcompanygroupname" style="text-transform:capitalize" placeholder="Company Group Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for company group name" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-xs-8">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label no-padding-right" for="form-field-1"> Currency <span style="color:red;font-size:14px;">*</span></label>
+
+
+                                        <div class="col-sm-8">
+                                            <select class="col-xs-10 col-sm-9" id="ddlcurrency" data-toggle="tooltip" title="select currency">
+                                                <option>-Select Currency-</option>
+
+
+                                            </select><sup style=" top: .5em; left: .5em;"><a class="clddlcurrency clddl_plus" data-toggle='tooltip' title='Add new currency'><i class="fa fa-plus"></i></a></sup>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="space-2"></div>
+                            <div class="row">
+                                <div class="col-xs-8">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label no-padding-right" for="form-field-1"> Language </label>
+
+                                        <div class="col-sm-8">
+                                            @*<input type="text" id="txtlanguage" style="text-transform:capitalize" placeholder="Language" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for language" />*@
+                                            <select class="col-xs-10 col-sm-9" id="ddllanguage" data-toggle="tooltip" title="Select language name">
+                                                <option>-Select language-</option>
+
+                                            </select><sup style=" top: .5em; left: .5em;"><a class="clddllanguage clddl_plus" data-toggle='tooltip' title='Add new language'><i class="fa fa-plus"></i></a></sup>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            @*<div class="space-4"></div>*@
+                            <div class="row" style="display:none">
+
+                                <div class="col-xs-8">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Images </label>
+                                        <div class="col-xs-9">
+                                            <label class="ace-file-input"><input type="file" onchange="loadFile(event)" id="profile-img"><span class="ace-file-container" data-title="Choose"><span class="ace-file-name" data-title="No File ..."></span></span></label>
+                                            <input type="hidden" id="hdcompanygroupimg" />
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                        <div style="width: 25%;float: left;" id="dvPreview1">
+                            <div id="copypaste" class="col-sm-12">
+                                <div id="div1" class="slidercontainer">
+                                    <div id="div2" class="showSlide fade">
+                                        <img id="imgcompany" class="img" />
+                                    </div>
+                                    @*<a id="a_left" class="left" onclick="nextSlide(-1)">❮</a>
+                                <a id="a_right" class="right" onclick="nextSlide(1)">❯</a>*@
+                                </div>
+
+                                <script type="text/javascript">
+                                    var slide_index = 1;
+                                    displaySlides(slide_index);
+
+                                    function nextSlide(n) {
+                                        displaySlides(slide_index += n);
+                                    }
+
+                                    function currentSlide(n) {
+                                        displaySlides(slide_index = n);
+                                    }
+
+                                    function displaySlides(n) {
+                                        var i;
+                                        var slides = document.getElementsByClassName("showSlide");
+                                        if (n > slides.length) { slide_index = 1 }
+                                        if (n < 1) { slide_index = slides.length }
+                                        for (i = 0; i < slides.length; i++) {
+                                            slides[i].style.display = "none";
+                                        }
+                                        slides[slide_index - 1].style.display = "block";
+                                    }
+                                </script>
+                                <div class="space-8"></div>
+                                <label class="ctrl_txt1">Open image and copy with 'Ctrl + c' and paste with 'Ctrl + v'</label>
+                            </div>
+
+
+
+                            @*<input type="image" id="profile-img-tag" style="width: 100%;height: auto;max-height: 180px;" />*@
+                        </div>
+                        @*<button id="btnUploadimage" class="btn btn-info"><i class="ace-icon fa fa-cloud-upload">Upload</i></button>*@
+                    </div>
+                    <style>
+                        .ctrl_txt1 {
+                            color: #161515;
+                            text-align: center;
+                            width: 100%;
+                            font-size: 10px;
+                            margin-bottom: 0px;
+                            padding-bottom: 0px;
+                            display: block;
+                        }
+                    </style>
+                    @*----------------------------------------------------popup for upload master data--------------------------------------------------------------*@
+                    <div id="dialogdivexcel" class="modal fade" style="margin-top:0px!important;overflow:auto!important">
+                        <div class="modal-dialog modal-lg modal-dialog-centered " style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
+                            <div class="modal-content" style="width:100% !important;padding-bottom:22px">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">×</a>
+                                    <h3 class="item_hedin">Upload Excel File </h3>
+                                </div>
+                                <div class="modal-body">
+
+                                    <div class="row">
+
+                                        <div class="col-md-3">Choose excel file <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                        <div class="col-sm-9">
+                                            <div class="col-xs-8 pr-0">
+
+                                                <label class="ace-file-input upload_fl1"><input type="file" id="fileUpload" accept=".xls,.xlsx"><span class="ace-file-container upload_fl" id="spnfile" data-title="Choose"><span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                            </div>
+                                            <div class="col-xs-4">
+                                                <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                                <input type="button" id="uploadExcel" class="btn btn-info upload-bt" value="Upload" onclick="ExportToTable()" />
+                                                <div id="ExcelDataLoader" class="loader">
+                                                    <img src="~/Images/1.gif" height="70" width="60" />
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                        <div class="space-6"></div>
+                                        <div class="row" style="padding-top:45px">
+                                            <div class="col-xs-12">
+                                                <div class="form-horizontal">
+                                                    <div id="dvExcel"></div>
+
+                                                </div>
+
+                                            </div><!-- /.span -->
+                                        </div><!-- /.row -->
+                                    </div>
+
+                                    <div class="space-4"></div>
+                                    <div class="row">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9">
+                                            <button class="btn btn-info" id="btnsaveuploaddb" type="button" data-toggle="tooltip" title="Button for save data">
+                                                <i class="ace-icon fa fa-floppy-o"></i>
+                                                Submit
+                                            </button>
+                                            <button class="btn master-page-reset" id="btnresetcompanygroup" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @*---------------------------------------------------------------------------------------------------------------------------------------*@
+
+
+
+
+                    <div class="space-4"></div>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="hidden" id="hdcompanygroup" />
+                            <div class="clearfix form-actions">
+                                <div class="col-md-offset-0 col-md-12">
+                                    <a href="~/excelFile/companygroupmaster.xlsx">Download Template</a>
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn btn-info" id="btnexcel" type="button" data-toggle="tooltip" style="width: auto;" title="Button for excel data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Upload Excel File
+                                    </button>
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn btn-info" type="button" id="btnsave" data-toggle="tooltip" title="Button for save data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Submit
+                                    </button>
+
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn" type="reset" id="btnreset" data-toggle="tooltip" title="Button for reset data">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+
+
+
+
+
+
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="form-horizontal">
+                                <div class="table-header">
+                                    Current Record
+                                </div>
+                                <div id="divtbl"></div>
+
+
+                            </div>
+
+                        </div><!-- /.span -->
+                    </div><!-- /.row -->
+
+                </div>
+            </div>
+        </div>
+@*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>
+@*<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<link href="~/assets/css/colReorder.dataTables.css" rel="stylesheet" />
+<link href="~/assets/css/responsive.dataTables.css" rel="stylesheet" />
+<script src="~/assets/js/dataTables.colReorder.js"></script>
+<script src="~/assets/js/dataTables.responsive.js"></script>
+
+<link href="~/assets/css/rowReorder.dataTables.min.css" rel="stylesheet" />
+
+
+<script>
+
+    $(document).ready(function () {
+        // GetData1();
+        //$('#pending_from').dataTable({
+        //    colReorder: {
+        //        order: [4, 3, 2, 1, 0, ]
+        //    }
+        //});
+        $('#EmpInfo').dataTable({
+            colReorder: {
+                order: [0, 1, 2, 3, 4]
+            }
+        });
+    });
+
+
+
+</script>

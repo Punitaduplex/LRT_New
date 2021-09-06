@@ -1,0 +1,15 @@
+<?xml version="1.0" standalone="yes"?>
+<NewDataSet>
+  <Table>
+    <internalItemCode>ACC0000001</internalItemCode>
+    <itemDescription>Desc</itemDescription>
+    <itemManufacture />
+    <itemManufacturingPartNumber>MPN01</itemManufacturingPartNumber>
+  </Table>
+  <Table>
+    <internalItemCode>ACC0000001</internalItemCode>
+    <itemDescription>RS PRO Cable Clamp Black Stainless Steel Cable Tie</itemDescription>
+    <itemManufacture />
+    <itemManufacturingPartNumber>743-6361</itemManufacturingPartNumber>
+  </Table>
+</NewDataSet>

@@ -1,0 +1,311 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+<style>
+     .nav > li > a {
+    padding: 1px 15px;
+}
+     .navbar-default .navbar-brand {
+    color: #fff !important;
+}
+</style>
+@*<script>
+    var geocoder;
+    var map;
+    var marker;
+
+    /*
+     * Google Map with marker
+     */
+    function initialize() {
+        var initialLat = $('.search_latitude').val();
+        var initialLong = $('.search_longitude').val();
+        initialLat = initialLat?initialLat:36.169648;
+        initialLong = initialLong?initialLong:-115.141000;
+
+        var latlng = new google.maps.LatLng(initialLat, initialLong);
+        var options = {
+            zoom: 16,
+            center: latlng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+
+        map = new google.maps.Map(document.getElementById("geomap"), options);
+
+        geocoder = new google.maps.Geocoder();
+
+        marker = new google.maps.Marker({
+            map: map,
+            draggable: true,
+            position: latlng
+        });
+
+        google.maps.event.addListener(marker, "dragend", function () {
+            var point = marker.getPosition();
+            map.panTo(point);
+            geocoder.geocode({'latLng': marker.getPosition()}, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    map.setCenter(results[0].geometry.location);
+                    marker.setPosition(results[0].geometry.location);
+                    $('.search_addr').val(results[0].formatted_address);
+                    $('.search_latitude').val(marker.getPosition().lat());
+                    $('.search_longitude').val(marker.getPosition().lng());
+                }
+            });
+        });
+
+    }
+
+    $(document).ready(function () {
+        //load google map
+        initialize();
+
+        /*
+         * autocomplete location search
+         */
+        var PostCodeid = '#search_location';
+        $(function () {
+            $(PostCodeid).autocomplete({
+                source: function (request, response) {
+                    geocoder.geocode({
+                        'address': request.term
+                    }, function (results, status) {
+                        response($.map(results, function (item) {
+                            return {
+                                label: item.formatted_address,
+                                value: item.formatted_address,
+                                lat: item.geometry.location.lat(),
+                                lon: item.geometry.location.lng()
+                            };
+                        }));
+                    });
+                },
+                select: function (event, ui) {
+                    $('.search_addr').val(ui.item.value);
+                    $('.search_latitude').val(ui.item.lat);
+                    $('.search_longitude').val(ui.item.lon);
+                    var latlng = new google.maps.LatLng(ui.item.lat, ui.item.lon);
+                    marker.setPosition(latlng);
+                    initialize();
+                }
+            });
+        });
+        /*
+       * Point location on google map
+       */
+        $('.get_map').click(function (e) {
+            var address = $(PostCodeid).val();
+            geocoder.geocode({'address': address}, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    map.setCenter(results[0].geometry.location);
+                    marker.setPosition(results[0].geometry.location);
+                    $('.search_addr').val(results[0].formatted_address);
+                    $('.search_latitude').val(marker.getPosition().lat());
+                    $('.search_longitude').val(marker.getPosition().lng());
+                } else {
+                    alert("Geocode was not successful for the following reason: " + status);
+                }
+            });
+            e.preventDefault();
+        });
+
+        //Add listener to marker for reverse geocoding
+        google.maps.event.addListener(marker, 'drag', function () {
+            geocoder.geocode({'latLng': marker.getPosition()}, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    if (results[0]) {
+                        $('.search_addr').val(results[0].formatted_address);
+                        $('.search_latitude').val(marker.getPosition().lat());
+                        $('.search_longitude').val(marker.getPosition().lng());
+                    }
+                }
+            });
+        });
+    });
+    </script>*@
+<style>
+    .img_icon {
+        height: 80px !important;
+        margin: 39px !important;
+    }
+</style>
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+<div class="main-content">
+    <div class="main-content-inner top-padding">
+        <div>
+            <a href="/Master/ItemMaster"> <img src="~/Images/add_item.png" class="img_icon" /></a>
+        </div>
+        @*<input type="text" name="long" id="long" value="">
+            <input type="text" name="lat" id="lat" value="">
+            <button id="getCords" onclick="codeAddress();">getLat&Long</button>
+            <div id="dvMap" style="width: 400px; height: 200px">
+            </div>
+            <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsMiKqDK54UQRma7dXEFoNSEfX4Bn8f8g"></script>
+            <script type="text/javascript" src="https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDsMiKqDK54UQRma7dXEFoNSEfX4Bn8f8g"></script>
+            <script type="text/javascript">
+
+                function initialize() {
+
+                    var canvas = $("#dvMap");
+
+                    var latitude =document.getElementById('lat').value;
+                    // alert(latitude);"26.4536767"
+                    var longitude = document.getElementById('long').value;
+                    // "80.2878686";//
+                    var latlng = new google.maps.LatLng(latitude, longitude);
+                    var options = {
+                        zoom: 8,
+                        center: latlng,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    };
+                    var map = new google.maps.Map(canvas[0], options);
+
+                    var marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(latitude, longitude),
+                        draggable: true,
+                        map: map
+                    });
+                    google.maps.event.addListener(marker, 'dragend', function (event) {
+                        document.getElementById("lat").value = this.getPosition().lat();
+                        document.getElementById("long").value = this.getPosition().lng();
+                    });
+                }
+                var myVar;
+                $(function () {
+                    initGeolocation();
+                    myVar = setTimeout(initialize, 100);
+                    //initialize();
+                });
+
+            </script>
+
+            <script type="text/javascript">
+                function initGeolocation() {
+                    if (navigator.geolocation) {
+
+                        // Call getCurrentPosition with success and failure callbacks
+                        navigator.geolocation.watchPosition(success, error);
+                        // initialize();
+                    }
+                    else {
+                        alert("Sorry, your browser does not support geolocation services.");
+                    }
+                }
+
+                function success(position) {
+                    alert("1");
+                    document.getElementById('long').value = position.coords.longitude;
+                    document.getElementById('lat').value = position.coords.latitude
+                }
+
+                function error(err) {
+                    alert();
+                    // Could not obtain location
+                }
+
+            </script>
+            <script>
+                //const demo = document.getElementById('demo');
+                function error(error) {
+                    //document.getElementById('long').value = `Failed to locate. Error: ${err.message}`;
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            alert("User denied the request for Geolocation.")
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            alert("Location information is unavailable.")
+                            break;
+                        case error.TIMEOUT:
+                            alert("The request to get user location timed out.")
+                            break;
+                        case error.UNKNOWN_ERROR:
+                            alert("An unknown error occurred.")
+                            break;
+                    }
+                }
+
+                function success(position) {
+                    document.getElementById('long').value = position.coords.longitude;
+                    document.getElementById('lat').value = position.coords.latitude
+                }
+
+                function getGeolocation() {
+                    if (navigator.geolocation) {
+                        document.getElementById('long').value = 'Locating…';
+                        navigator.geolocation.watchPosition(success, error);
+                    } else {
+                        document.getElementById('long').value = 'Geolocation is not supported by this browser.';
+                    }
+                }
+            </script>*@
+
+
+
+        @*<script>
+                function codeAddress() {
+                    geocoder = new google.maps.Geocoder();
+                    var address = "Lucknow";
+                    geocoder.geocode({ 'address': address }, function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+
+                            alert("Latitude: " + results[0].geometry.location.lat());
+                            alert("Longitude: " + results[0].geometry.location.lng());
+                        }
+
+                        else {
+                            alert("Geocode was not successful for the following reason: " + status);
+                        }
+                    });
+                }
+            </script>*@
+
+    </div>
+</div>
+@*</div>
+    </div>*@

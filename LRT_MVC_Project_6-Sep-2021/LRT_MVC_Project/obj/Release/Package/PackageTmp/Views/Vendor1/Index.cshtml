@@ -1,0 +1,177 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/_Layout.cshtml";
+}
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+     <style type="text/css">
+        body { font-family: Arial; font-size: 10pt; }
+        .Grid { border: 1px solid #ccc; border-collapse: collapse; background-color: #fff; }
+        .Grid th { background-color: #B8DBFD; color: #333; font-weight: bold; }
+        .Grid th, .Grid td { padding: 5px; border: 1px solid #ccc; }
+        .Grid img { cursor:pointer; }
+        .ChildGrid { width: 100%; }
+        .ChildGrid th { background-color: #6C6C6C; color: #fff; font-weight: bold; }
+    </style>
+<style>
+    #EmpInfo1 {
+    width: 69.7% !important;
+    margin-top: 135px;
+    position: absolute;
+    width: 100%;
+    z-index: 9;
+    left: 439px;
+}
+</style>
+<script>
+    var myVar;
+    $(document).ready(function () {
+        Getdata();
+        //myVar = setTimeout(Getdata1, 50);
+        // Resetdata();
+    });
+</script>
+<script>
+    function Getdata() {
+        $("#EmpInfo > tbody").html("");
+        $.getJSON("/Master/CountryDetails",
+            function (json) {
+                var tr;
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td style='text-align:center'> <img src='/Images/plus.png'/> <div style='display:none;padding-top:100px'><table id='EmpInfo1' cellpadding='0' cellspacing='0' class='ChildGrid table table-bordered table-hover'><tr><th></th><th>code</th><th>name</th><th style='display:none;'></th></tr></table></div></td>");
+                    tr.append("<td class='left_c'>" + json[i].Country_Code + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Country_Name + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Country_Id + "</td>");
+                   
+                    $('#EmpInfo').append(tr);
+                }
+                $('#EmpInfo').DataTable();
+            });
+    }
+</script>
+
+
+<script>
+    function Getdata1() {
+       // alert();
+        $("#EmpInfo1 > tbody").html("");
+        
+        $.getJSON("/Master/StateDetails",
+            function (json) {
+                alert(json.length);
+                var tr;
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td style='text-align:center'><img src='/Images/plus-Copy.png'/> <div style='display:none'><table id='EmpInfo2' cellpadding='0' cellspacing='0' class='ChildGrid table table-bordered table-hover'><tr><th></th><th>code</th><th>name</th><th style='display:none;'></th></tr></table></div></td>");
+                    tr.append("<td class='left_c'>" + json[i].State_Code + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].State_Name + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].State_Id + "</td>");
+
+                    $('#EmpInfo1').append(tr);
+                }
+                $('#EmpInfo1').DataTable();
+            });
+    }
+</script>
+<script>
+    function Getdata2() {
+        // alert();
+        $("#EmpInfo1 > tbody").html("");
+
+        $.getJSON("/Master/CityDetails",
+            function (json) {
+                alert(json.length);
+                var tr;
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td style='text-align:center'>"+(i+1)+"</td>");
+                    tr.append("<td class='left_c'>" + json[i].City_Name + "</td>");
+                   // tr.append("<td class='left_c'>" + json[i].State_Name + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].City_Id + "</td>");
+
+                    $('#EmpInfo1').append(tr);
+                }
+                $('#EmpInfo1').DataTable();
+            });
+    }
+</script>
+
+<table id="EmpInfo1" cellpadding="0" cellspacing="0" class="Grid table table-bordered table-hover"><tr><th></th><th>code</th><th>name</th><th style="display:none;"></th></tr><tbody></tbody></table>
+
+<div style="width:100%" class="m_27">
+    <div style="width:18% ; float:left" class="menu_border">
+        <div class="side_bar_main">
+            
+            @{ Html.RenderAction("SideMenu", "Master");}
+
+        </div>
+
+    </div><div style="width:82% ; float:left">
+        @*<div class="main-content">
+            <div class="main-content-inner">*@
+                @*<div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="ace-icon fa fa-home home-icon"></i>
+                            <a href="#">Vendor</a>
+                        </li>
+
+                        <li>
+                            <a href="/Vendor/Dashboard">Vendor Master</a>
+                        </li>
+                        <li class="active">Standby Vendor</li>
+                    </ul>
+
+                </div>*@
+
+
+                <div class="page-content">
+                    <div class="page-header">
+                        <h3 class="item_hedin">
+                            Stand By Vendor
+                        </h3>
+                    </div><!-- /.page-header -->
+                    <table id="EmpInfo" cellpadding="0" cellspacing="0" class="Grid table table-bordered table-hover">
+                        <tr>
+                            <th></th>
+                            <th>code</th>
+                            <th>country</th>
+                            <th style="display:none;"></th>
+                        </tr>
+                        <tbody></tbody>
+
+                    </table>
+                    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+                    <script type="text/javascript">
+                        //Assign Click event to Plus Image.
+                        $("body").on("click", "img[src*='plus.png']", function () {
+                          
+                            //$(this).closest("tr").after("<tr><td></td><td colspan = '999'>" + $(this).next().html() + "</td></tr>");
+                            Getdata2();
+                            $(this).attr("src", "/Images/minus.png");
+                        });
+                        //Assign Click event to Minus Image.
+                        $("body").on("click", "img[src*='minus.png']", function () {
+                            $(this).attr("src", "/Images/plus.png");
+                            $(this).closest("tr").next().remove();
+                        });
+                        $("body").on("click", "img[src*='plus-Copy.png']", function () {
+
+                            $(this).closest("tr").after("<tr><td></td><td colspan = '999'>" + $(this).next().html() + "</td></tr>");
+                            Getdata2();
+                            $(this).attr("src", "/Images/minus-Copy.png");
+                        });
+                        $("body").on("click", "img[src*='minus-Copy.png']", function () {
+                            $(this).attr("src", "/Images/plus-Copy.png");
+                            $(this).closest("tr").next().remove();
+                        });
+                    </script>
+</div><!-- /.col -->
+                    </div>
+                </div>
+            @*</div>
+        </div>*@
+ 

@@ -1,0 +1,56 @@
+﻿<div id="dlgQRReader">
+    @*<script type="text/javascript" src="@Url.Content("~/Common/InspectionControl/Scripts/instascan.min.js")"></script>*@
+    <script src="~/Scripts/instascan.min.js"></script>
+    <video id="preview" autoplay="autoplay" width="267" height="200" style="border: 1px solid black"></video>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dlgQRReader').dialog({
+                title: 'QR Reader',
+                width: 270,
+                modal: true,
+                resizable: false,
+                close: function () {
+                    $('#' + this.id).dialog('destroy').remove();
+                }
+            });
+
+            var scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+
+            scanner.addListener('scan', function (content) {
+                // var Querystring = content;
+                // var sURLVariables = Querystring.split('&');
+                //var URLValues;
+                @*if (sURLVariables.length > 0) {
+                    for (i = 0; i < sURLVariables.length; i++) {
+                        URLValues = sURLVariables[i].split('=');
+                        $('#' + URLValues[0]).val(URLValues[1])
+                    }
+                   // var QRDate = $('#QRDate').val();
+                    //var ExpiryDate = $("#ExpiryDate").val();
+                    //var dtQRDate = new Date(QRDate);
+                    //var dtExpiryDate = new Date(ExpiryDate);
+
+                    if (QRDate <= ExpiryDate)
+                    {
+                    $('#SelectedOperatorID').val(@Session["Userid"]);
+                    SubmitFormData($(this));
+                      }
+                     else { jAlert('QR Code Expired.'); }
+                }*@
+
+                $('#dlgQRReader').dialog('close');
+                scanner.stop();
+            });
+
+            Instascan.Camera.getCameras().then(function (cameras) {
+                if (cameras.length > 0) {
+                    scanner.start(cameras[0]);
+                } else {
+                    jAlert('Camera is not found.');
+                }
+            }).catch(function (e) {
+                console.error(e);
+            });
+        });
+    </script>
+</div>

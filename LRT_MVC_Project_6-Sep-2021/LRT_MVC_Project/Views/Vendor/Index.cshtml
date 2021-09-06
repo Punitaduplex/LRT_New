@@ -1,0 +1,691 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+<link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
+<link rel="stylesheet" href="assets/css/fonts.googleapis.com.css" />
+<link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
+<link rel="stylesheet" href="assets/css/ace-skins.min.css" />
+<link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
+<script src="assets/js/ace-extra.min.js"></script>
+<script src="~/assets/js/canvasjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/StephanWagner/svgMap@v2.5.2/dist/svgMap.min.js"></script>
+<link href="https://cdn.jsdelivr.net/gh/StephanWagner/svgMap@v2.5.2/dist/svgMap.min.css" rel="stylesheet">
+<style>
+    .lrt {
+    font-size: 24px;
+    display: inline-block;
+    margin-top: -1px;
+    position: absolute;
+    margin-left: 6px;
+    font-weight: 600;
+}
+.sublogo{
+    margin-left:10px;
+}
+.sub-logo {
+    margin-left: -61px;
+}
+#ace-settings-btn{
+display:none;
+}
+.add_ara {
+    margin-top: 3px;
+    font-size: 19px;
+    margin-bottom: -10px;
+    font-weight: 600;
+}
+.add_add {
+    margin-top: 21px;
+    font-size: 16px;
+    margin-bottom: 0px;
+    font-weight: 600;
+    color: #478FCA !important;
+    display: inline-block;
+}
+.plus_sym {
+    top: 2px;
+    position: relative;
+    padding-left: 2px;
+}
+
+.credit h3 {
+    font-size: 14px;
+    margin-bottom: 0px;
+    font-weight: 600;
+    color: #000 !important;
+    margin-top: 5px;
+}
+.credit h4 {
+    font-size: 14px;
+    margin-bottom: 0px;
+    font-weight: 600;
+    color: #000 !important;
+    margin-top: 5px;
+}
+.credit span{
+  float: right;
+}
+.bill_add{
+    font-size: 15px;
+    margin-bottom: -10px;
+    font-weight: 600;
+}
+.fl_right{
+  float: right;
+}
+.br_right{
+  border-right:1px solid #ddd;
+}
+#data_ui{
+  width:100% !important;
+  height: 500px !important;
+}
+.heading {
+    margin-top: 29px;
+    font-size: 19px;
+    margin-bottom: 31px;
+    font-weight: 600;
+}
+.grn{
+color: green;
+}
+.red{
+ color: red;
+}
+.img_sc{
+width: 30px;
+height: 30px;
+}
+.red_font{
+  color:red;
+  font-size: 14px;
+}
+.list_main .fa:hover {
+    transform: scale(1.2);
+}
+.list_main .fa:hover {
+    transform: scale(1.2);
+}
+.list_main .fa {
+    transition: 0.3s;
+}
+.list_main .fa {
+    transition: 0.3s;
+}
+.list_main li i {
+    padding-right: 3px;
+}
+.bigger-120 {
+    font-size: 120%!important;
+}
+.green {
+    color: #69AA46!important;
+}
+.green {
+    color: #69AA46 !important;
+}
+.green {
+    color: #69AA46 !important;
+}.comn_inline {
+    display: inline-block;
+    padding-left: 6px;
+    font-size: 15px;
+    padding-right: 6px;
+}.list_main li {
+    list-style: none;
+    display: inline-block;
+}
+.list_main{
+padding: 0px;
+margin:0px
+}
+#myChart_bar{
+height: 600px !important;
+width: 600px !important;
+display: block;
+margin: auto;
+}
+#densityChart{
+    height: 600px !important;
+    width: 80% !important;
+    display: block;
+    margin: auto;
+}
+</style>
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<style>
+    .btn-info1 {
+        width: 97px !important;
+        padding: 1px 7px !important;
+    }
+</style>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    @*<a href='javascript:void(0);' class='collapse'>click*@
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <a href='javascript:void(0);' class='collapse1'>
+            <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+        </a>
+    </div>
+    @*</a>*@
+</div>
+<div class="main-content">
+    <div class="main-content-inner top-padding">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#">Vendor</a>
+                </li>
+
+                <li>
+                    <a href="#">Vendor Master</a>
+                </li>
+                <li class="active">Dashboard</li>
+            </ul><!-- /.breadcrumb -->
+
+            @*<div class="nav-search" id="nav-search">
+                <form class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </form>
+            </div>*@
+        </div>
+        <div class="page-content1">
+
+
+            <div class="page-header">
+                <h1>
+                   Dashboard
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+
+                    </small>
+                </h1>
+            </div><!-- /.page-header -->
+
+
+
+            <div class="vendor_mast">
+                <div class="row">
+                    <div class="col-sm-12 ">
+                        <div class="widget-box">
+                            <div class="widget-header widget-header-flat widget-header-small">
+                                <h5 class="widget-title">
+                                    <i class="ace-icon fa fa-user"></i>
+                                    Mode of Registration
+                                </h5>
+
+                                <div class="widget-toolbar no-border">
+                                    <div class="inline dropdown-hover">
+                                        <button class="btn btn-minier btn-primary">
+                                            This Week
+                                            <i class="ace-icon fa fa-angle-down icon-on-right bigger-110"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-menu-right dropdown-125 dropdown-lighter dropdown-close dropdown-caret">
+                                            <li class="active">
+                                                <a href="#" class="blue">
+                                                    <i class="ace-icon fa fa-caret-right bigger-110">&nbsp;</i>
+                                                    This Week
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="#">
+                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
+                                                    Last Week
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="#">
+                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
+                                                    This Month
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="#">
+                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
+                                                    Last Month
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="widget-body">
+                                <div class="widget-main">
+                                    <!-- <div id="piechart-placeholder"></div> -->
+
+                                    <div class="container">
+                                        <canvas id="myChart_bar"></canvas>
+                                    </div>
+
+
+                                </div><!-- /.widget-main -->
+                            </div><!-- /.widget-body -->
+                        </div><!-- /.widget-box -->
+                    </div><!-- /.col -->
+                    <!-- <div class="space-6"></div> </br></br> <div class="vspace-12-sm"></div> -->
+                    <div class="col-sm-12 ">
+                        <div class="widget-box">
+                            <div class="widget-header widget-header-flat widget-header-small">
+                                <h5 class="widget-title">
+                                    <i class="ace-icon fa fa-user"></i>
+                                    Vendor Type Stats
+                                </h5>
+
+                                <div class="widget-toolbar no-border">
+                                    <div class="inline dropdown-hover">
+                                        <button class="btn btn-minier btn-primary">
+                                            This Week
+                                            <i class="ace-icon fa fa-angle-down icon-on-right bigger-110"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-menu-right dropdown-125 dropdown-lighter dropdown-close dropdown-caret">
+                                            <li class="active">
+                                                <a href="#" class="blue">
+                                                    <i class="ace-icon fa fa-caret-right bigger-110">&nbsp;</i>
+                                                    This Week
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="#">
+                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
+                                                    Last Week
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="#">
+                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
+                                                    This Month
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="#">
+                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
+                                                    Last Month
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="widget-body">
+                                <div class="widget-main">
+                                    <div class="container">
+                                        <canvas id="densityChart" width="600" height="400"></canvas>
+                                    </div>
+
+
+
+
+                                </div><!-- /.widget-main -->
+                            </div><!-- /.widget-body -->
+                        </div><!-- /.widget-box -->
+                    </div>
+                    <div class="col-sm-12 ">
+                        <div class="widget-box">
+                            <div class="widget-header widget-header-flat widget-header-small">
+                                <h5 class="widget-title">
+                                    <i class="ace-icon fa fa-user"></i>
+                                    Vendor Presence Chart
+                                </h5>
+
+                                <div class="widget-toolbar no-border">
+                                    <div class="inline dropdown-hover">
+                                        <button class="btn btn-minier btn-primary">
+                                            This Week
+                                            <i class="ace-icon fa fa-angle-down icon-on-right bigger-110"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-menu-right dropdown-125 dropdown-lighter dropdown-close dropdown-caret">
+                                            <li class="active">
+                                                <a href="#" class="blue">
+                                                    <i class="ace-icon fa fa-caret-right bigger-110">&nbsp;</i>
+                                                    This Week
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="#">
+                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
+                                                    Last Week
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="#">
+                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
+                                                    This Month
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="#">
+                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
+                                                    Last Month
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="widget-body">
+                                <div class="widget-main">
+                                    <div class="container">
+                                        <!-- <canvas id="densityChart" width="600" height="400"></canvas> -->
+                                        <div id="svgMap"></div>
+                                    </div>
+
+
+
+
+                                </div><!-- /.widget-main -->
+                            </div><!-- /.widget-body -->
+                        </div><!-- /.widget-box -->
+                    </div><!-- /.col -->
+                </div>
+            </div>
+        </div>
+      
+
+
+
+    </div>
+</div>
+
+
+
+
+
+
+<script type="text/javascript">
+    if ('ontouchstart' in document.documentElement) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>" + "<" + "/script>");
+</script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+<!-- page specific plugin scripts -->
+<!--[if lte IE 8]>
+  <script src="assets/js/excanvas.min.js"></script>
+<![endif]-->
+<script src="assets/js/jquery-ui.custom.min.js"></script>
+<script src="assets/js/jquery.ui.touch-punch.min.js"></script>
+<script src="assets/js/jquery.easypiechart.min.js"></script>
+<script src="assets/js/jquery.sparkline.index.min.js"></script>
+<script src="assets/js/jquery.flot.min.js"></script>
+<script src="assets/js/jquery.flot.pie.min.js"></script>
+<script src="assets/js/jquery.flot.resize.min.js"></script>
+
+<!-- ace scripts -->
+<script src="assets/js/ace-elements.min.js"></script>
+<script src="assets/js/ace.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.0/chart.min.js" integrity="sha512-asxKqQghC1oBShyhiBwA+YgotaSYKxGP1rcSYTDrB0U6DxwlJjU59B67U8+5/++uFjcuVM8Hh5cokLjZlhm3Vg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+
+    $(document).ready(function () {
+        Circularchar();
+        Barchart();
+        mapchar();
+    });
+</script>
+
+<script type="text/javascript">
+
+    function Circularchar() {
+        let myChart = document.getElementById('myChart_bar').getContext('2d');
+        var sub_array = [];
+        var super_array = [];
+        var sub_array1 = [];
+        var super_array1 = [];
+        $.getJSON("/Vendor1/VendorStatuschart",
+            function (json) {
+
+                for (var i = 0; i < json.length; i++) {
+                    sub_array.push("" + json[i].Label1 + "");
+                    super_array.push(sub_array);
+                    sub_array1.push("" + json[i].Count + "");
+                    super_array1.push(sub_array1);
+                }
+
+
+
+
+                new Chart(myChart_bar, {
+                    type: 'pie',
+                    data: {
+                        labels:
+
+                            sub_array
+
+                         ,
+
+
+                        datasets: [{
+                            label: 'Population',
+                            data:
+
+
+                                sub_array1,
+
+                            // backgroundColor:'green',
+                            backgroundColor: [
+                                '#20336e',
+                                '#2589ad',
+                                '#86ddd4',
+
+                            ],
+
+                            borderWidth: 1,
+                            borderColor: '#777',
+                            hoverBorderWidth: 3,
+                            hoverBorderColor: '#000',
+                        }],
+
+
+                    },
+
+                    options: {
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Mode of Registration',
+                                fontSize: 35,
+                                color: '#000',
+                            }
+                        },
+                        animations: {
+                            tension: {
+                                duration: 1000,
+                                easing: 'linear',
+                                from: 1,
+                                to: 0,
+                                loop: true
+                            }
+                        },
+
+                    },
+                });
+
+
+            });
+
+    }
+</script>
+ 
+@*<script type="text/javascript">
+
+    function Barchart() {
+        let densityCanvas = document.getElementById('densityChart').getContext('2d');
+        var dataPoints = [];
+        $.getJSON("/Vendor/VendorStatuschart",
+            function (json) {
+                // alert(json.length);
+                for (var i = 0; i < json.length; i++) {
+                    dataPoints.push(json[i].Label1,json[i].Count,);
+                    //alert(json[i].Label1);
+
+
+
+                    var densityData = {
+                        label: json[0].Label1,
+                        data: [7, 3, 4, 3, 6, 7, 1, 8],
+                        backgroundColor: '#7c9cd6',
+                        borderWidth: 0,
+                        yAxisID: "y-axis-density"
+                    };
+
+                    var gravityData = {
+                        label: json[1].Label1,
+                        data: [3.7, 8.9, 9.8, 3.7, 23.1, 9.0, 8.7, 11.0],
+                        backgroundColor: '#f2a46e',
+                        borderWidth: 0,
+                        yAxisID: "y-axis-gravity"
+                    };
+                    var gravityData1 = {
+                        label: json[2].Label1,
+                        data: [1.7, 2.9, 4.8, 4.7, 3.1, 5.0, 5.7, 1.0],
+                        backgroundColor: '#c0c0c0',
+                        borderWidth: 0,
+                        yAxisID: "y-axis-gravity"
+                    };
+
+                    var planetData = {
+                        labels: ["Vendor Type 1", "Vendor Type 2", "Vendor Type 3", "Vendor Type 4", "Vendor Type 5", "Vendor Type 6", "Vendor Type 7", "Vendor Type 8"],
+                        datasets: [densityData, gravityData, gravityData1]
+                    };
+
+                    var chartOptions = {
+                        scales: {
+                            xAxes: [{
+                                barPercentage: 1,
+                                categoryPercentage: 0.6
+                            }],
+                            yAxes: [{
+                                id: "y-axis-density"
+                            }, {
+                                id: "y-axis-gravity"
+                            }]
+                        }
+                    };
+
+                    var barChart1 = new Chart(densityCanvas, {
+                        type: 'bar',
+                        data: planetData,
+                        options: chartOptions
+                    });
+                }
+            });
+
+    }
+</script>
+
+<script type="text/javascript">
+
+    /* map Chart Js  */
+    function mapchar() {
+
+        var dataPoints = [];
+
+        var dataPoints1 = [];
+        //alert("done");
+        $.getJSON("/Vendor/VendorStatuschart",
+
+            function (json) {
+                for (var i = 0; i < json.length; i++) {
+                    dataPoints.push( json[i].Label2);
+                    dataPoints1.push(json[i].Label1);
+                    //alert(dataPoints);
+                }
+
+                new svgMap({
+                    targetElementID: 'svgMap',
+                    data: {
+                        data: {
+                            LRT: {
+                                name: 'Vendor Name',
+                                //format: '{0} USD',
+                                format: '{0}',
+                                thousandSeparator: ',',
+                                thresholdMax: 50000,
+                                thresholdMin: 1000
+                            },
+                            change: {
+                                name: 'Status',
+                                //format: '{0} %'
+                                format: '{0}'
+                            }
+                        },
+                        applyData: 'LRT',
+                        values: {
+
+                            //AF: { LRT: 587, change: 4.73 },
+                            ///AL: { LRT: 4583, change: 11.09 },
+                            //DZ: { LRT: 4293, change: 10.01 },
+                            //IN: { LRT: json[i].Label2, change: json[i].Label1 },
+                            IN: { LRT: dataPoints, change: dataPoints1 },
+                            //RU: { LRT: 5670, change: 10.01 },
+
+
+                        }
+                    }
+
+                });
+
+                //}
+
+            });
+    }
+
+</script>*@

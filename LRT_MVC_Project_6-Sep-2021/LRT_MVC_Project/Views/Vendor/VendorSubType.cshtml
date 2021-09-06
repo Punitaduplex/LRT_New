@@ -1,0 +1,619 @@
+﻿
+@{
+    ViewBag.Title = "VendorSubType";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+<script src="~/assets/js/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>
+ <script src="assets/js/ace-extra.min.js"></script>
+ <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.css" />
+<style>
+
+    .loader {
+        display: none;
+        top: 251px;
+        position: absolute;
+        margin-left: -193px;
+        margin-bottom: 117px;
+        z-index: 99999;
+    }
+    .tb_area h3 {
+        font-size: 21px;
+        margin-top: 0px;
+        padding-left: 9px;
+        font-weight: 600;
+        margin-bottom: 21px;
+    }
+
+    .tabbable .nav-tabs > li > a {
+        padding: 7px 31px 8px;
+        background: #ffff !important;
+        color: #000 !IMPORTANT;
+        margin: 0px !IMPORTANT;
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 15px;
+    }
+
+    .tabbable .nav-tabs.background-blue {
+        padding-top: 6px;
+        background-color: #fff;
+        border: 1px solid #C5D0DC;
+    }
+
+    .tabbable .nav-tabs > li > a img {
+        width: auto;
+        position: relative;
+        top: -1px;
+        height: 22px;
+    }
+
+    .tabbable .nav-tabs > li > a i {
+        font-size: 21px;
+        color: #000;
+        position: relative;
+        top: 1px;
+    }
+
+    .m_botm {
+        margin-bottom: 25px;
+    }
+
+    .tb_area .form-group {
+        margin-bottom: 51px;
+    }
+
+        .tb_area .form-group span {
+            font-size: 15px;
+            color: red;
+        }
+
+
+    .tabbable .nav-tabs[class*=tab-color-] > li.active > a, .nav-tabs[class*=tab-color-] > li.active > a:focus, .nav-tabs[class*=tab-color-] > li.active > a:hover {
+        background-color: #FFF;
+        color: #ffffff !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        background: #7db4d8 !IMPORTANT;
+    }
+
+    table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTable thead .sorting_desc, table.dataTable thead .sorting_asc_disabled, table.dataTable thead .sorting_desc_disabled {
+        background-repeat: no-repeat !important;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $("#txtVendorSubType").focus();
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "/assets/js/jquery.dataTables.min.js";
+        document.getElementsByTagName("body")[0].appendChild(script);
+    })
+</script>
+
+
+@*------------------------------------reset data-------------------------------------------*@
+<script>
+    function Resetdata1() {
+        $("#txtupVendorSubType").val("");
+    }
+</script>
+<script>
+    function Resetdata() {
+
+        $("#txtVendorSubType").val("");
+
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Submit");
+        $("#hdVendorSubTypeId").val("");
+        $("#txtVendorSubType").focus();
+
+        var objRolePermission = {};
+        objRolePermission.Sub_To_Sub_Menu_Id = sessionStorage.getItem("sid");
+        //alert(objRolePermission.Sub_To_Sub_Menu_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/AddRolePermission",
+            data: '{objRolePermission: ' + JSON.stringify(objRolePermission) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //if (response.Is_Add == false) {
+                //    $("#btnsave").css('visibility', 'hidden');
+                //    $("#btnreset").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Edit == false) {
+                //    $("a.remove").css('visibility', 'hidden');
+                //}
+                ////alert(response.Is_Delete);
+                //if (response.Is_Delete == false) {
+                //    $("a.delete").css('visibility', 'hidden');
+                //}
+                //if (response.Is_View == false) {
+                //    $("#EmpInfo_wrapper").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Approve == false) {
+                //    $("a.approve").css('visibility', 'hidden');
+                //}
+                //$('script[src=~/assets/js/jquery.dataTables.min.js]').remove();
+                //$('script[src=/assets/js/jquery.dataTables.min.js]').remove();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+
+@*------------------------------------save data-------------------------------------------*@
+<script>
+    $(document).ready(function () {
+        
+        $("#btnsave").click(function (e) {
+           
+            e.preventDefault();
+            var objVendorSubType = {};
+         
+            
+            objVendorSubType.Vendor_Sub_Type_Name = $("#txtVendorSubType").val().charAt(0).toUpperCase() + $("#txtVendorSubType").val().slice(1);
+            //alert("done");
+            objVendorSubType.Vendor_Sub_Type_Id = $("#hdVendorSubTypeId").val();
+            
+
+            if (objVendorSubType.Vendor_Sub_Type_Name == "" || objVendorSubType.Vendor_Sub_Type_Name == null) {
+                swal("Please enter vendor Sub Type name.");
+                $("#txtVendorSubType").focus();
+                return;
+            }
+         
+            $.ajax({
+                type: "POST",
+               
+                url: "/Vendor/AddVendorSubType",
+                data: '{objVendorSubType: ' + JSON.stringify(objVendorSubType) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                   
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+
+ @*------------------------------------get data-------------------------------------------*@
+<script>
+    var myVar;
+    $(document).ready(function () {
+        Getdata();
+        myVar = setTimeout(Resetdata, 50);
+       Resetdata();
+    });
+</script>
+ 
+
+<script>
+    function Getdata() {
+       
+        $("#divtbl").append('<table id="EmpInfo" class="table table-bordered  table-hover"><thead><tr><th class="left_c w61_i">S. No</th> <th class="left_c">Vendor Sub Typer Name</th><th style="display:none"></th><th class="w155_i">Action</th> </tr></thead><tbody></tbody></table>');
+        $("#EmpInfo > tbody").html("");
+        $.getJSON("/Vendor/VendorSubTypeDetails",
+            function (json) {
+                var tr;
+
+                //Append each row to html table
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Vendor_Sub_Type_Name + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Vendor_Sub_Type_Id + "</td>");
+                    var status = json[i].Approve_Status;
+                    var status1 = "";
+                    if (status == 1) {
+                        status1 = "<i class='menu-icon fa fa-check bigger-120 green' data-rel='tooltip' title='Approved'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-clock-o bigger-120 green' data-rel='tooltip' title='Pending'></i>";
+                    }
+
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a href='javascript:void(0);' class='approve tooltip-error comn_inline grn' data-rel='tooltip'>" + status1 + "</a></li><li><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip' title='Edit'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i></a></li><li><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='Delete'><i class='menu-icon fa fa-trash bigger-120 red' title='Delete'></i></a></li></ul></td>");
+
+                    $('#EmpInfo').append(tr);
+
+                }
+                $('#EmpInfo').DataTable();
+            });
+
+    };
+</script>
+ 
+
+@*------------------------------------delete data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.delete", function (e) {
+
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(2)').text();
+        swal({
+            title: 'Are you sure?',
+            text: '*You want to delete this data?*',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function (value) {
+            if (value) {
+                var objVendorSubType = {};
+                objVendorSubType.Vendor_Sub_Type_Id = $id;
+                $.ajax({
+                    type: "POST",
+                    url: "/Vendor/DeleteVendorSubType",
+                    data: '{objVendorSubType: ' + JSON.stringify(objVendorSubType) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        Getdata();
+                        Resetdata();
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "/assets/js/jquery.dataTables.min.js";
+                        document.getElementsByTagName("body")[0].appendChild(script);
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+                swal("*Your data is safe*");
+            }
+        });
+
+    });
+</script>
+@*------------------------------------edit data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.remove", function (e) {
+       
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+     
+        var $name = $row.find('td:eq(1)').text();
+       
+        var $id = $row.find('td:eq(2)').text()
+       
+        $("#dialogdivupdateVendorSubType").modal("show");
+   
+        $("#txtupVendorSubType").val($name);
+        
+        $("#hdVendorSubTypeId").val($id);
+       
+    });
+</script>
+<script>
+    $(document).ready(function () {
+      
+        $("#btnupdateVendorSubType").click(function (e) {
+          
+            e.preventDefault();
+            var objVendorSubType = {};
+         
+            objVendorSubType.Vendor_Sub_Type_Name = $("#txtupVendorSubType").val().charAt(0).toUpperCase() + $("#txtupVendorSubType").val().slice(1);
+            alert(objVendorSubType.Vendor_Sub_Type_Name);
+            objVendorSubType.Vendor_Sub_Type_Id = $("#hdVendorSubTypeId").val();
+           
+
+            if (objVendorSubType.Vendor_Sub_Type_Name == "" || objVendorSubType.Vendor_Sub_Type_Name == null) {
+                swal("Please enter vendor Sub Type name.");
+                $("#txtupVendorSubType").focus();
+                return;
+            }
+            //alert();
+            $.ajax({
+                type: "POST",
+                url: "/Vendor/AddVendorSubType",
+                data: '{objVendorSubType: ' + JSON.stringify(objVendorSubType) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata1();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+@*------------------------------------approve data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.approve", function (e) {
+    
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(2)').text();
+        var objVendorSubType = {};
+        objVendorSubType.Vendor_Sub_Type_Id = $id;
+        $.ajax({
+
+            type: "POST",
+            url: "/Vendor/VendorSubTypeApproveStatus",
+            data: '{objVendorSubType: ' + JSON.stringify(objVendorSubType) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //$(".dataTables_length").remove();
+                //$(".dataTables_filter").remove();
+                //$(".dataTables_info").remove();
+                //$(".dataTables_paginate").remove();
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                Getdata();
+                Resetdata();
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+ <div class="page-content">
+    <div style="width:100%" class="m_27">
+        <div style="width:18% ; float:left" class="menu_border">
+            <div class="side_bar_main">
+
+                @{ Html.RenderAction("SideMenu", "Master");}
+
+            </div>
+
+        </div>
+
+        <div style="width:82% ; float:left" class="side_content">
+            <div class="main-content">
+                <div class="main-content-inner">
+                    <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                        <ul class="breadcrumb">
+                            <li>
+                                <i class="ace-icon fa fa-home home-icon"></i>
+                                <a href="#">Home</a>
+                            </li>
+
+                            <li>
+                                <a href="#">Forms</a>
+                            </li>
+                            <li class="active">Form Elements</li>
+                        </ul>
+
+                        <div class="nav-search" id="nav-search">
+                            <form class="form-search">
+                                <span class="input-icon">
+                                    <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                                    <i class="ace-icon fa fa-search nav-search-icon"></i>
+                                </span>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="ace-settings-container" id="ace-settings-container">
+                        
+
+                        <div class="ace-settings-box clearfix" id="ace-settings-box">
+                           
+                         
+                        </div> 
+                    </div> 
+
+                    <div >
+                        <h1 class="Page_header_h1">
+                            Vendor Sub Type Master
+                            <small>
+                                <i class="ace-icon fa fa-angle-double-right"></i>
+
+                            </small>
+                        </h1>
+                    </div>
+
+                    <div class="vendor_mast">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <input type="hidden" id="hdVendorSubTypeId" />
+                                <div class="tabbable"  >
+
+
+                                    <div class="tab-content tb_area">
+                                        <div id="home4" class="tab-pane active">
+
+
+
+                                            <div class="row m_botm">
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
+                                                        <label class="col-sm-5 control-label no-padding-right" for="form-field-1" style="font-weight: 400;font-size: 14px;">Vendor Sub Type Name<span>*</span></label>
+
+                                                        <div class="col-sm-7">
+                                                            <input type="text" id="txtVendorSubType" placeholder="Vendor Sub Type Name" class="col-xs-12 col-sm-12">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+
+                                                </div>
+
+
+                                                <div class="col-md-12">
+                                                    <div class="clearfix form-actions">
+                                                        <div class=" col-md-12 text-center">
+                                                            <button class="btn btn-info" id="btnsave" type="button" data-toggle="tooltip" title="Button for save data">
+                                                                <i class="ace-icon fa fa-check bigger-110"></i>
+                                                                Submit
+                                                            </button>
+
+                                                            &nbsp; &nbsp; &nbsp;
+                                                            <button class="btn" id="btnreset" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                                Reset
+                                                            </button>
+
+                                                            &nbsp; &nbsp; &nbsp;
+                                                             
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="sub_tb">
+
+                                            <table id="divtbl" class="table  table-bordered table-hover">
+
+
+                                                <tbody>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+           
+
+            @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+            <script>
+
+                $(document).ready(function () {
+                    $('#divtbl').dataTable({
+                        colReorder: {
+                            order: [4, 3, 2, 1, 0, ]
+                        }
+                    });
+                    $('#divtbl').dataTable({
+                        colReorder: {
+                            order: [0, 1, 2]
+                        }
+                    });
+                });
+
+
+
+            </script>
+            
+             </div>
+        </div>
+     @*-----------------------------------------------update popup Vendor Sub Type Master---------------------------------------------------------*@
+     <div class="modal fade" id="dialogdivupdateVendorSubType">
+         <div class="modal-dialog modal-md modal-dialog-centered">
+             <div class="modal-content">
+                 <div class="modal-header">
+                     <a href="#" class="close" data-dismiss="modal">×</a>
+                     <h3 class="item_hedin">Update vendor Sub Type Name</h3>
+                 </div>
+                 <div class="modal-body">
+
+                     <div class="space-4"></div>
+                     <div class="row">
+                         <div class="col-md-3">Vendor Sub Type Name <span class="red_star">*</span><span> : </span></div>
+                         <div class="col-md-9">
+                             <input type="text" id="txtupVendorSubType" style="text-transform:capitalize" placeholder="Vendor Sub Type Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for vendor Sub Type name" />
+                         </div>
+                     </div>
+
+                     <div class="space-4"></div>
+                     <div class="row">
+                         <div class="col-md-3"></div>
+                         <div class="col-md-9">
+                             <button class="btn btn-info" id="btnupdateVendorSubType" type="button" data-toggle="tooltip" title="Button for update data">
+                                 <i class="ace-icon fa fa-floppy-o"></i>
+                                 Update
+                             </button>
+                             <button class="btn master-page-reset" id="btnresetupdateVendorSubType" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                 <i class="ace-icon fa fa-undo bigger-110"></i>
+                                 Reset
+                             </button>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+     @*---------------------------------------------------------------------------------------------------------------------*@
+     </div>
+

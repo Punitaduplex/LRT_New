@@ -1,0 +1,1604 @@
+﻿@{
+    ViewBag.Title = "ExchangeRateMaster";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+@*<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+
+<style>
+    .loader {
+        display: none;
+        top: 251px;
+        position: absolute;
+        margin-left: -193px;
+        margin-bottom: 117px;
+        z-index: 99999;
+    }
+</style>
+
+
+@*------------------------------------fill currency data  ddlnewcurrency-------------------------------------------*@
+<script type="text/javascript">
+    function CurrencyName() {
+        var ddlcurrency = $("#ddlcurrency");
+        var ddlupcurrency = $("#ddlupcurrency");
+        var ddlnewcurrency = $("#ddlnewcurrency");
+        ddlcurrency.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlupcurrency.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlnewcurrency.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/CurrencyName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlcurrency.empty().append('<option selected="selected" value="0">Select currency name</option>');
+                ddlupcurrency.empty().append('<option selected="selected" value="0">Select currency name</option>');
+                ddlnewcurrency.empty().append('<option selected="selected" value="0">Select currency name</option>');
+                $.each(response, function () {
+                    ddlcurrency.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlupcurrency.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlnewcurrency.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+<script type="text/javascript">
+    function LangaugeName() {
+        var ddllanguage = $("#ddllanguage");
+        var ddluplanguage = $("#ddluplanguage");
+        ddllanguage.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddluplanguage.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/LanguageName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddllanguage.empty().append('<option selected="selected" value="0">Select language name</option>');
+                ddluplanguage.empty().append('<option selected="selected" value="0">Select language name</option>');
+                $.each(response, function () {
+                    ddllanguage.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddluplanguage.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+
+@*------------------------------------fill company data-------------------------------------------*@
+<script type="text/javascript">
+    function CompanyName() {
+        var ddlcompany = $("#ddlcompany");
+        var ddlupcompany = $("#ddlupcompany");
+        ddlcompany.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        ddlupcompany.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/CompanyMasterName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlcompany.empty().append('<option selected="selected" value="0">Select company name</option>');
+                ddlupcompany.empty().append('<option selected="selected" value="0">Select company name</option>');
+                $.each(response, function () {
+                    ddlcompany.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlupcompany.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+<script>
+    $(document).ready(function () {
+
+        $("#ddlcompany").focus();
+        CurrencyName();
+        CompanyName();
+        LangaugeName();
+        jQuery.datetimepicker.setLocale('en');
+
+        jQuery('#rate_date').datetimepicker({
+            i18n: {
+                en: {
+                    months: [
+                        'January', 'February', 'March', 'April',
+                        'May', 'Jun', 'July', 'August',
+                        'September', 'October', 'November', 'December',
+                    ],
+                    dayOfWeek: [
+                        "Sun", "Mon", "Tues", "Wed",
+                        "Thus", "Fri", "Sat",
+                    ]
+                }
+            },
+            timepicker: false,
+            value: 'today',
+            format: 'd/m/Y',
+            closeOnDateSelect: true,
+            minDate: 0,
+            weeks: false
+
+        });
+        var today = new Date();
+        today.setHours(today.getHours() + 4);
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "/assets/js/jquery.dataTables.min.js";
+        document.getElementsByTagName("body")[0].appendChild(script);
+    })
+</script>
+@*------------------------------------reset data-------------------------------------------*@
+<script>
+    function Resetdata1() {
+        $("#ddlupcompany").val(0);
+        $("uprate_date").val("");
+        $("#ddlupcurrency").val(0);
+        $("#txtupamount").val("");
+    }
+</script>
+<script>
+    function Resetdata() {
+        $("#ddlcompany").val(0);
+        $("rate_date").val("");
+        $("#ddlcurrency").val(0);
+        $("#txtamount").val("");
+
+        $("#hdexchage").val("");
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Submit");
+        $("#ddlcompany").focus();
+        // $("#rate_date").datepicker({ dateFormat: 'dd/mm/yy' }).val($.datepicker.formatDate("dd/mm/yy", new Date()));
+
+        var objRolePermission = {};
+        objRolePermission.Sub_To_Sub_Menu_Id = sessionStorage.getItem("sid");
+        //alert(objRolePermission.Sub_To_Sub_To_Menu_Id);
+        $.ajax({
+            type: "POST",
+            url: "/Master/AddRolePermission",
+            data: '{objRolePermission: ' + JSON.stringify(objRolePermission) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //if (response.Is_Add == false) {
+                //    $("#btnsave").css('visibility', 'hidden');
+                //    $("#btnreset").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Edit == false) {
+                //    $("a.remove").css('visibility', 'hidden');
+                //}
+                ////alert(response.Is_Delete);
+                //if (response.Is_Delete == false) {
+                //    $("a.delete").css('visibility', 'hidden');
+                //}
+                //if (response.Is_View == false) {
+                //    $("#EmpInfo_wrapper").css('visibility', 'hidden');
+                //}
+                //if (response.Is_Approve == false) {
+                //    $("a.approve").css('visibility', 'hidden');
+                //}
+                //$('script[src=~/assets/js/jquery.dataTables.min.js]').remove();
+                //$('script[src=/assets/js/jquery.dataTables.min.js]').remove();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        //  alert();
+        $("#btnreset").click(function () {
+            Resetdata();
+            jQuery.datetimepicker.setLocale('en');
+
+            jQuery('#rate_date').datetimepicker({
+                i18n: {
+                    en: {
+                        months: [
+                            'January', 'February', 'March', 'April',
+                            'May', 'Jun', 'July', 'August',
+                            'September', 'October', 'November', 'December',
+                        ],
+                        dayOfWeek: [
+                            "Sun", "Mon", "Tues", "Wed",
+                            "Thus", "Fri", "Sat",
+                        ]
+                    }
+                },
+                timepicker: false,
+                value: 'today',
+                format: 'd/m/Y',
+                closeOnDateSelect: true,
+                minDate: 0,
+                weeks: false
+
+            });
+            var today = new Date();
+            today.setHours(today.getHours() + 4);
+        });
+        $("#btnresetupdate").click(function () {
+            Resetdata1();
+            jQuery.datetimepicker.setLocale('en');
+
+            jQuery('#rate_date').datetimepicker({
+                i18n: {
+                    en: {
+                        months: [
+                            'January', 'February', 'March', 'April',
+                            'May', 'Jun', 'July', 'August',
+                            'September', 'October', 'November', 'December',
+                        ],
+                        dayOfWeek: [
+                            "Sun", "Mon", "Tues", "Wed",
+                            "Thus", "Fri", "Sat",
+                        ]
+                    }
+                },
+                timepicker: false,
+                value: 'today',
+                format: 'd/m/Y',
+                closeOnDateSelect: true,
+                minDate: 0,
+                weeks: false
+
+            });
+            var today = new Date();
+            today.setHours(today.getHours() + 4);
+        });
+    })
+</script>
+@*------------------------------------get data-------------------------------------------*@
+<script>
+    var myVar;
+    $(document).ready(function () {
+        Getdata();
+        myVar = setTimeout(Resetdata, 50);
+        //Resetdata();
+    });
+</script>
+<script>
+    function Getdata() {
+        $("#divtbl").append('<table id="EmpInfo" class="table table-bordered  table-hover"> <thead><tr> <th class="left_c w61_i">S. No</th><th class="left_c">Company</th><th class="left_c">Date</th><th class="left_c">Currency</th><th class="left_c">Amount</th><th style="display:none"></th><th style="display:none"></th> <th style="display:none"></th><th class="w155_i">Action</th></tr></thead><tbody></tbody></table>')
+        $("#EmpInfo > tbody").html("");
+        $.getJSON("/Master/ExchangeRateDetails",
+            function (json) {
+                var tr;
+
+                //Append each row to html table
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td class='left_c w61_i'>" + (i + 1) + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Company_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Date_String + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Currency + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Exchange_Rate_Amount + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Exchange_Rate_Id + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Currency_Id + "</td>");
+                    tr.append("<td style='display:none'>" + json[i].Company_Id + "</td>");
+                    var status = json[i].Approve_Status;
+                    var status1 = "";
+                    if (status == 1) {
+                        status1 = "<i class='menu-icon fa fa-check bigger-120 green'  data-toggle='tooltip' title='Approved'></i>";
+                    }
+                    else {
+                        status1 = "<i class='menu-icon fa fa-clock-o bigger-120 green' data-toggle='tooltip' title='Pending'></i>";
+                    }
+
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a href='javascript:void(0);' class='approve tooltip-error comn_inline grn' data-rel='tooltip' >" + status1 + "</a></li><li><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip' title='Edit'><i class='ace-icon fa fa-pencil bigger-120 edit_c'></i></a></li><li><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='Delete'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+                    $('#EmpInfo').append(tr);
+
+                }
+                $('#EmpInfo').DataTable();
+            });
+
+    };
+</script>
+@*------------------------------------approve data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.approve", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(5)').text();
+        var objExchangeRate = {};
+        objExchangeRate.Exchange_Rate_Id = $id;
+        $.ajax({
+            type: "POST",
+            url: "/Master/ExchangeRateApproveStatus",
+            data: '{objExchangeRate: ' + JSON.stringify(objExchangeRate) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //$(".dataTables_length").remove();
+                //$(".dataTables_filter").remove();
+                //$(".dataTables_info").remove();
+                //$(".dataTables_paginate").remove();
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                Getdata();
+                Resetdata();
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+</script>
+@*------------------------------------save data-------------------------------------------*@
+<script>
+    $(document).ready(function () {
+        // alert();
+        $("#btnsave").click(function (e) {
+            e.preventDefault();
+            var objExchangeRate = {};
+            objExchangeRate.Currency_Id = $("#ddlcurrency").val();
+            objExchangeRate.Company_Id = $("#ddlcompany").val();
+            objExchangeRate.Date_String = $("#rate_date").val();
+            objExchangeRate.Exchange_Rate_Amount = $("#txtamount").val();
+            // ExchangeRate.Relate_To = $("#ddlrelatedto").val();
+            //   alert(objExchangeRate.Exchange_Rate_Amount);
+            objExchangeRate.Exchange_Rate_Id = $("#hdexchage").val();
+            if (objExchangeRate.Company_Id == 0 || objExchangeRate.Company_Id == null) {
+                swal("Please select company name.");
+                $("#ddlcompany").focus();
+                return;
+            }
+
+            if (objExchangeRate.Date_String == "" || objExchangeRate.Date_String == null) {
+                swal("Please enter date.");
+
+                $("#rate_date").focus();
+                return;
+            }
+            if (objExchangeRate.Currency_Id == 0 || objExchangeRate.Currency_Id == null) {
+                swal("Please select currency");
+                $("#ddlcurrancy").focus();
+                return;
+            }
+            if (objExchangeRate.Exchange_Rate_Amount == "" || objExchangeRate.Exchange_Rate_Amount == null) {
+                swal("Please enter amount.");
+
+                $("#txtamount").focus();
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddExchangeRate",
+                data: '{objExchangeRate: ' + JSON.stringify(objExchangeRate) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata();
+                    jQuery.datetimepicker.setLocale('en');
+
+                    jQuery('#rate_date').datetimepicker({
+                        i18n: {
+                            en: {
+                                months: [
+                                    'January', 'February', 'March', 'April',
+                                    'May', 'Jun', 'July', 'August',
+                                    'September', 'October', 'November', 'December',
+                                ],
+                                dayOfWeek: [
+                                    "Sun", "Mon", "Tues", "Wed",
+                                    "Thus", "Fri", "Sat",
+                                ]
+                            }
+                        },
+                        timepicker: false,
+                        value: 'today',
+                        format: 'd/m/y',
+                        closeOnDateSelect: true,
+                        minDate: 0,
+                        weeks: false
+
+
+
+                    });
+                    var today = new Date();
+                    today.setHours(today.getHours() + 4);
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // alert();
+        $("#btnupdateexchangerate").click(function (e) {
+            e.preventDefault();
+            var objExchangeRate = {};
+            objExchangeRate.Currency_Id = $("#ddlupcurrency").val();
+            objExchangeRate.Company_Id = $("#ddlupcompany").val();
+            objExchangeRate.Date_String = $("#uprate_date").val();
+            objExchangeRate.Exchange_Rate_Amount = $("#txtupamount").val();
+            // ExchangeRate.Relate_To = $("#ddlrelatedto").val();
+            //   alert(objExchangeRate.Exchange_Rate_Amount);
+            objExchangeRate.Exchange_Rate_Id = $("#hdexchage").val();
+            if (objExchangeRate.Company_Id == 0 || objExchangeRate.Company_Id == null) {
+                swal("Please select company name.");
+                $("#ddlupcompany").focus();
+                return;
+            }
+
+            if (objExchangeRate.Date_String == "" || objExchangeRate.Date_String == null) {
+                swal("Please enter date.");
+
+                $("#uprate_date").focus();
+                return;
+            }
+            if (objExchangeRate.Currency_Id == 0 || objExchangeRate.Currency_Id == null) {
+                swal("Please select currency");
+                $("#ddlupcurrancy").focus();
+                return;
+            }
+            if (objExchangeRate.Exchange_Rate_Amount == "" || objExchangeRate.Exchange_Rate_Amount == null) {
+                swal("Please enter amount.");
+
+                $("#txtupamount").focus();
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddExchangeRate",
+                data: '{objExchangeRate: ' + JSON.stringify(objExchangeRate) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata1();
+                    jQuery.datetimepicker.setLocale('en');
+
+                    jQuery('#rate_date').datetimepicker({
+                        i18n: {
+                            en: {
+                                months: [
+                                    'January', 'February', 'March', 'April',
+                                    'May', 'Jun', 'July', 'August',
+                                    'September', 'October', 'November', 'December',
+                                ],
+                                dayOfWeek: [
+                                    "Sun", "Mon", "Tues", "Wed",
+                                    "Thus", "Fri", "Sat",
+                                ]
+                            }
+                        },
+                        timepicker: false,
+                        value: 'today',
+                        format: 'd/m/y',
+                        closeOnDateSelect: true,
+                        minDate: 0,
+                        weeks: false
+
+
+
+                    });
+                    var today = new Date();
+                    today.setHours(today.getHours() + 4);
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+</script>
+@*------------------------------------edit data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.remove", function (e) {
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $rate = $row.find('td:eq(2)').text();
+        var $amount = $row.find('td:eq(4)').text();
+        var $company = $row.find('td:eq(7)').text();
+        var $currency = $row.find('td:eq(6)').text();
+        //var $relatedto = $row.find('td:eq(5)').text();
+
+        var $id = $row.find('td:eq(5)').text()
+        $("#dialogdivupdateexchangerate").modal("show");
+        $("#ddlupcompany").val($company);
+        $("#uprate_date").val($rate);
+        $("#ddlupcurrency").val($currency);
+        $("#txtupamount").val($amount);
+        //$("#ddlrelatedto").val($relatedto);
+
+        $("#hdexchage").val($id);
+        //$("#btnsave").text("");
+        //$("#btnsave").append(" <i class='ace-icon fa fa-floppy-o'></i>Update");
+        //$("#btnsave").css('visibility', 'visible');
+        //$("#btnreset").css('visibility', 'visible');
+    });
+</script>
+
+@*------------------------------------delete data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.delete", function (e) {
+
+        e.preventDefault();
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(5)').text();
+
+        swal({
+            title: 'Are you sure?',
+            text: '*You want to delete this data?*',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function (value) {
+            if (value) {
+                var objExchangeRate = {};
+                objExchangeRate.Exchange_Rate_Id = $id;
+                $.ajax({
+                    type: "POST",
+                    url: "/Master/DeleteExchangeRate",
+                    data: '{objExchangeRate: ' + JSON.stringify(objExchangeRate) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        //$(".dataTables_length").remove();
+                        //$(".dataTables_filter").remove();
+                        //$(".dataTables_info").remove();
+                        //$(".dataTables_paginate").remove();
+                        $(".dataTables_wrapper").remove();
+                        swal(response);
+                        Getdata();
+                        Resetdata();
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "/assets/js/jquery.dataTables.min.js";
+                        document.getElementsByTagName("body")[0].appendChild(script);
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+            else {
+                swal("*Your data is safe*");
+            }
+        });
+
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsavecurrency").click(function (e) {
+            e.preventDefault();
+            var objcurrency = {};
+            objcurrency.Currency_Code = $("#txtcurrencycode").val().toUpperCase();
+            objcurrency.Currency_Name = $("#txtcurrencyname").val().charAt(0).toUpperCase() + $("#txtcurrencyname").val().slice(1);
+            objcurrency.International_Code = $("#txtinternationalcode").val();
+            objcurrency.International_Name = $("#txtinternationalname").val().charAt(0).toUpperCase() + $("#txtinternationalname").val().slice(1);
+            objcurrency.Decimal_Unit = $("#txtdecimalunit").val();
+            objcurrency.Currency_Symbol = $("#txtcurrencysymbol").val();
+            objcurrency.Currency_Id = $("#hdcurrency").val();
+            //  alert();
+            if (objcurrency.Currency_Code == "" || objcurrency.Currency_Code == null) {
+                swal("Please enter currency code.");
+                return;
+                $("#txtcurrencycode").focus();
+
+            }
+            if (objcurrency.Currency_Name == "" || objcurrency.Currency_Name == null) {
+                swal("Please enter currency name.");
+                $("#txtcurrencyname").focus();
+                return;
+            }
+            if (objcurrency.International_Code == "" || objcurrency.International_Code == null) {
+                swal("Please enter international code.");
+
+                $("#txtcurrencycode").focus();
+                return;
+            }
+            if (objcurrency.International_Name == "" || objcurrency.International_Name == null) {
+                swal("Please enter international name.");
+                $("#txtcurrencyname").focus();
+                return;
+            }
+            //if (objcurrency.Decimal_Unit == "" || objcurrency.Decimal_Unit == null) {
+            //    swal("Please enter decimal unit.");
+            //    $("#txtdecimalunit").focus();
+            //    return;
+            //}
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddCurrency",
+                data: '{objcurrency: ' + JSON.stringify(objcurrency) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    swal(response);
+                    CurrencyName();
+                    ResetCurrency();
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveCompany").click(function (e) {
+            e.preventDefault();
+            var objcompanymaster = {};
+            objcompanymaster.Company_Code = $("#txtcompanycode").val().toUpperCase();
+            objcompanymaster.Company_Name = $("#txtcompanyname").val().charAt(0).toUpperCase() + $("#txtcompanyname").val().slice(1);
+            objcompanymaster.Currency_Id = $("#ddlnewcurrency").val();
+            objcompanymaster.Language_Id = $("#ddllanguage").val();
+            objcompanymaster.Company_Image = $("#hdprofileimg").val();
+            objcompanymaster.Company_Id = $("#hdcompanymaster").val();
+            if (objcompanymaster.Company_Code == "" || objcompanymaster.Company_Code == null) {
+                swal("Please enter company code.");
+
+                $("#txtcompanycode").focus();
+                return;
+            }
+            if (objcompanymaster.Company_Name == "" || objcompanymaster.Company_Name == null) {
+                swal("Please select company name.");
+
+                $("#txtcompanyname").focus();
+                return;
+            }
+            if (objcompanymaster.Currency_Id == "0" || objcompanymaster.Currency_Id == null) {
+                swal("Please select currency.");
+
+                $("#ddlnewcurrency").focus();
+                return;
+            }
+            if (objcompanymaster.Language_Id == "0" || objcompanymaster.Language_Id == null) {
+                swal("Please select language.");
+
+                $("#ddllanguage").focus();
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddCompanyMaster",
+                data: '{objcompanymaster: ' + JSON.stringify(objcompanymaster) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    swal(response);
+                    CompanyName();
+                    ResetCompany();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script>
+    function ResetCompany() {
+        $("#ddlnewcurrency").val(0);
+        $("#ddllanguage").val(0);
+        $("#txtcompanycode").val("");
+        $("#txtcompanyname").val("");
+    }
+    function ResetCurrency() {
+        $("#txtcurrencycode").val("");
+        $("#txtcurrencyname").val("");
+        $("#txtinternationalcode").val("");
+        $("#txtinternationalname").val("");
+        $("#txtdecimalunit").val("");
+        $("#txtcurrencysymbol").val("");
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $("#btnresetCompany").click(function (e) {
+            ResetCompany();
+        });
+        $("#btnresetcurrency").click(function (e) {
+            ResetCurrency();
+        });
+
+    });
+</script>
+<script>
+    $(document).on("click", "a.clddlcompany1", function () {
+        $('#dialogdivCompany1').modal('show');
+    });
+    $(document).on("click", "a.clddlcurrency", function () {
+        $('#dialogdivcurrency').modal('show');
+    });
+</script>
+
+<script>
+    $(function () {
+        $("#btnexcel").click(function () {
+            $('#dialogdivexcel').modal('show');
+        });
+    });
+</script>
+<script type="text/javascript">
+    $("body").on("click", "#uploadExcel", function () {
+        Resettable();
+        //Reference the FileUpload element.
+        var fileUpload = $("#fileUpload")[0];
+
+        //Validate whether File is valid Excel file.
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx)$/;
+        if (regex.test(fileUpload.value.toLowerCase())) {
+            if (typeof (FileReader) != "undefined") {
+                var reader = new FileReader();
+
+                //For Browsers other than IE.
+                if (reader.readAsBinaryString) {
+                    reader.onload = function (e) {
+                        ProcessExcel(e.target.result);
+                    };
+                    reader.readAsBinaryString(fileUpload.files[0]);
+                } else {
+                    //For IE Browser.
+                    reader.onload = function (e) {
+                        var data = "";
+                        var bytes = new Uint8Array(e.target.result);
+                        for (var i = 0; i < bytes.byteLength; i++) {
+                            data += String.fromCharCode(bytes[i]);
+                        }
+                        ProcessExcel(data);
+                    };
+                    reader.readAsArrayBuffer(fileUpload.files[0]);
+                }
+            } else {
+                alert("This browser does not support HTML5.");
+            }
+        } else {
+            alert("Please upload a valid Excel file.");
+        }
+    });
+    function ProcessExcel(data) {
+        $('#ExcelDataLoader').show();
+        var workbook = XLSX.read(data, {
+            type: 'binary'
+        });
+        var firstSheet = workbook.SheetNames[0];
+        var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[firstSheet]);
+        // $("#dvExcel").empty();
+        $("#dvExcel").append('<table id="EmpInfoExchangeRate" class="table table-bordered table-hover"><thead><tr><th class="left_c">S. No</th> <th class="left_c">Company</th> <th class="left_c">Date</th><th class="left_c">Currency </th> <th class="left_c">Amount</th><th <th class="w155_i">Action</th> </tr></thead><tbody></tbody> </table>')
+        $("#EmpInfoExchangeRate> tbody").html("");
+        var count = excelRows.length;
+        for (var i = 0; i < excelRows.length; i++) {
+            var C_Company = "";
+            var D_Date = "";
+            var C_Currency = "";
+            var A_Amount = "";
+
+            if (excelRows[i].Company == undefined) {
+
+                C_Company = "";
+            }
+            else {
+                C_Company = excelRows[i].Company;
+
+            }
+
+            if (excelRows[i].Date == undefined) {
+
+                D_Date = "";
+            }
+            else {
+                D_Date = excelRows[i].Date;
+
+            }
+
+
+            if (excelRows[i].Currency == undefined) {
+
+                C_Currency = "";
+            }
+            else {
+                C_Currency = excelRows[i].Currency;
+
+            }
+            if (excelRows[i].Amount == undefined) {
+
+                A_Amount = "";
+            }
+            else {
+                A_Amount = parseFloat(excelRows[i].Amount).toFixed(4);
+
+            }
+
+
+            tr = $('<tr/>');
+            tr.append("<td style='text-align:left'>" + (i + 1) + "</td>");
+            tr.append("<td class='left_c'>" + C_Company + "</td>");
+            tr.append("<td class='left_c'>" + D_Date + "</td>");
+            tr.append("<td class='left_c'>" + C_Currency + "</td>");
+            tr.append("<td class='left_c'>" + A_Amount + "</td>");
+            tr.append("<td class='lst_td w155_i'><ul class='list_main'><li><a  href='javascript:void(0);' class='deleteExchangerate tooltip-error comn_inline red' data-rel='tooltip'><i class='menu-icon fa fa-trash bigger-120 red'></i></a></li></ul></td>");
+
+            $('#EmpInfoExchangeRate').append(tr);
+        }
+        $('#EmpInfoExchangeRate').DataTable();
+        $('#EmpInfoExchangeRate').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count + " entries";
+            }
+        });
+        sessionStorage.setItem("item-count14", count);
+        $('#ExcelDataLoader').hide();
+    };
+</script>
+<script>
+    $(document).on("click", "a.deleteExchangerate", function () {
+        var $row = $(this).closest("tr");    // Find the row
+        var $id = $row.find('td:eq(0)').text();
+        // $row.hide();
+        //$row.remove();
+        $row.remove().draw(false);
+        var oTable = $('#EmpInfoExchangeRate').dataTable();
+
+        var rowcollection = oTable.$("tr", { "page": "all" });
+
+        var count = sessionStorage.getItem("item-count14");
+
+        sessionStorage.setItem("item-count14", (count - 1));
+
+        var count1 = count - 1;
+
+        var table = $('#EmpInfoExchangeRate').DataTable({
+            destroy: true,
+            rowReorder: true
+        });
+        table.on('row-reorder', function (e, diff, edit) {
+            var res = '';
+            for (var i = 0, ien = diff.length ; i < ien ; i++) {
+                res += diff[i].newData + '=';
+            }
+            res = res.substring(0, res.length - 1);
+            getVal(res);
+        });
+        $('#EmpInfoExchangeRate').dataTable({
+            destroy: true,
+            "infoCallback": function (settings, start, end, max, total, pre) {
+                return "Showing 1 to " + count1 + " entries";
+            }
+        });
+        if (count <= 1) {
+            Resettable();
+        }
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsaveuploaddb").click(function () {
+            $('#ExcelDataLoader').show();
+            var objExchangeRate = {};
+            objExchangeRate.Company_Name = "";
+            objExchangeRate.Date = "";
+            objExchangeRate.Currency = "";
+            objExchangeRate.Amount = "";
+
+            var oTable = $('#EmpInfoExchangeRate').dataTable();
+            var rowcollection = oTable.$("tr", { "page": "all" });
+
+            rowcollection.each(function (index, elem) {
+                var row = $(elem).closest("tr");
+
+                if (objExchangeRate.Company_Name == "") {
+                    objExchangeRate.Company_Name = row.find('td:eq(1)').text().charAt(0).toUpperCase() + row.find('td:eq(1)').text().slice(1);
+                    objExchangeRate.Date_String = row.find('td:eq(2)').text();
+                    objExchangeRate.Currency = row.find('td:eq(3)').text().charAt(0).toUpperCase() + row.find('td:eq(3)').text().slice(1);
+                    objExchangeRate.Exchange_Rate_Amount = row.find('td:eq(4)').text();
+
+
+                }
+                else {
+
+                    objExchangeRate.Company_Name = objExchangeRate.Company_Name + "," + row.find('td:eq(1)').text().charAt(0).toUpperCase() + row.find('td:eq(1)').text().slice(1);
+                    objExchangeRate.Date_String = objExchangeRate.Date_String + "," + row.find('td:eq(2)').text();
+                    objExchangeRate.Currency = objExchangeRate.Currency + "," + row.find('td:eq(3)').text().charAt(0).toUpperCase() + row.find('td:eq(3)').text().slice(1);
+                    objExchangeRate.Exchange_Rate_Amount = objExchangeRate.Exchange_Rate_Amount + "," + row.find('td:eq(4)').text();
+
+
+                }
+            });
+            var rowCount = $('#EmpInfoExchangeRate tr').length;
+            if (rowCount <= 1) {
+                swal("please upload excel file for data upload.");
+                return;
+            }
+            if (rowCount > 1 && objExchangeRate.Company_Name == "") {
+                swal("no data in table.");
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Master/AddBulkExchangeRate",
+                data: '{objExchangeRate: ' + JSON.stringify(objExchangeRate) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    CompanyName();
+                    Resettable();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+                    $('#ExcelDataLoader').hide();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+        $("#btnresetexchangerate").click(function () {
+            Resettable();
+        });
+        $('#fileUpload').change(function (e) {
+
+            var file = e.target.files[0].name;
+            $(this).next('span').text(file);
+        });
+    });
+</script>
+
+
+<script>
+    function Resettable() {
+        $("#dvExcel").empty();
+        $('#spnfile').text("");
+        $('#spnfile').append('<span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span>')
+    }
+</script>
+
+
+<style>
+    .clddl_plus {
+        float: right;
+        left: 5px;
+        position: absolute !important;
+        top: 9px;
+        font-size: 13px;
+    }
+</style>
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
+</div>
+<div class="main-content">
+    <div class="main-content-inner top-padding">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs" style=" z-index: -1 !IMPORTANT;">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#">PMS Setting</a>
+                </li>
+
+                <li>
+                    <a href="#">Finance Setting</a>
+                </li>
+                <li class="active">Exchange Rate</li>
+            </ul><!-- /.breadcrumb -->
+            @*<div class="nav-search" id="nav-search">
+                <div class="form-search">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>*@<!-- /.nav-search -->
+        </div>
+
+        <div class="page-content1">
+            @*------------------------------------------start currency popup---------------------------------------------------*@
+            <div class="modal fade" id="dialogdivcurrency">
+                <div class="modal-dialog modal-md modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <a href="#" class="close" data-dismiss="modal">×</a>
+                            <h3 class="item_hedin">Add Currency </h3>
+                        </div>
+                        <div class="modal-body" style="padding-left:6px">
+                            <div class="row">
+                                <div class="col-md-3">Currency Code <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                <div class="col-md-9">
+                                    <input type="text" id="txtcurrencycode" style="text-transform:uppercase" placeholder="Currency Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency code" />
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3">Currency Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                <div class="col-md-9">
+                                    <input type="text" id="txtcurrencyname" style="text-transform:capitalize" placeholder="Currency Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency name" />
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3" style="padding-right:0px">International Code <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                <div class="col-md-9">
+                                    <input type="text" id="txtinternationalcode" placeholder="International Code" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for international code" />
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3" style="padding-right:0px">International Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                <div class="col-md-9">
+                                    <input type="text" id="txtinternationalname" style="text-transform:capitalize;" placeholder="International Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for international Name" />
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3">Decimal Unit<span> : </span></div>
+                                <div class="col-md-9">
+                                    <input type="text" id="txtdecimalunit" placeholder="Decimal Unit" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for decimal unit" />
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3">Currency Symbol<span> : </span></div>
+                                <div class="col-md-9">
+                                    <input type="text" id="txtcurrencysymbol" placeholder="Currency Symbol" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for currency symbol" />
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3"></div>
+                                <div class="col-md-9">
+                                    <button class="btn btn-info" id="btnsavecurrency" type="button" data-toggle="tooltip" title="Button for save data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Submit
+                                    </button>
+                                    <button class="btn master-page-reset" id="btnresetcurrency" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="dialogdivCompany1">
+                <div class="modal-dialog modal-md modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <a href="#" class="close" data-dismiss="modal">×</a>
+                            <h3 class="item_hedin">Add Company </h3>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-3">Company Code <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                <div class="col-md-9">
+                                    <input type="text" id="txtcompanycode" style="text-transform:uppercase" placeholder="Company Code" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for company code" />
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3">Company Name <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                <div class="col-md-9">
+                                    <input type="text" id="txtcompanyname" style="text-transform:capitalize" placeholder="Company Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for company name" />
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3">Currency <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                <div class="col-md-9">
+                                    <select class="col-xs-10 col-sm-9" id="ddlnewcurrency" data-toggle="tooltip" title="Select currency">
+                                        <option>-Select Currency-</option>
+
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3">Language <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                <div class="col-md-9">
+                                    <select class="col-xs-10 col-sm-9" id="ddllanguage" data-toggle="tooltip" title="Select language name">
+                                        <option>-Select language-</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3"></div>
+                                <div class="col-md-9">
+                                    <button class="btn btn-info" id="btnsaveCompany" type="button" data-toggle="tooltip" title="Button for save data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Submit
+                                    </button>
+                                    <button class="btn master-page-reset" id="btnresetCompany" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*-----------------------------------------/end Currency master-----------------------------------------------------------*@
+            @*--------------------------------------------------------update exchange rate-------------------------------------------------------*@
+            <div class="modal fade" id="dialogdivupdateexchangerate">
+                <div class="modal-dialog modal-md modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <a href="#" class="close" data-dismiss="modal">×</a>
+                            <h3 class="item_hedin">Update Exchange Rate </h3>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-3">Company Name <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                <div class="col-md-9">
+
+                                    <select class="col-xs-10 col-sm-9" id="ddlupcompany" data-toggle="tooltip" title="Select company">
+                                        <option>-Select Company-</option>
+                                    </select>
+
+
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3">Date <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                <div class="col-md-9">
+                                    <input type="text" id="uprate_date" autocomplete="off" placeholder="Date" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for date" autocomplete="off" />
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3">Currency <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                <div class="col-md-9">
+                                    <select class="col-xs-10 col-sm-9" id="ddlupcurrency" data-toggle="tooltip" title="Select currency">
+                                        <option>-Select Currency-</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3">Amount <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                                <div class="col-md-9">
+                                    <input type="text" id="txtupamount" placeholder="Amount" onkeyup="checkDec(this);" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for amount" />
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3"></div>
+                                <div class="col-md-9">
+                                    <button class="btn btn-info" id="btnupdateexchangerate" type="button" data-toggle="tooltip" title="Button for update data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Update
+                                    </button>
+                                    <button class="btn master-page-reset" id="btnresetupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*-------------------------------------------------------------------------------------------------------------------------------*@
+            <div class="page-header">
+                <h3 class="item_hedin">
+                    Exchange Rate
+                </h3>
+            </div><!-- /.page-header -->
+            <div class="row">
+                <div class="col-xs-6">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Company <span style="color:red;font-size:14px;">*</span></label>
+
+                        <div class="col-sm-9">
+                            <select class="col-xs-10 col-sm-9" id="ddlcompany" data-toggle="tooltip" title="Select company">
+                                <option>-Select Company-</option>
+                                @*<option>  Kalatmak Spatial Systems(100)</option>*@
+
+
+                            </select><sup style=" top: .5em; left: .5em;"><a class="clddlcompany1 clddl_plus" data-toggle='tooltip' title='Add new company'><i class="fa fa-plus"></i></a></sup>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Date <span style="color:red;font-size:14px;">*</span></label>
+
+                        <div class="col-sm-9">
+                            <input type="text" id="rate_date" autocomplete="off" placeholder="Date" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for date" autocomplete="off" />
+                            @*<script>
+                                    $(function () {
+                                        $("#rate_date").datepicker({ dateFormat: 'dd/mm/yy' }).val($.datepicker.formatDate("dd/mm/yy", new Date()));
+                                    });
+                                </script>*@
+                            @*<script>
+                                    var datepicker = new ej.calendars.DatePicker({ width: "300px" });
+                                    datepicker.appendTo('#rate_date');
+                                </script>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-4"></div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Currency <span style="color:red;font-size:14px;">*</span></label>
+
+                        <div class="col-sm-9">
+                            <select class="col-xs-10 col-sm-9" id="ddlcurrency" data-toggle="tooltip" title="Select currency">
+                                <option>-Select Currency-</option>
+                            </select><sup style=" top: .5em; left: .5em;"><a class="clddlcurrency clddl_plus" data-toggle='tooltip' title='Add new currency'><i class="fa fa-plus"></i></a></sup>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Amount <span style="color:red;font-size:14px;">*</span></label>
+
+                        <div class="col-sm-9">
+                            <input type="text" id="txtamount" placeholder="Amount" onkeyup="checkDec(this);" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for amount" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <script type="text/javascript">
+                        function checkDec(el) {
+                            var ex = /^[0-9]+\.?[0-9]*$/;
+                            if (ex.test(el.value) == false) {
+                                el.value = el.value.substring(0, el.value.length - 1);
+                            }
+                        }
+            </script>
+
+            <div class="space-4"></div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <input type="hidden" id="hdexchage" />
+                    <div class="clearfix form-actions">
+                        <div class="col-md-offset-0 col-md-12">
+                            <a href="~/excelFile/ExchangeRateMaster.xlsx">Download Template</a>
+                            &nbsp; &nbsp; &nbsp;
+                            <button class="btn btn-info" id="btnexcel" type="button" data-toggle="tooltip" style="width: auto;" title="Button for excel data">
+                                <i class="ace-icon fa fa-floppy-o"></i>
+                                Upload Excel File
+                            </button>
+                            &nbsp; &nbsp; &nbsp;
+                            <button class="btn btn-info" id="btnsave" type="button" data-toggle="tooltip" title="Button for save data">
+                                <i class="ace-icon fa fa-floppy-o"></i>
+                                Submit
+                            </button>
+
+                            &nbsp; &nbsp; &nbsp;
+                            <button class="btn" type="reset" id="btnreset" data-toggle="tooltip" title="Button for reset data">
+                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+            <!-- PAGE CONTENT BEGINS -->
+            @*----------------------------------------------------popup for upload master data--------------------------------------------------------------*@
+            <div id="dialogdivexcel" class="modal fade" style="margin-top:0px!important;overflow:auto!important">
+                <div class="modal-dialog modal-lg modal-dialog-centered " style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
+                    <div class="modal-content" style="width:100% !important;padding-bottom:22px">
+                        <div class="modal-header">
+                            <a href="#" class="close" data-dismiss="modal">×</a>
+                            <h3 class="item_hedin">Upload Excel File </h3>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="row">
+
+                                <div class="col-md-3">Choose excel file <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                                <div class="col-sm-9">
+                                    <div class="col-xs-8 pr-0">
+
+                                        <label class="ace-file-input upload_fl1"><input type="file" id="fileUpload" accept=".xls,.xlsx"><span class="ace-file-container upload_fl" id="spnfile" data-title="Choose"><span class="ace-file-name" id="spnfile1" data-title="No File ..."><i class=" ace-icon fa fa-upload"></i></span></span><a class="remove" href="#"><i class=" ace-icon fa fa-times"></i></a></label>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <i class="ace-icon fa fa-cloud-upload upload-ic"></i>
+                                        <input type="button" id="uploadExcel" class="btn btn-info upload-bt" value="Upload" onclick="ExportToTable()" />
+                                        <div id="ExcelDataLoader" class="loader">
+                                            <img src="~/Images/1.gif" height="70" width="60" />
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                                <div class="space-6"></div>
+                                <div class="row" style="padding-top:45px">
+                                    <div class="col-xs-12">
+                                        <div class="form-horizontal">
+                                            <div id="dvExcel"></div>
+
+                                        </div>
+
+                                    </div><!-- /.span -->
+                                </div><!-- /.row -->
+                            </div>
+
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-3"></div>
+                                <div class="col-md-9">
+                                    <button class="btn btn-info" id="btnsaveuploaddb" type="button" data-toggle="tooltip" title="Button for save data">
+                                        <i class="ace-icon fa fa-floppy-o"></i>
+                                        Submit
+                                    </button>
+                                    <button class="btn master-page-reset" id="btnresetexchangerate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @*---------------------------------------------------------------------------------------------------------------------------------------*@
+
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="form-horizontal">
+                        <div class="table-header">
+                            Current Record
+                        </div>
+                        <div id="divtbl"></div>
+
+
+                    </div>
+
+                </div><!-- /.span -->
+            </div><!-- /.row -->
+
+        </div>
+    </div>
+</div>
+
+@*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>
+@*<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<link href="~/assets/css/colReorder.dataTables.css" rel="stylesheet" />
+<link href="~/assets/css/responsive.dataTables.css" rel="stylesheet" />
+<script src="~/assets/js/dataTables.colReorder.js"></script>
+<script src="~/assets/js/dataTables.responsive.js"></script>
+
+<link href="~/assets/css/rowReorder.dataTables.min.css" rel="stylesheet" />
+
+
+<script>
+
+    $(document).ready(function () {
+        // GetData1();
+        //$('#pending_from').dataTable({
+        //    colReorder: {
+        //        order: [4, 3, 2, 1, 0, ]
+        //    }
+        //});
+        $('#EmpInfo').dataTable({
+            colReorder: {
+                order: [0, 1, 2, 3, 4]
+            }
+        });
+    });
+
+
+
+</script>
+<link href="~/Datetime/css/jquery.datetimepicker.min.css" rel="stylesheet" />
+<script src="~/Datetime/js/jquery.datetimepicker.full.js"></script>
+<script>
+
+    jQuery.datetimepicker.setLocale('en');
+
+    jQuery('#rate_date').datetimepicker({
+        i18n: {
+            en: {
+                months: [
+                    'January', 'February', 'March', 'April',
+                    'May', 'Jun', 'July', 'August',
+                    'September', 'October', 'November', 'December',
+                ],
+                dayOfWeek: [
+                    "Sun", "Mon", "Tues", "Wed",
+                    "Thus", "Fri", "Sat",
+                ]
+            }
+        },
+        timepicker: false,
+        value: 'today',
+        format: 'd/m/Y',
+        closeOnDateSelect: true,
+        minDate: 0,
+        weeks: false
+
+
+
+    });
+    var today = new Date();
+    today.setHours(today.getHours() + 4);
+
+</script>
+<script>
+
+    jQuery.datetimepicker.setLocale('en');
+
+    jQuery('#uprate_date').datetimepicker({
+        i18n: {
+            en: {
+                months: [
+                    'January', 'February', 'March', 'April',
+                    'May', 'Jun', 'July', 'August',
+                    'September', 'October', 'November', 'December',
+                ],
+                dayOfWeek: [
+                    "Sun", "Mon", "Tues", "Wed",
+                    "Thus", "Fri", "Sat",
+                ]
+            }
+        },
+        timepicker: false,
+        value: 'today',
+        format: 'd/m/Y',
+        closeOnDateSelect: true,
+        minDate: 0,
+        weeks: false
+
+
+
+    });
+    var today = new Date();
+    today.setHours(today.getHours() + 4);
+
+</script>
