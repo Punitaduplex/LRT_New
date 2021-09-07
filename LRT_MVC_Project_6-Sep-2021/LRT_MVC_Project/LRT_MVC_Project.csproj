@@ -742,6 +742,7 @@
     <Content Include="Views\Vendor\Index.cshtml" />
     <Content Include="Views\Vendor\VendorRegistration.cshtml" />
     <Content Include="Views\Vendor\VendorMaster.cshtml" />
+    <Content Include="Views\Vendor\ListedVendor.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

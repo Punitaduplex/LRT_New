@@ -1,0 +1,283 @@
+﻿
+@{
+    ViewBag.Title = "ListedVendor";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+ 
+    @*<title>Listed Vendor </title>*@ 
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.css">
+
+@*<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+
+
+   <style>
+    .tbl_width {
+        width: 500px !important;
+    }
+
+    .dataTables_wrapper {
+        margin-bottom: 16px;
+        overflow: hidden !important;
+    }
+
+    .hide_me {
+        display: none;
+    }
+
+    li[data-dtr-index="5"] {
+        display: none;
+    }
+
+    .loader {
+        display: none;
+        top: 251px;
+        position: absolute;
+        margin-left: -193px;
+        margin-bottom: 117px;
+        z-index: 99999;
+    }
+
+    .form-group {
+        margin-bottom: 10px !important;
+    }
+</style>
+<style>
+    .margin-top-forms {
+        margin-top: 190px;
+    }
+
+    .border-forms {
+        border: 1px solid;
+        padding-top: 7px;
+    }
+
+    #machin td {
+        padding: 9px 24px 0px 9px !important;
+        padding-left: 20px !important;
+    }
+
+    #machin input[type=text] {
+        height: 25px !IMPORTANT;
+        margin-bottom: 5px !important;
+    }
+
+    .modal-header .close {
+        font-size: 32px;
+        background: none !IMPORTANT;
+    }
+
+    .sv-form {
+        padding: 0px 14px !important;
+        height: 42px !important;
+        margin: 10px !important;
+        border-radius: 3px !important;
+        background: #438eb9;
+        color: white;
+    }
+
+    .wid_9 {
+        width: 9%;
+    }
+
+    .add_inf {
+        /* color: black; */
+        padding: 5px 10px;
+        background-color: #f3f3f3;
+        display: block;
+        text-align: center;
+        font-weight: 500;
+    }
+</style>
+ <script type="text/javascript">
+    $(function () {
+
+        GetVendorListeddata();
+
+    });
+
+</script>
+ 
+
+
+@*---------------------------------------------------------------------Start Listed vendor----------------------------------------------------------------------*@
+<script>
+    function GetVendorListeddata() {
+        $("#divtbl").append('<table id="listedvendor" class="table table-bordered  table-hover"><thead><tr><th><input type="checkbox" id="chkAll"</th><th class="left_c">Name</th><th class="left_c">Company Name</th><th class="left_c">Email</th> <th class="left_c">Work Phone</th> <th style="display:none"></th><th class="w155_i">Action</th></tr></thead> <tbody></tbody> </table>')
+        $("#listedvendor > tbody").html("");
+
+        $.getJSON("/Vendor/ListedVendorDetails",
+            function (json) {
+                var tr;
+
+                //Append each row to html table
+                CheckBox = chklstvendor;
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    //tr.append("<td><label class='pos-rel'>" + (i + 1) +  "</lable></td>");
+                    tr.append("<td><input type='checkbox'  class='ace'/></td>");
+                    tr.append("<td class='left_c'>" + json[i].Vendor_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Vendor_Company_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Vendor_Email_ID + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Vendor_Contact_Person + "</td>");
+
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li ><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip'><i class='ace-icon fa fa-pencil bigger-120 edit_c' data-rel='tooltip' title='Edit'></i></a><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='List'><i class='menu-icon fa fa-eye bigger-120 green'></i></a></li></ul></td>");
+                    
+                    $('#listedvendor').append(tr);
+
+                }
+                $('#listedvendor').DataTable();
+           
+            
+            });
+
+    };
+</script>
+  @*------------------------------------edit data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.remove", function () {
+        var $row = $(this).closest("tr");    // Find the row
+       
+        var $id = $row.find('td:eq(0)').text();
+        //alert($id);
+        var $Vendor_Name = $row.find('td:eq(1)').text();
+        var $Vendor_Company_Name = $row.find('td:eq(2)').text();
+        var $Vendor_Contact_Person = $row.find('td:eq(3)').text();
+        var $Vendor_Email_ID = $row.find('td:eq(4)').text();
+        //pass page path fill this value($contactpersonname,Vendor_Email_ID,$Vendor_Company_Name,$Vendor_Name)
+        $("#hdlistedvendor").val($id);
+
+    });
+</script>
+
+ 
+   <label id="chklstvendor"><input type="checkbox" id=""></label>
+
+ 
+    <div class="main-container ace-save-state" id="main-container">
+        <script type="text/javascript">
+            try { ace.settings.loadState('main-container') } catch (e) { }
+        </script>
+
+        <div id="sidebar" class="sidebar                  responsive                    ace-save-state">
+            <script type="text/javascript">
+                try { ace.settings.loadState('sidebar') } catch (e) { }
+            </script>
+
+            <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+                <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+                    <button class="btn btn-success">
+                        <i class="ace-icon fa fa-signal"></i>
+                    </button>
+
+                    <button class="btn btn-info">
+                        <i class="ace-icon fa fa-pencil"></i>
+                    </button>
+
+                    <button class="btn btn-warning">
+                        <i class="ace-icon fa fa-users"></i>
+                    </button>
+
+                    <button class="btn btn-danger">
+                        <i class="ace-icon fa fa-cogs"></i>
+                    </button>
+                </div>
+
+                <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+                    <span class="btn btn-success"></span>
+
+                    <span class="btn btn-info"></span>
+
+                    <span class="btn btn-warning"></span>
+
+                    <span class="btn btn-danger"></span>
+                </div>
+            </div><!-- /.sidebar-shortcuts -->
+
+
+
+            <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+                <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="main-content-inner">
+                <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="ace-icon fa fa-home home-icon"></i>
+                            <a href="#">Home</a>
+                        </li>
+
+                        <li>
+                            <a href="#">Forms</a>
+                        </li>
+                        <li class="active">Form Elements</li>
+                    </ul><!-- /.breadcrumb -->
+
+                    <div class="nav-search" id="nav-search">
+                        <form class="form-search">
+                            <span class="input-icon">
+                                <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                                <i class="ace-icon fa fa-search nav-search-icon"></i>
+                            </span>
+                        </form>
+                    </div><!-- /.nav-search -->
+                </div>
+
+                <div class="page-content">
+                    
+
+                    <div class="page-header">
+                        <h1>
+                            Listed Vendor
+
+                        </h1>
+                    </div><!-- /.page-header -->
+
+
+                    @*<h3>Current Record</h3>*@
+                    <div id="divtbl"></div>
+                    
+                </div><!-- /.page-content -->
+
+
+
+
+
+            </div>
+        </div><!-- /.main-content -->
+        
+       
+    </div> 
+
+
+@*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>
+@*<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<link href="~/assets/css/colReorder.dataTables.css" rel="stylesheet" />
+<link href="~/assets/css/responsive.dataTables.css" rel="stylesheet" />
+<script src="~/assets/js/dataTables.colReorder.js"></script>
+<script src="~/assets/js/dataTables.responsive.js"></script>
+
+<link href="~/assets/css/rowReorder.dataTables.min.css" rel="stylesheet" />
+<script>
+
+    $(document).ready(function () {
+
+        $('#listedvendor').DataTable({
+            //colReorder: {
+            //    order: [0,1,2,4,5]
+            //}
+        });
+    });
+
+
+
+</script>

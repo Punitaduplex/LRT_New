@@ -84,6 +84,70 @@
     font-weight: 500;
 }
 </style>
+
+<script type="text/javascript">
+    $(function () {
+
+        GetVendorListeddata();
+        
+    });
+
+</script>
+
+@*---------------------------------------------------------------------Start Listed vendor----------------------------------------------------------------------*@
+<script>
+    function GetVendorListeddata() {
+        $("#divtbl").append('<table id="listed_ver" class="table table-bordered  table-hover"><thead><tr><th><input type="checkbox" id="chkAllView"</th><th class="left_c">Name</th><th class="left_c">Company Name</th><th class="left_c">Email</th> <th class="left_c">Work Phone</th> <th style="display:none"></th><th class="w155_i">Action</th></tr></thead> <tbody></tbody> </table>')
+        $("#listed_ver > tbody").html("");
+
+        $.getJSON("/Vendor/ListedVendorDetails",
+            function (json) {
+                var tr;
+
+                //Append each row to html table
+                CheckBox = chklstvendor;
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    //tr.append("<td><label class='pos-rel'>" + (i + 1) +  "</lable></td>");
+                    tr.append("<td><input type='checkbox'  class='ace'/></td>");
+                    tr.append("<td class='left_c'>" + json[i].Vendor_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Vendor_Company_Name + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Vendor_Email_ID + "</td>");
+                    tr.append("<td class='left_c'>" + json[i].Vendor_Contact_Person + "</td>");
+
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li ><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip'><i class='ace-icon fa fa-pencil bigger-120 edit_c' data-rel='tooltip' title='Edit'></i></a><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='List'><i class='menu-icon fa fa-eye bigger-120 green'></i></a></li></ul></td>");
+
+                    $('#listed_ver').append(tr);
+
+                }
+                $('#listed_ver').DataTable();
+            });
+
+    };
+</script>
+
+
+<label id="chklstvendor"><input type="checkbox" id=""></label>
+
+@*------------------------------------edit data-------------------------------------------*@
+<script>
+    $(document).on("click", "a.remove", function () {
+        var $row = $(this).closest("tr");    // Find the row
+        //var $Vendor_Name = $row.find('td:eq(1)').text();
+        //var $Vendor_Company_Name = $row.find('td:eq(2)').text();
+        //var $Vendor_Contact_Person = $row.find('td:eq(3)').text();
+        //var $Vendor_Email_ID = $row.find('td:eq(3)').text();
+        var $id = $row.find('td:eq(0)').text();
+        var $Vendor_Name = $row.find('td:eq(1)').text();
+        var $Vendor_Company_Name = $row.find('td:eq(2)').text();
+        var $Vendor_Contact_Person = $row.find('td:eq(3)').text();
+        var $Vendor_Email_ID = $row.find('td:eq(4)').text();
+        //pass page path fill this value($contactpersonname,Vendor_Email_ID,$Vendor_Company_Name,$Vendor_Name)
+        $("#hdlistedvendor").val($id);
+
+    });
+</script>
+@*---------------------------------------------------------------------End Listed vendor----------------------------------------------------------------------*@
 <script>
     if ($("input[type='radio'].radioBtnClass").is(':checked')) {
         var card_type = $("input[type='radio'].radioBtnClass:checked").val();
@@ -4789,420 +4853,312 @@
                                 </div>
 
                                 <div id="dropdown14" class="tab-pane">
-                                    <h3 class="man_fild">
-                                        Listed Vendor
-                                    </h3>
-                                    <div class="form-horizontal" id="">
-                                        <!-- <div class="table-header">
-                                            Current Record
-                                        </div> -->
-                                        <div id="divtbl">
-                                            <div id="EmpInfo_wrapper" class="dataTables_wrapper no-footer">
-                                                <div class="dataTables_length" id="EmpInfo_length">
-                                                    <label>
-                                                        Show
-                                                        <select name="EmpInfo_length" aria-controls="EmpInfo"
-                                                                class="">
-                                                            <option value="10">10</option>
-                                                            <option value="25">25</option>
-                                                            <option value="50">50</option>
-                                                            <option value="100">100</option>
-                                                        </select> entries
-                                                    </label>
-                                                </div>
-                                                <div id="EmpInfo_filter" class="dataTables_filter">
-                                                    <label>
-                                                        Search:<input type="search" class="" placeholder=""
-                                                                      aria-controls="EmpInfo">
-                                                    </label>
-                                                </div>
-                                                <table id="EmpInfo" class="table table-bordered  table-hover dataTable no-footer" role="grid" aria-describedby="EmpInfo_info">
-                                                    <thead>
-                                                        <tr role="row">
-                                                            <th class="left_c w61_i sorting_asc" tabindex="0"
-                                                                aria-controls="EmpInfo" rowspan="1" colspan="1"
-                                                                aria-sort="ascending"
-                                                                aria-label="S. No: activate to sort column descending"
-                                                                style="width: 61px;">S. No</th>
-                                                            <th class="left_c sorting" tabindex="0"
-                                                                aria-controls="EmpInfo" rowspan="1" colspan="1"
-                                                                aria-label="Vendor Category Name: activate to sort column ascending"
-                                                                style="width: 999px;">Vendor Category Name</th>
-                                                            <th style="display: none; width: 0px;"
-                                                                class="sorting" tabindex="0"
-                                                                aria-controls="EmpInfo" rowspan="1" colspan="1"
-                                                                aria-label=": activate to sort column ascending">
-                                                            </th>
-                                                            <th class="w155_i sorting" tabindex="0"
-                                                                aria-controls="EmpInfo" rowspan="1" colspan="1"
-                                                                aria-label="Action: activate to sort column ascending"
-                                                                style="width: 145px;">Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr role="row" class="odd">
-                                                            <td class="left_c w61_i sorting_1">1</td>
-                                                            <td class="left_c">FINISHING / TREATMENT</td>
-                                                            <td style="display:none">1</td>
-                                                            <td class="lst_td w155_i">
-                                                                <ul class="list_main">
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="approve tooltip-error comn_inline grn"
-                                                                           data-rel="tooltip">
-                                                                            <i class="menu-icon fa fa-check bigger-120 green"
-                                                                               data-rel="tooltip"
-                                                                               title="Approved"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);" id="myAnc"
-                                                                           class="remove tooltip-error comn_inline blu"
-                                                                           data-rel="tooltip" title="Edit">
-                                                                            <i class="ace-icon fa fa-pencil bigger-120 edit_c"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="delete tooltip-error comn_inline red"
-                                                                           data-rel="tooltip" title="Delete">
-                                                                            <i class="menu-icon fa fa-trash bigger-120 red"
-                                                                               title="Delete"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </td>
-                                                        </tr>
-                                                        <tr role="row" class="even">
-                                                            <td class="left_c w61_i sorting_1">2</td>
-                                                            <td class="left_c">FABRICATION</td>
-                                                            <td style="display:none">2</td>
-                                                            <td class="lst_td w155_i">
-                                                                <ul class="list_main">
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="approve tooltip-error comn_inline grn"
-                                                                           data-rel="tooltip">
-                                                                            <i class="menu-icon fa fa-clock-o bigger-120 green"
-                                                                               data-rel="tooltip"
-                                                                               title="Pending"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);" id="myAnc"
-                                                                           class="remove tooltip-error comn_inline blu"
-                                                                           data-rel="tooltip" title="Edit">
-                                                                            <i class="ace-icon fa fa-pencil bigger-120 edit_c"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="delete tooltip-error comn_inline red"
-                                                                           data-rel="tooltip" title="Delete">
-                                                                            <i class="menu-icon fa fa-trash bigger-120 red"
-                                                                               title="Delete"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </td>
-                                                        </tr>
-                                                        <tr role="row" class="odd">
-                                                            <td class="left_c w61_i sorting_1">3</td>
-                                                            <td class="left_c">FASTENER123</td>
-                                                            <td style="display:none">3</td>
-                                                            <td class="lst_td w155_i">
-                                                                <ul class="list_main">
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="approve tooltip-error comn_inline grn"
-                                                                           data-rel="tooltip">
-                                                                            <i class="menu-icon fa fa-check bigger-120 green"
-                                                                               data-rel="tooltip"
-                                                                               title="Approved"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);" id="myAnc"
-                                                                           class="remove tooltip-error comn_inline blu"
-                                                                           data-rel="tooltip" title="Edit">
-                                                                            <i class="ace-icon fa fa-pencil bigger-120 edit_c"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="delete tooltip-error comn_inline red"
-                                                                           data-rel="tooltip" title="Delete">
-                                                                            <i class="menu-icon fa fa-trash bigger-120 red"
-                                                                               title="Delete"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </td>
-                                                        </tr>
-                                                        <tr role="row" class="even">
-                                                            <td class="left_c w61_i sorting_1">4</td>
-                                                            <td class="left_c">MATERIAL</td>
-                                                            <td style="display:none">4</td>
-                                                            <td class="lst_td w155_i">
-                                                                <ul class="list_main">
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="approve tooltip-error comn_inline grn"
-                                                                           data-rel="tooltip">
-                                                                            <i class="menu-icon fa fa-check bigger-120 green"
-                                                                               data-rel="tooltip"
-                                                                               title="Approved"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);" id="myAnc"
-                                                                           class="remove tooltip-error comn_inline blu"
-                                                                           data-rel="tooltip" title="Edit">
-                                                                            <i class="ace-icon fa fa-pencil bigger-120 edit_c"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="delete tooltip-error comn_inline red"
-                                                                           data-rel="tooltip" title="Delete">
-                                                                            <i class="menu-icon fa fa-trash bigger-120 red"
-                                                                               title="Delete"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </td>
-                                                        </tr>
-                                                        <tr role="row" class="odd">
-                                                            <td class="left_c w61_i sorting_1">5</td>
-                                                            <td class="left_c">MAINTENANCE</td>
-                                                            <td style="display:none">5</td>
-                                                            <td class="lst_td w155_i">
-                                                                <ul class="list_main">
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="approve tooltip-error comn_inline grn"
-                                                                           data-rel="tooltip">
-                                                                            <i class="menu-icon fa fa-check bigger-120 green"
-                                                                               data-rel="tooltip"
-                                                                               title="Approved"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);" id="myAnc"
-                                                                           class="remove tooltip-error comn_inline blu"
-                                                                           data-rel="tooltip" title="Edit">
-                                                                            <i class="ace-icon fa fa-pencil bigger-120 edit_c"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="delete tooltip-error comn_inline red"
-                                                                           data-rel="tooltip" title="Delete">
-                                                                            <i class="menu-icon fa fa-trash bigger-120 red"
-                                                                               title="Delete"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </td>
-                                                        </tr>
-                                                        <tr role="row" class="even">
-                                                            <td class="left_c w61_i sorting_1">6</td>
-                                                            <td class="left_c">OTHER done</td>
-                                                            <td style="display:none">6</td>
-                                                            <td class="lst_td w155_i">
-                                                                <ul class="list_main">
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="approve tooltip-error comn_inline grn"
-                                                                           data-rel="tooltip">
-                                                                            <i class="menu-icon fa fa-check bigger-120 green"
-                                                                               data-rel="tooltip"
-                                                                               title="Approved"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);" id="myAnc"
-                                                                           class="remove tooltip-error comn_inline blu"
-                                                                           data-rel="tooltip" title="Edit">
-                                                                            <i class="ace-icon fa fa-pencil bigger-120 edit_c"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="delete tooltip-error comn_inline red"
-                                                                           data-rel="tooltip" title="Delete">
-                                                                            <i class="menu-icon fa fa-trash bigger-120 red"
-                                                                               title="Delete"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </td>
-                                                        </tr>
-                                                        <tr role="row" class="odd">
-                                                            <td class="left_c w61_i sorting_1">7</td>
-                                                            <td class="left_c">STANDARD PART ELECTRICAL</td>
-                                                            <td style="display:none">7</td>
-                                                            <td class="lst_td w155_i">
-                                                                <ul class="list_main">
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="approve tooltip-error comn_inline grn"
-                                                                           data-rel="tooltip">
-                                                                            <i class="menu-icon fa fa-check bigger-120 green"
-                                                                               data-rel="tooltip"
-                                                                               title="Approved"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);" id="myAnc"
-                                                                           class="remove tooltip-error comn_inline blu"
-                                                                           data-rel="tooltip" title="Edit">
-                                                                            <i class="ace-icon fa fa-pencil bigger-120 edit_c"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="delete tooltip-error comn_inline red"
-                                                                           data-rel="tooltip" title="Delete">
-                                                                            <i class="menu-icon fa fa-trash bigger-120 red"
-                                                                               title="Delete"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </td>
-                                                        </tr>
-                                                        <tr role="row" class="even">
-                                                            <td class="left_c w61_i sorting_1">8</td>
-                                                            <td class="left_c">
-                                                                STATIONARY AND OFFICE EQUIPMENT
-                                                            </td>
-                                                            <td style="display:none">8</td>
-                                                            <td class="lst_td w155_i">
-                                                                <ul class="list_main">
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="approve tooltip-error comn_inline grn"
-                                                                           data-rel="tooltip">
-                                                                            <i class="menu-icon fa fa-clock-o bigger-120 green"
-                                                                               data-rel="tooltip"
-                                                                               title="Pending"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);" id="myAnc"
-                                                                           class="remove tooltip-error comn_inline blu"
-                                                                           data-rel="tooltip" title="Edit">
-                                                                            <i class="ace-icon fa fa-pencil bigger-120 edit_c"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="delete tooltip-error comn_inline red"
-                                                                           data-rel="tooltip" title="Delete">
-                                                                            <i class="menu-icon fa fa-trash bigger-120 red"
-                                                                               title="Delete"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </td>
-                                                        </tr>
-                                                        <tr role="row" class="odd">
-                                                            <td class="left_c w61_i sorting_1">9</td>
-                                                            <td class="left_c">
-                                                                TOOLS AND HARDWARE(PMD AND SMD)
-                                                            </td>
-                                                            <td style="display:none">9</td>
-                                                            <td class="lst_td w155_i">
-                                                                <ul class="list_main">
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="approve tooltip-error comn_inline grn"
-                                                                           data-rel="tooltip">
-                                                                            <i class="menu-icon fa fa-clock-o bigger-120 green"
-                                                                               data-rel="tooltip"
-                                                                               title="Pending"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);" id="myAnc"
-                                                                           class="remove tooltip-error comn_inline blu"
-                                                                           data-rel="tooltip" title="Edit">
-                                                                            <i class="ace-icon fa fa-pencil bigger-120 edit_c"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="delete tooltip-error comn_inline red"
-                                                                           data-rel="tooltip" title="Delete">
-                                                                            <i class="menu-icon fa fa-trash bigger-120 red"
-                                                                               title="Delete"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </td>
-                                                        </tr>
-                                                        <tr role="row" class="even">
-                                                            <td class="left_c w61_i sorting_1">10</td>
-                                                            <td class="left_c">HARDWARE (ASSY)</td>
-                                                            <td style="display:none">10</td>
-                                                            <td class="lst_td w155_i">
-                                                                <ul class="list_main">
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="approve tooltip-error comn_inline grn"
-                                                                           data-rel="tooltip">
-                                                                            <i class="menu-icon fa fa-clock-o bigger-120 green"
-                                                                               data-rel="tooltip"
-                                                                               title="Pending"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);" id="myAnc"
-                                                                           class="remove tooltip-error comn_inline blu"
-                                                                           data-rel="tooltip" title="Edit">
-                                                                            <i class="ace-icon fa fa-pencil bigger-120 edit_c"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="javascript:void(0);"
-                                                                           class="delete tooltip-error comn_inline red"
-                                                                           data-rel="tooltip" title="Delete">
-                                                                            <i class="menu-icon fa fa-trash bigger-120 red"
-                                                                               title="Delete"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                                <div class="dataTables_info" id="EmpInfo_info" role="status"
-                                                     aria-live="polite">Showing 1 to 10 of 56 entries</div>
-                                                <div class="dataTables_paginate paging_simple_numbers"
-                                                     id="EmpInfo_paginate">
-                                                    <a class="paginate_button previous disabled"
-                                                       aria-controls="EmpInfo" data-dt-idx="0" tabindex="0"
-                                                       id="EmpInfo_previous">Previous</a><span>
-                                                        <a class="paginate_button current"
-                                                           aria-controls="EmpInfo" data-dt-idx="1"
-                                                           tabindex="0">1</a><a class="paginate_button "
-                                                                                aria-controls="EmpInfo" data-dt-idx="2"
-                                                                                tabindex="0">2</a><a class="paginate_button "
-                                                                                                     aria-controls="EmpInfo" data-dt-idx="3"
-                                                                                                     tabindex="0">3</a><a class="paginate_button "
-                                                                                                                          aria-controls="EmpInfo" data-dt-idx="4"
-                                                                                                                          tabindex="0">4</a><a class="paginate_button "
-                                                                                                                                               aria-controls="EmpInfo" data-dt-idx="5"
-                                                                                                                                               tabindex="0">5</a><a class="paginate_button "
-                                                                                                                                                                    aria-controls="EmpInfo" data-dt-idx="6"
-                                                                                                                                                                    tabindex="0">6</a>
-                                                    </span><a class="paginate_button next" aria-controls="EmpInfo"
-                                                              data-dt-idx="7" tabindex="0" id="EmpInfo_next">Next</a>
-                                                </div>
+                                    <div class="page-header">
+                                        <h1>
+                                            Listed Vendor
+
+                                        </h1>
+                                    </div><!-- /.page-header -->
+
+
+
+                                    <div class="vendor_mast">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+
+                                                <div id="divtbl"></div>
+                                                @*<div class="tabbable">
+
+
+                                                    <div class="tab-content tb_area">
+
+
+
+                                                        <div class="sub_tb">
+
+                                                            <table id="vendor_per" class="table  table-bordered table-hover">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>
+                                                                            <label class="pos-rel">
+                                                                                <input type="checkbox" class="ace">
+                                                                                <span class="lbl"></span>
+                                                                            </label>
+                                                                        </th>
+
+                                                                        <th>
+                                                                            Name
+                                                                        </th>
+                                                                        <th>AVL/ SBL Number</th>
+                                                                        <th>Company Name</th>
+                                                                        <th>Email</th>
+                                                                        <th>Work Phone </th>
+                                                                        <th>  Status  </th>
+                                                                        <th>Edit</th>
+
+
+
+                                                                    </tr>
+                                                                </thead>
+
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                <input type="checkbox" class="ace">
+                                                                                <span class="lbl"></span>
+                                                                            </label>
+                                                                        </td>
+
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                Kanopesi Sporer
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label for="">
+                                                                                <img class="img_sc" src="./assets/images/listed.png" alt="">
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                Kanopesi Sporer
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                sporer@gmail.com
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel grn">
+                                                                                Approved
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                +91-9898989898
+                                                                            </label>
+                                                                        </td>
+
+
+                                                                        <td>
+                                                                            <ul class="list_main"><li><a href="javascript:void(0);" id="myAnc" class="remove tooltip-error comn_inline blu" data-rel="tooltip" title="Edit"><i class="ace-icon fa fa-pencil bigger-120 edit_c"></i></a></li><li><a href="javascript:void(0);" class="approve tooltip-error comn_inline grn" data-rel="tooltip"><i class="menu-icon fa fa-eye bigger-120 green" data-toggle="tooltip" title="Pending"></i></a></li></ul>
+                                                                        </td>
+
+
+
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                <input type="checkbox" class="ace">
+                                                                                <span class="lbl"></span>
+                                                                            </label>
+                                                                        </td>
+
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                Kanopesi Sporer
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label for="">
+                                                                                <img class="img_sc" src="./assets/images/listed.png" alt="">
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                Kanopesi Sporer
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                sporer@gmail.com
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel red">
+                                                                                Rejected
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                +91-9898989898
+                                                                            </label>
+                                                                        </td>
+
+
+                                                                        <td>
+                                                                            <ul class="list_main"><li><a href="javascript:void(0);" id="myAnc" class="remove tooltip-error comn_inline blu" data-rel="tooltip" title="Edit"><i class="ace-icon fa fa-pencil bigger-120 edit_c"></i></a></li><li><a href="javascript:void(0);" class="approve tooltip-error comn_inline grn" data-rel="tooltip"><i class="menu-icon fa fa-eye bigger-120 green" data-toggle="tooltip" title="Pending"></i></a></li></ul>
+                                                                        </td>
+
+
+
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                <input type="checkbox" class="ace">
+                                                                                <span class="lbl"></span>
+                                                                            </label>
+                                                                        </td>
+
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                Kanopesi Sporer
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label for="">
+                                                                                <img class="img_sc" src="./assets/images/listed.png" alt="">
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                Kanopesi Sporer
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                sporer@gmail.com
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                Stand by
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                +91-9898989898
+                                                                            </label>
+                                                                        </td>
+
+
+                                                                        <td>
+                                                                            <ul class="list_main"><li><a href="javascript:void(0);" id="myAnc" class="remove tooltip-error comn_inline blu" data-rel="tooltip" title="Edit"><i class="ace-icon fa fa-pencil bigger-120 edit_c"></i></a></li><li><a href="javascript:void(0);" class="approve tooltip-error comn_inline grn" data-rel="tooltip"><i class="menu-icon fa fa-eye bigger-120 green" data-toggle="tooltip" title="Pending"></i></a></li></ul>
+                                                                        </td>
+
+
+
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                <input type="checkbox" class="ace">
+                                                                                <span class="lbl"></span>
+                                                                            </label>
+                                                                        </td>
+
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                Kanopesi Sporer
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label for="">
+                                                                                <img class="img_sc" src="./assets/images/listed.png" alt="">
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                Kanopesi Sporer
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                sporer@gmail.com
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel grn">
+                                                                                Approved
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                +91-9898989898
+                                                                            </label>
+                                                                        </td>
+
+
+                                                                        <td>
+                                                                            <ul class="list_main"><li><a href="javascript:void(0);" id="myAnc" class="remove tooltip-error comn_inline blu" data-rel="tooltip" title="Edit"><i class="ace-icon fa fa-pencil bigger-120 edit_c"></i></a></li><li><a href="javascript:void(0);" class="approve tooltip-error comn_inline grn" data-rel="tooltip"><i class="menu-icon fa fa-eye bigger-120 green" data-toggle="tooltip" title="Pending"></i></a></li></ul>
+                                                                        </td>
+
+
+
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                <input type="checkbox" class="ace">
+                                                                                <span class="lbl"></span>
+                                                                            </label>
+                                                                        </td>
+
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                Kanopesi Sporer
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label for="">
+                                                                                <img class="img_sc" src="./assets/images/listed.png" alt="">
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                Kanopesi Sporer
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                sporer@gmail.com
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel red">
+                                                                                Rejected
+                                                                            </label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="pos-rel">
+                                                                                +91-9898989898
+                                                                            </label>
+                                                                        </td>
+
+
+                                                                        <td>
+                                                                            <ul class="list_main"><li><a href="javascript:void(0);" id="myAnc" class="remove tooltip-error comn_inline blu" data-rel="tooltip" title="Edit"><i class="ace-icon fa fa-pencil bigger-120 edit_c"></i></a></li><li><a href="javascript:void(0);" class="approve tooltip-error comn_inline grn" data-rel="tooltip"><i class="menu-icon fa fa-eye bigger-120 green" data-toggle="tooltip" title="Pending"></i></a></li></ul>
+                                                                        </td>
+
+
+
+
+                                                                    </tr>
+
+
+
+
+
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>*@
                                             </div>
+
+
+
                                         </div>
-
-
                                     </div>
                                 </div>
                                 <div id="pendingform" class="tab-pane">

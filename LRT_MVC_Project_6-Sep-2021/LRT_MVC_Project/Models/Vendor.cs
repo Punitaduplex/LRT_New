@@ -12,17 +12,23 @@ namespace LRT_MVC_Project.Models
 {
     public class Vendor
     {
-        [DisplayFormat(ConvertEmptyStringToNull = false)]
-        public int Vendor_Invitation_Id { get; set; }
+        public string Vendor_Name { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Vendor_Company_Name { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
-        public string Vendor_Type { get; set; }
-        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
         public string Vendor_Contact_Person { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Vendor_Email_ID { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        
+        public int Vendor_Invitation_Id { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        
+        public string Vendor_Type { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+      
         public string Approve_Status { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Access_Permission { get; set; }
@@ -294,7 +300,18 @@ namespace LRT_MVC_Project.Models
             catch (Exception ex) { }
             return ds;
         }
-       
+        public DataSet GetVendorListeddtls()
+        {
+            string strcon = ConfigurationManager.ConnectionStrings["myConStr"].ConnectionString;
+            MySqlConnection con = new MySqlConnection(strcon);
+            MySqlCommand cmd = new MySqlCommand("proc_get_v_vendorlisted_Dtls ", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            DataSet ds = new DataSet();
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            da.Fill(ds);
+            return ds;
+        }
     }
     public class VendorRegistation
     {
