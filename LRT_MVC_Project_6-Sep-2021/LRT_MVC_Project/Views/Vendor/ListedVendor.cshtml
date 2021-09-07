@@ -1,22 +1,21 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "ListedVendor";
     Layout = "~/_LayoutVendor.cshtml";
 }
- 
-    @*<title>Listed Vendor </title>*@ 
 
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+@{
+    ViewBag.Title = "VendorMaster";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+@*<script src="~/assets/js/jquery-2.1.4.min.js"></script>*@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.css">
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 @*<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
-
-
-   <style>
+<style>
     .tbl_width {
         width: 500px !important;
     }
@@ -94,7 +93,8 @@
         font-weight: 500;
     }
 </style>
- <script type="text/javascript">
+
+<script type="text/javascript">
     $(function () {
 
         GetVendorListeddata();
@@ -102,7 +102,7 @@
     });
 
 </script>
- 
+
 
 
 @*---------------------------------------------------------------------Start Listed vendor----------------------------------------------------------------------*@
@@ -127,22 +127,22 @@
                     tr.append("<td class='left_c'>" + json[i].Vendor_Contact_Person + "</td>");
 
                     tr.append("<td class='lst_td w155_i'><ul class='list_main'><li ><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip'><i class='ace-icon fa fa-pencil bigger-120 edit_c' data-rel='tooltip' title='Edit'></i></a><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='List'><i class='menu-icon fa fa-eye bigger-120 green'></i></a></li></ul></td>");
-                    
+
                     $('#listedvendor').append(tr);
 
                 }
                 $('#listedvendor').DataTable();
-           
-            
+
+
             });
 
     };
 </script>
-  @*------------------------------------edit data-------------------------------------------*@
+@*------------------------------------edit data-------------------------------------------*@
 <script>
     $(document).on("click", "a.remove", function () {
         var $row = $(this).closest("tr");    // Find the row
-       
+
         var $id = $row.find('td:eq(0)').text();
         //alert($id);
         var $Vendor_Name = $row.find('td:eq(1)').text();
@@ -155,110 +155,187 @@
     });
 </script>
 
- 
-   <label id="chklstvendor"><input type="checkbox" id=""></label>
 
- 
-    <div class="main-container ace-save-state" id="main-container">
-        <script type="text/javascript">
-            try { ace.settings.loadState('main-container') } catch (e) { }
-        </script>
+<label id="chklstvendor"><input type="checkbox" id=""></label>
+  
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
 
-        <div id="sidebar" class="sidebar                  responsive                    ace-save-state">
-            <script type="text/javascript">
-                try { ace.settings.loadState('sidebar') } catch (e) { }
-            </script>
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
 
-            <div class="sidebar-shortcuts" id="sidebar-shortcuts">
-                <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
-                    <button class="btn btn-success">
-                        <i class="ace-icon fa fa-signal"></i>
-                    </button>
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
 
-                    <button class="btn btn-info">
-                        <i class="ace-icon fa fa-pencil"></i>
-                    </button>
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
 
-                    <button class="btn btn-warning">
-                        <i class="ace-icon fa fa-users"></i>
-                    </button>
-
-                    <button class="btn btn-danger">
-                        <i class="ace-icon fa fa-cogs"></i>
-                    </button>
-                </div>
-
-                <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
-                    <span class="btn btn-success"></span>
-
-                    <span class="btn btn-info"></span>
-
-                    <span class="btn btn-warning"></span>
-
-                    <span class="btn btn-danger"></span>
-                </div>
-            </div><!-- /.sidebar-shortcuts -->
-
-
-
-            <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
-                <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
-            </div>
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
         </div>
 
-        <div class="main-content">
-            <div class="main-content-inner">
-                <div class="breadcrumbs ace-save-state" id="breadcrumbs">
-                    <ul class="breadcrumb">
-                        <li>
-                            <i class="ace-icon fa fa-home home-icon"></i>
-                            <a href="#">Home</a>
-                        </li>
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
 
-                        <li>
-                            <a href="#">Forms</a>
-                        </li>
-                        <li class="active">Form Elements</li>
-                    </ul><!-- /.breadcrumb -->
+            <span class="btn btn-info"></span>
 
-                    <div class="nav-search" id="nav-search">
-                        <form class="form-search">
-                            <span class="input-icon">
-                                <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
-                                <i class="ace-icon fa fa-search nav-search-icon"></i>
-                            </span>
-                        </form>
-                    </div><!-- /.nav-search -->
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    @*<a href='javascript:void(0);' class='collapse'>click*@
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <a href='javascript:void(0);' class='collapse1'>
+            <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+        </a>
+    </div>
+    @*</a>*@
+</div>
+<div class="main-content">
+    <input type="hidden" id="hdvendorregistrationid" />
+    <div class="main-content-inner top-padding">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#">Vendor</a>
+                </li>
+
+                <li>
+                    <a href="#">Listed Vendor</a>
+                </li>
+                <li class="active">Listed Vendor</li>
+            </ul><!-- /.breadcrumb -->
+            @*<div class="nav-search" id="nav-search">
+                    <form class="form-search">
+                        <span class="input-icon">
+                            <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                            <i class="ace-icon fa fa-search nav-search-icon"></i>
+                        </span>
+                    </form>
+                </div>*@
+        </div>
+
+
+        <div class="page-content1">
+            <div class="ace-settings-container" id="ace-settings-container">
+                <div class="btn btn-app btn-xs btn-warning ace-settings-btn" id="ace-settings-btn">
+                    <i class="ace-icon fa fa-cog bigger-130"></i>
                 </div>
 
-                <div class="page-content">
-                    
+                <div class="ace-settings-box clearfix" id="ace-settings-box">
+                    <div class="pull-left width-50">
+                        <div class="ace-settings-item">
+                            <div class="pull-left">
+                                <select id="skin-colorpicker" class="hide">
+                                    <option data-skin="no-skin" value="#438EB9">#438EB9</option>
+                                    <option data-skin="skin-1" value="#222A2D">#222A2D</option>
+                                    <option data-skin="skin-2" value="#C6487E">#C6487E</option>
+                                    <option data-skin="skin-3" value="#D0D0D0">#D0D0D0</option>
+                                </select>
+                            </div>
+                            <span>&nbsp; Choose Skin</span>
+                        </div>
 
-                    <div class="page-header">
-                        <h1>
-                            Listed Vendor
+                        <div class="ace-settings-item">
+                            <input type="checkbox" class="ace ace-checkbox-2 ace-save-state"
+                                   id="ace-settings-navbar" autocomplete="off" />
+                            <label class="lbl" for="ace-settings-navbar"> Fixed Navbar</label>
+                        </div>
 
-                        </h1>
-                    </div><!-- /.page-header -->
+                        <div class="ace-settings-item">
+                            <input type="checkbox" class="ace ace-checkbox-2 ace-save-state"
+                                   id="ace-settings-sidebar" autocomplete="off" />
+                            <label class="lbl" for="ace-settings-sidebar"> Fixed Sidebar</label>
+                        </div>
+
+                        <div class="ace-settings-item">
+                            <input type="checkbox" class="ace ace-checkbox-2 ace-save-state"
+                                   id="ace-settings-breadcrumbs" autocomplete="off" />
+                            <label class="lbl" for="ace-settings-breadcrumbs"> Fixed Breadcrumbs</label>
+                        </div>
+
+                        <div class="ace-settings-item">
+                            <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-rtl"
+                                   autocomplete="off" />
+                            <label class="lbl" for="ace-settings-rtl"> Right To Left (rtl)</label>
+                        </div>
+
+                        <div class="ace-settings-item">
+                            <input type="checkbox" class="ace ace-checkbox-2 ace-save-state"
+                                   id="ace-settings-add-container" autocomplete="off" />
+                            <label class="lbl" for="ace-settings-add-container">
+                                Inside
+                                <b>.container</b>
+                            </label>
+                        </div>
+                    </div><!-- /.pull-left -->
+
+                    <div class="pull-left width-50">
+                        <div class="ace-settings-item">
+                            <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-hover"
+                                   autocomplete="off" />
+                            <label class="lbl" for="ace-settings-hover"> Submenu on Hover</label>
+                        </div>
+
+                        <div class="ace-settings-item">
+                            <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-compact"
+                                   autocomplete="off" />
+                            <label class="lbl" for="ace-settings-compact"> Compact Sidebar</label>
+                        </div>
+
+                        <div class="ace-settings-item">
+                            <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-highlight"
+                                   autocomplete="off" />
+                            <label class="lbl" for="ace-settings-highlight"> Alt. Active Item</label>
+                        </div>
+                    </div><!-- /.pull-left -->
+                </div><!-- /.ace-settings-box -->
+            </div><!-- /.ace-settings-container -->
+
+            <div class="page-header">
+                <h1>
+                    Listed vendor
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+
+                    </small>
+                </h1>
+            </div><!-- /.page-header -->
 
 
-                    @*<h3>Current Record</h3>*@
-                    <div id="divtbl"></div>
-                    
-                </div><!-- /.page-content -->
+
+            <div class="vendor_mast">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="tabbable">
+                            
+                            <div id="divtbl"></div>
+                            <div class="tab-content tb_area">
+                                 
+  
 
 
-
-
-
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div><!-- /.main-content -->
-        
-       
-    </div> 
+        </div>
+    </div>
+</div>
 
-
-@*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
 <script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>
 @*<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
 <link href="~/assets/css/colReorder.dataTables.css" rel="stylesheet" />
@@ -267,17 +344,28 @@
 <script src="~/assets/js/dataTables.responsive.js"></script>
 
 <link href="~/assets/css/rowReorder.dataTables.min.css" rel="stylesheet" />
+  
+ 
+ 
+ 
 <script>
 
     $(document).ready(function () {
-
-        $('#listedvendor').DataTable({
-            //colReorder: {
-            //    order: [0,1,2,4,5]
-            //}
+        // GetData1();
+        //$('#pending_from').dataTable({
+        //    colReorder: {
+        //        order: [4, 3, 2, 1, 0, ]
+        //    }
+        //});
+        $('#listedvendor').dataTable({
+            colReorder: {
+                order: [0, 1, 2]
+            }
         });
     });
 
 
 
 </script>
+
+
