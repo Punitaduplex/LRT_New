@@ -47,7 +47,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/Vendor/SearchListedVendor",
+                url: "/Vendor/SearchpendingListedVendor",
                 data: '{objlistedvendor: ' + JSON.stringify(objlistedvendor) + '}',
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -91,7 +91,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/Vendor/SearchListedVendorbysearch",
+            url: "/Vendor/SearchpendingListedVendorbysearch",
             data: '{objlistedvendor: ' + JSON.stringify(objlistedvendor) + '}',
             contentType: "application/json; charset=utf-8",
             dataType: "json",

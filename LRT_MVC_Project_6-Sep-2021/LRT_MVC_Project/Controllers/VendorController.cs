@@ -1607,6 +1607,66 @@ namespace LRT_MVC_Project.Controllers
             return Json(objVendorlist);
         }
 
+
+
+        //--------------------------------pending----------------------------------
+
+        [HttpPost]
+        public JsonResult SearchpendingListedVendor(Vendor objlistedvendor)
+        {
+
+            Vendor b = new Vendor();
+            Vendor Vendor1 = new Vendor();
+
+            try
+            {
+                DataSet ds = Vendor1.GetpendingVendorListed_dtls_BySearch(objlistedvendor);
+
+
+                Vendor1.Vendor_Type_Id = Convert.ToInt32(ds.Tables[0].Rows[0]["vendorid"]);
+                Vendor1.Vendor_Name = ds.Tables[0].Rows[0]["vendorfirstName"].ToString();
+                Vendor1.Vendor_Company_Name = ds.Tables[0].Rows[0]["companyName"].ToString();
+                Vendor1.Vendor_Contact_Person = ds.Tables[0].Rows[0]["vendorteliphoneNo1"].ToString();
+                Vendor1.Vendor_Email_ID = ds.Tables[0].Rows[0]["vendorEmail"].ToString();
+
+
+            }
+            catch (Exception ex)
+            {
+            }
+            return Json(Vendor1);
+        }
+
+        [HttpPost]
+
+        public JsonResult SearchpendingListedVendorbysearch(Vendor objlistedvendor)
+        {
+
+            Vendor vendor = new Vendor();
+            List<Vendor> objVendorlist = new List<Vendor>();
+            try
+            {
+
+                DataSet ds = vendor.GetpendingVendorListed_dtls_BySearch(objlistedvendor);
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Vendor Vendor1 = new Vendor();
+                        Vendor1.Vendor_Type_Id = Convert.ToInt32(ds.Tables[0].Rows[0]["vendorid"]);
+                        Vendor1.Vendor_Name = ds.Tables[0].Rows[0]["vendorfirstName"].ToString();
+                        Vendor1.Vendor_Company_Name = ds.Tables[0].Rows[0]["companyName"].ToString();
+                        Vendor1.Vendor_Contact_Person = ds.Tables[0].Rows[0]["vendorteliphoneNo1"].ToString();
+                        Vendor1.Vendor_Email_ID = ds.Tables[0].Rows[0]["vendorEmail"].ToString();
+
+                        objVendorlist.Add(Vendor1);
+                    }
+                }
+            }
+            catch (Exception ex) { }
+            return Json(objVendorlist);
+        }
+
         #endregion
     }
 }
