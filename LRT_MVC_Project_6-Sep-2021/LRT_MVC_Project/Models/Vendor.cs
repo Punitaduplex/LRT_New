@@ -313,6 +313,25 @@ namespace LRT_MVC_Project.Models
             return ds;
         }
 
+
+        public DataSet GetVendorListed_dtls_BySearch(Vendor objlistedvendor)
+        {
+            string strcon = ConfigurationManager.ConnectionStrings["myConStr"].ConnectionString;
+            MySqlConnection con = new MySqlConnection(strcon);
+            MySqlCommand cmd = new MySqlCommand("proc_get_v_vendorlisted_Dtls_by_Search ", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@vendor_firstName", objlistedvendor.Vendor_Name);
+            cmd.Parameters.AddWithValue("@company_Name", objlistedvendor.Vendor_Company_Name);
+            cmd.Parameters.AddWithValue("@vendor_Email", objlistedvendor.Vendor_Email_ID);
+            cmd.Parameters.AddWithValue("@vendor_teli_phoneNo1", objlistedvendor.Vendor_Contact_Person);
+         
+
+            DataSet ds = new DataSet();
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            da.Fill(ds);
+            return ds;
+        }
+
         public DataSet GetPendingVendorListdtls()
         {
             string strcon = ConfigurationManager.ConnectionStrings["myConStr"].ConnectionString;

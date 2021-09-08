@@ -2,13 +2,14 @@
     ViewBag.Title = "PendingVendor";
     Layout = "~/_LayoutVendor.cshtml";
 }
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.css">
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 @*<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
-
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
 
 
 <style>
@@ -30,20 +31,254 @@
         z-index: 99999;
     }
 </style>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsearch").click(function (e) {
+            //alert("done");
+            e.preventDefault();
+            var objlistedvendor = {};
+            objlistedvendor.Vendor_Name = $("#ddlvendorName").val();
+            objlistedvendor.Vendor_Company_Name = $("#ddlcompanyname").val();
+
+            objlistedvendor.Vendor_Contact_Person = $("#ddlWorkPhone").val();
+            objlistedvendor.Vendor_Email_ID = $("#ddlEmail").val();
+            // alert();
+            objlistedvendor.Vendor_Id = $("#hdpendingvendorid").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/Vendor/SearchListedVendor",
+                data: '{objlistedvendor: ' + JSON.stringify(objlistedvendor) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    $(".dataTables_wrapper").remove();
+                    //swal(response);
+
+                    Getdata();
+
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script>
+    function Getdata() {
+        $("#divtbl").append('<table id="vendor_pen" class="table table-bordered  table-hover"><thead><tr><th><input type="checkbox" id="chkAll"</th><th class="left_c">Name</th> <th class="left_c">Company Name</th><th class="left_c">Email</th> <th class="left_c">Work Phone</th><th class="w155_i">Action</th> <th style="display:none"> </tr></thead> <tbody></tbody> </table>')
+
+        $("#vendor_pen > tbody").html("");
+        
+        var objlistedvendor = {};
+        objlistedvendor.Vendor_Name = $("#ddlvendorName").val();
+        objlistedvendor.Vendor_Company_Name = $("#ddlcompanyname").val();
+
+        objlistedvendor.Vendor_Contact_Person = $("#ddlWorkPhone").val();
+        objlistedvendor.Vendor_Email_ID = $("#ddlEmail").val();
+        // alert();
+        objlistedvendor.Vendor_Id = $("#hdlistedvendorid").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/SearchListedVendorbysearch",
+            data: '{objlistedvendor: ' + JSON.stringify(objlistedvendor) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+
+                if (response.length > 0) {
+                    for (var i = 0; i < response.length; i++) {
+                        tr = $('<tr/>');
+                        tr.append("<td><input type='checkbox'  class='ace'/></td>");
+                        tr.append("<td><label class='pos-rel'>" + response[i].Vendor_Name + "</label></td>");
+                        
+                        tr.append("<td><label class='pos-rel'>" + response[i].Vendor_Company_Name + "</label></td>");
+                        tr.append("<td><label class='pos-rel'>" + response[i].Vendor_Email_ID + "</label></td>");
+                        tr.append("<td><label class='pos-rel'>" + response[i].Vendor_Contact_Person + "</label></td>");
+                        tr.append("<td class='lst_td w155_i'><ul class='list_main'><li ><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='List'><i class='menu-icon fa fa-eye bigger-120 green'></i></a></li></ul></td>");
+                        tr.append("<td class='hide_me'>" + response[i].Vendor_Id + "</td>");
+                        $('#vendor_pen').append(tr);
+                    }
+                    $('#vendor_pen').DataTable({
+
+
+                        colReorder: true,
+                        destroy: true
+
+                    });
+                }
+                else {
+                    $("#divtbl").empty();
+                }
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
 
 <script>
     $(document).ready(function () {
 
         GetPendingVendor();
+        VendorName();
+        VendorCompanyName();
+        FillVendorEmail();
+        FillVendorWorkPhone();
 
     })
 
 </script>
+@*-------------------------------------------Fill Vendor------------------------------------------------------------*@
+<script type="text/javascript">
+    function VendorName() {
+        //  alert();
+        var ddlvendorName = $("#ddlvendorName");
 
+        ddlvendorName.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/ListedVendorName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlvendorName.empty().append('<option selected="selected" value="0">Select Vendor Name</option>');
+
+                $.each(response, function () {
+                    //ddlvendorName.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlvendorName.append($("<option></option>").html(this['Text']));
+
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+
+<script type="text/javascript">
+    function VendorCompanyName() {
+        //  alert();
+        var ddlcompanyname = $("#ddlcompanyname");
+
+        ddlcompanyname.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/ListedVendorCompanyName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlcompanyname.empty().append('<option selected="selected" value="0">Select Company Name </option>');
+
+                $.each(response, function () {
+                    //ddlcompanyname.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlcompanyname.append($("<option></option>").html(this['Text']));
+
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+
+
+<script type="text/javascript">
+    function FillVendorEmail() {
+        //  alert();
+        var ddlEmail = $("#ddlEmail");
+
+        ddlEmail.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/ListedVendorvendorEmail",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlEmail.empty().append('<option selected="selected" value="0">Select Vendor Email</option>');
+
+                $.each(response, function () {
+                    //ddlEmail.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlEmail.append($("<option></option>").html(this['Text']));
+
+
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+
+
+<script type="text/javascript">
+    function FillVendorWorkPhone() {
+        //  alert();
+        var ddlWorkPhone = $("#ddlWorkPhone");
+
+        ddlWorkPhone.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/ListedVendorWorkPhone",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlWorkPhone.empty().append('<option selected="selected" value="0">Select Vendor Work Phone</option>');
+
+                $.each(response, function () {
+                    //ddlWorkPhone.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    ddlWorkPhone.append($("<option></option>").html(this['Text']));
+
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
 @*-----------------------------------------Get Data------------------------------------------*@
 <script>
     function GetPendingVendor() {
-        $("#divtbl").append('<table id="vendor_pen" class="table table-bordered  table-hover"><thead><tr><th><input type="checkbox" id="chkAll"</th><th class="left_c">Name</th><th class="left_c">Company Name</th><th class="left_c">Email</th> <th class="left_c">Work Phone</th> <th style="display:none"></th><th class="w155_i">Action</th></tr></thead> <tbody></tbody> </table>')
+        $("#divtbl").append('<table id="vendor_pen" class="table table-bordered  table-hover"><thead><tr><th><input type="checkbox" id="chkAll"</th><th class="left_c">Name</th><th class="left_c">Company Name</th><th class="left_c">Email</th> <th class="left_c">Work Phone</th><th class="w155_i">Action</th><th style="display:none"></tr></thead> <tbody></tbody> </table>')
 
         $("#vendor_pen > tbody").html("");
 
@@ -64,11 +299,17 @@
                     tr.append("<td class='left_c'>" + json[i].Vendor_Contact_Person + "</td>");
 
                     tr.append("<td class='lst_td w155_i'><ul class='list_main'><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='List'><i class='menu-icon fa fa-eye bigger-120 green'></i></a></li></ul></td>");
-
+                    tr.append("<td class='hide_me'>" + json[i].Vendor_Id + "</td>");
                     $('#vendor_pen').append(tr);
 
                 }
-                $('#vendor_pen').DataTable();
+                $('#vendor_pen').DataTable({
+
+                   
+                    colReorder: true,
+                    destroy: true
+                     
+                });
 
 
             });
@@ -244,24 +485,109 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="tabbable">
+                            <div class="row m_botm">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Vendor Name <span class="red">*</span>  </label>
 
-                            <div id="divtbl"></div>
+                                        <div class="col-sm-9">
+                                            <select name="" id="ddlvendorName" class="form-control wid_90" data-toggle="tooltip" title="Field for Vendor Name">
+                                                <option value="">Select Vendor Name</option>
 
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Company Name <span class="red">*</span>  </label>
+
+                                        <div class="col-sm-9">
+                                            <select name="" id="ddlcompanyname" class="form-control wid_90" data-toggle="tooltip" title="Field for company Name">
+                                                <option value="">Select Company Name</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Email <span class="red">*</span>  </label>
+
+                                        <div class="col-sm-9">
+                                            <select name="" id="ddlEmail" class="form-control wid_90" data-toggle="tooltip" title="Field for Vendor Email">
+                                                <option value="">Select Email</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Work Phone <span class="red">*</span>  </label>
+
+                                        <div class="col-sm-9">
+                                            <select name="" id="ddlWorkPhone" class="form-control wid_90" data-toggle="tooltip" title="Field for Vendor Work Phone">
+                                                <option value="">Select Work Phone</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="hdlistedvendor" />
+                                <input type="hidden" id="hdpendingvendorid" />
+                                <div class="col-md-12">
+                                    <div class="clearfix form-actions">
+                                        <div class=" col-md-12 text-center">
+
+
+                                            &nbsp; &nbsp; &nbsp;
+                                            <button class="btn btn-info" id="btnsearch" type="button">
+                                                <i class="fa fa-search"></i>
+                                                Search
+                                            </button>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-content tb_area">
+                                
+                                <div class="sub_tb">
+                                     
+                                    <div id="divtbl">
+
+                                         
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                            <div class="sub_tb">
+
+                                <div id="divtbl"></div>
+
+                            </div>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
+</div>
+@*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>
 @*<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
 <link href="~/assets/css/colReorder.dataTables.css" rel="stylesheet" />
 <link href="~/assets/css/responsive.dataTables.css" rel="stylesheet" />
 <script src="~/assets/js/dataTables.colReorder.js"></script>
 <script src="~/assets/js/dataTables.responsive.js"></script>
-<link href="~/assets/css/rowReorder.dataTables.min.css" rel="stylesheet" />
 
+<link href="~/assets/css/rowReorder.dataTables.min.css" rel="stylesheet" />
 
 
 
@@ -280,3 +606,5 @@
 
 </script>
 
+
+ 

@@ -1418,6 +1418,99 @@ namespace LRT_MVC_Project.Controllers
             return Json(objVendor, JsonRequestBehavior.AllowGet);
         }
 
+
+        [HttpPost]
+        public JsonResult ListedVendorName()
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            Vendor vb = new Vendor();
+            try
+            {
+                DataSet ds = vb.GetVendorListeddtls();
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    list.Add(new SelectListItem
+                    {
+                        Value = ds.Tables[0].Rows[i]["vendorId"].ToString(),
+                        Text = ds.Tables[0].Rows[i]["vendorfirstName"].ToString(),
+                        
+                        
+                    });
+                }
+            }
+            catch (Exception ex) { }
+            return Json(list);
+        }
+         [HttpPost]
+        public JsonResult ListedVendorCompanyName()
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            Vendor vb = new Vendor();
+            try
+            {
+                DataSet ds = vb.GetVendorListeddtls();
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    list.Add(new SelectListItem
+                    {
+                        Value = ds.Tables[0].Rows[i]["vendorId"].ToString(),
+                        Text = ds.Tables[0].Rows[i]["companyName"].ToString(),
+
+
+                    });
+                }
+            }
+            catch (Exception ex) { }
+            return Json(list);
+        }
+
+         [HttpPost]
+         public JsonResult ListedVendorvendorEmail()
+         {
+             List<SelectListItem> list = new List<SelectListItem>();
+             Vendor vb = new Vendor();
+             try
+             {
+                 DataSet ds = vb.GetVendorListeddtls();
+                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                 {
+                     list.Add(new SelectListItem
+                     {
+                         Value = ds.Tables[0].Rows[i]["vendorId"].ToString(),
+                         Text = ds.Tables[0].Rows[i]["vendorEmail"].ToString(),
+
+
+                     });
+                 }
+             }
+             catch (Exception ex) { }
+             return Json(list);
+         }
+
+
+
+         [HttpPost]
+         public JsonResult ListedVendorWorkPhone()
+         {
+             List<SelectListItem> list = new List<SelectListItem>();
+             Vendor vb = new Vendor();
+             try
+             {
+                 DataSet ds = vb.GetVendorListeddtls();
+                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                 {
+                     list.Add(new SelectListItem
+                     {
+                         Value = ds.Tables[0].Rows[i]["vendorId"].ToString(),
+                         Text = ds.Tables[0].Rows[i]["vendorteliphoneNo1"].ToString(),
+
+
+                     });
+                 }
+             }
+             catch (Exception ex) { }
+             return Json(list);
+         }
         public ActionResult PendingVendor()
         {
             if (this.ControllerContext.HttpContext.Request.Cookies.AllKeys.Contains("userid"))
@@ -1455,6 +1548,65 @@ namespace LRT_MVC_Project.Controllers
             }
             return Json(objVendor, JsonRequestBehavior.AllowGet);
         }
+
+        
+
+        [HttpPost]
+        public JsonResult SearchListedVendor(Vendor objlistedvendor)
+        {
+           
+            Vendor b = new Vendor();
+            Vendor Vendor1 = new Vendor();
+          
+            try
+            {
+                DataSet ds = Vendor1.GetVendorListed_dtls_BySearch(objlistedvendor);
+
+                 
+                    Vendor1.Vendor_Type_Id = Convert.ToInt32(ds.Tables[0].Rows[0]["vendorid"]);
+                    Vendor1.Vendor_Name = ds.Tables[0].Rows[0]["vendorfirstName"].ToString();
+                    Vendor1.Vendor_Company_Name = ds.Tables[0].Rows[0]["companyName"].ToString();
+                    Vendor1.Vendor_Contact_Person = ds.Tables[0].Rows[0]["vendorteliphoneNo1"].ToString();
+                    Vendor1.Vendor_Email_ID = ds.Tables[0].Rows[0]["vendorEmail"].ToString();
+               
+                 
+            }
+            catch (Exception ex)
+            { 
+            }
+            return Json(Vendor1);
+        }
+
+        [HttpPost]
+         
+        public JsonResult SearchListedVendorbysearch(Vendor objlistedvendor)
+        {
+
+            Vendor vendor = new Vendor();
+            List<Vendor> objVendorlist = new List<Vendor>();
+            try
+            {
+                 
+                DataSet ds = vendor.GetVendorListed_dtls_BySearch(objlistedvendor);
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Vendor Vendor1 = new Vendor();
+                         Vendor1.Vendor_Type_Id = Convert.ToInt32(ds.Tables[0].Rows[0]["vendorid"]);
+                Vendor1.Vendor_Name = ds.Tables[0].Rows[0]["vendorfirstName"].ToString();
+                Vendor1.Vendor_Company_Name = ds.Tables[0].Rows[0]["companyName"].ToString();
+                Vendor1.Vendor_Contact_Person = ds.Tables[0].Rows[0]["vendorteliphoneNo1"].ToString();
+                Vendor1.Vendor_Email_ID = ds.Tables[0].Rows[0]["vendorEmail"].ToString();
+
+                        objVendorlist.Add(Vendor1);
+                    }
+                }
+            }
+            catch (Exception ex) { }
+            return Json(objVendorlist);
+        }
+
         #endregion
     }
 }
