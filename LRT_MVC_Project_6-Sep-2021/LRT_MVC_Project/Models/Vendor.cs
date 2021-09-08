@@ -314,6 +314,20 @@ namespace LRT_MVC_Project.Models
         }
 
 
+        public DataSet GetpendingVendorListeddtls()
+        {
+            string strcon = ConfigurationManager.ConnectionStrings["myConStr"].ConnectionString;
+            MySqlConnection con = new MySqlConnection(strcon);
+            MySqlCommand cmd = new MySqlCommand("proc_get_v_Pending_vendorlisted_Dtls ", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            DataSet ds = new DataSet();
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            da.Fill(ds);
+            return ds;
+        }
+
+
         public DataSet GetVendorListed_dtls_BySearch(Vendor objlistedvendor)
         {
             string strcon = ConfigurationManager.ConnectionStrings["myConStr"].ConnectionString;

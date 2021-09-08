@@ -1441,6 +1441,108 @@ namespace LRT_MVC_Project.Controllers
             catch (Exception ex) { }
             return Json(list);
         }
+
+        //------------------------------------Pending--------------------------------------------------------------
+
+
+
+        [HttpPost]
+        public JsonResult PendingVendorName()
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            Vendor vb = new Vendor();
+            try
+            {
+                DataSet ds = vb.GetpendingVendorListeddtls();
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    list.Add(new SelectListItem
+                    {
+                        Value = ds.Tables[0].Rows[i]["vendorId"].ToString(),
+                        Text = ds.Tables[0].Rows[i]["vendorfirstName"].ToString(),
+
+
+                    });
+                }
+            }
+            catch (Exception ex) { }
+            return Json(list);
+        }
+
+
+
+        [HttpPost]
+        public JsonResult PendingListedVendorCompanyName()
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            Vendor vb = new Vendor();
+            try
+            {
+                DataSet ds = vb.GetpendingVendorListeddtls();
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    list.Add(new SelectListItem
+                    {
+                        Value = ds.Tables[0].Rows[i]["vendorId"].ToString(),
+                        Text = ds.Tables[0].Rows[i]["companyName"].ToString(),
+
+
+                    });
+                }
+            }
+            catch (Exception ex) { }
+            return Json(list);
+        }
+
+
+
+        [HttpPost]
+        public JsonResult PendingListedVendorvendorEmail()
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            Vendor vb = new Vendor();
+            try
+            {
+                DataSet ds = vb.GetpendingVendorListeddtls();
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    list.Add(new SelectListItem
+                    {
+                        Value = ds.Tables[0].Rows[i]["vendorId"].ToString(),
+                        Text = ds.Tables[0].Rows[i]["vendorEmail"].ToString(),
+
+
+                    });
+                }
+            }
+            catch (Exception ex) { }
+            return Json(list);
+        }
+        [HttpPost]
+        public JsonResult PendingListedVendorWorkPhone()
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            Vendor vb = new Vendor();
+            try
+            {
+                DataSet ds = vb.GetpendingVendorListeddtls();
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    list.Add(new SelectListItem
+                    {
+                        Value = ds.Tables[0].Rows[i]["vendorId"].ToString(),
+                        Text = ds.Tables[0].Rows[i]["vendorteliphoneNo1"].ToString(),
+
+
+                    });
+                }
+            }
+            catch (Exception ex) { }
+            return Json(list);
+        }
+
+
+        //------------------------------------end Pending--------------------------------------------------------------
          [HttpPost]
         public JsonResult ListedVendorCompanyName()
         {
