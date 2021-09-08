@@ -1,21 +1,16 @@
 ﻿@{
-    ViewBag.Title = "ListedVendor";
+    ViewBag.Title = "PendingVendor";
     Layout = "~/_LayoutVendor.cshtml";
 }
-
-@{
-    ViewBag.Title = "VendorMaster";
-    Layout = "~/_LayoutVendor.cshtml";
-}
-
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 @*<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
 
- 
+
+
 <style>
     .hide_me {
         display: none;
@@ -36,25 +31,23 @@
     }
 </style>
 
-<script type="text/javascript">
-    $(function () {
+<script>
+    $(document).ready(function () {
 
-        GetVendorListeddata();
+        GetPendingVendor();
 
-    });
+    })
 
 </script>
 
-
-
-@*---------------------------------------------------------------------Start Listed vendor----------------------------------------------------------------------*@
+@*-----------------------------------------Get Data------------------------------------------*@
 <script>
-    function GetVendorListeddata() {
-        $("#divtbl").append('<table id="listedvendor" class="table table-bordered  table-hover"><thead><tr><th><input type="checkbox" id="chkAll"</th><th class="left_c">Name</th><th class="left_c">AVL/SBL Number</th><th class="left_c">Company Name</th><th class="left_c">Email</th> <th class="left_c">Work Phone</th> <th style="display:none"></th><th class="w155_i">Action</th></tr></thead> <tbody></tbody> </table>')
+    function GetPendingVendor() {
+        $("#divtbl").append('<table id="vendor_pen" class="table table-bordered  table-hover"><thead><tr><th><input type="checkbox" id="chkAll"</th><th class="left_c">Name</th><th class="left_c">Company Name</th><th class="left_c">Email</th> <th class="left_c">Work Phone</th> <th style="display:none"></th><th class="w155_i">Action</th></tr></thead> <tbody></tbody> </table>')
 
-        $("#listedvendor > tbody").html("");
+        $("#vendor_pen > tbody").html("");
 
-        $.getJSON("/Vendor/ListedVendorDetails",
+        $.getJSON("/Vendor/PendingVendorTypeDetails",
             function (json) {
                 var tr;
 
@@ -65,43 +58,30 @@
                     //tr.append("<td><label class='pos-rel'>" + (i + 1) +  "</lable></td>");
                     tr.append("<td><input type='checkbox'  class='ace'/></td>");
                     tr.append("<td class='left_c'>" + json[i].Vendor_Name + "</td>");
-                    tr.append("<td class='left_c'></td>");
+
                     tr.append("<td class='left_c'>" + json[i].Vendor_Company_Name + "</td>");
                     tr.append("<td class='left_c'>" + json[i].Vendor_Email_ID + "</td>");
                     tr.append("<td class='left_c'>" + json[i].Vendor_Contact_Person + "</td>");
 
-                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li ><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip'><i class='ace-icon fa fa-pencil bigger-120 edit_c' data-rel='tooltip' title='Edit'></i></a><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='List'><i class='menu-icon fa fa-eye bigger-120 green'></i></a></li></ul></td>");
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='List'><i class='menu-icon fa fa-eye bigger-120 green'></i></a></li></ul></td>");
 
-                    $('#listedvendor').append(tr);
+                    $('#vendor_pen').append(tr);
 
                 }
-                $('#listedvendor').DataTable();
+                $('#vendor_pen').DataTable();
 
 
             });
 
     };
 </script>
-@*------------------------------------edit data-------------------------------------------*@
-<script>
-    $(document).on("click", "a.remove", function () {
-        var $row = $(this).closest("tr");    // Find the row
 
-        var $id = $row.find('td:eq(0)').text();
-        //alert($id);
-        var $Vendor_Name = $row.find('td:eq(1)').text();
-        var $Vendor_Company_Name = $row.find('td:eq(2)').text();
-        var $Vendor_Contact_Person = $row.find('td:eq(3)').text();
-        var $Vendor_Email_ID = $row.find('td:eq(4)').text();
-        //pass page path fill this value($contactpersonname,Vendor_Email_ID,$Vendor_Company_Name,$Vendor_Name)
-        $("#hdlistedvendor").val($id);
 
-    });
-</script>
+
 
 
 <label id="chklstvendor"><input type="checkbox" id=""></label>
-  
+
 <div id="sidebar" class="sidebar responsive ace-save-state top-padding">
     <script type="text/javascript">
         try { ace.settings.loadState('sidebar') } catch (e) { }
@@ -157,9 +137,9 @@
                 </li>
 
                 <li>
-                    <a href="#">Listed Vendor</a>
+                    <a href="#">Pending Vendor</a>
                 </li>
-                <li class="active">Listed Vendor</li>
+                <li class="active">Pending Vendor</li>
             </ul><!-- /.breadcrumb -->
             @*<div class="nav-search" id="nav-search">
                     <form class="form-search">
@@ -250,7 +230,7 @@
 
             <div class="page-header">
                 <h1>
-                    Listed vendor
+                    Pending vendor
                     <small>
                         <i class="ace-icon fa fa-angle-double-right"></i>
 
@@ -264,9 +244,9 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="tabbable">
-                            
+
                             <div id="divtbl"></div>
-                             
+
                         </div>
                     </div>
                 </div>
@@ -281,17 +261,17 @@
 <script src="~/assets/js/dataTables.colReorder.js"></script>
 <script src="~/assets/js/dataTables.responsive.js"></script>
 <link href="~/assets/css/rowReorder.dataTables.min.css" rel="stylesheet" />
-  
- 
- 
- 
+
+
+
+
 <script>
 
     $(document).ready(function () {
-        
-        $('#listedvendor').dataTable({
+
+        $('#vendor_pen').dataTable({
             colReorder: {
-                order: [0, 1, 2, 3, 4, 5,6]
+                order: [0, 1, 2, 3, 4, 5, 6]
             }
         });
     });
@@ -299,5 +279,4 @@
 
 
 </script>
-
 

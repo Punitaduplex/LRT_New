@@ -1418,7 +1418,43 @@ namespace LRT_MVC_Project.Controllers
             return Json(objVendor, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult PendingVendor()
+        {
+            if (this.ControllerContext.HttpContext.Request.Cookies.AllKeys.Contains("userid"))
+            {
+                HttpCookie cookie1 = this.ControllerContext.HttpContext.Request.Cookies["username"];
+                Common.CommonSetting.name = cookie1.Value;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("LogIn", "User");
+            }
+        }
 
+        [HttpGet]
+        public JsonResult PendingVendorTypeDetails()
+        {
+            Vendor vendor = new Vendor();
+            List<Vendor> objVendor = new List<Vendor>();
+            DataSet ds = vendor.GetPendingVendorListdtls();
+
+            foreach (DataRow dr in ds.Tables[0].Rows)
+            {
+                objVendor.Add(new Vendor
+                {
+                    Vendor_Name = (dr["vendorfirstName"].ToString()),
+                    Vendor_Company_Name = dr["companyName"].ToString(),
+
+                    Vendor_Contact_Person = dr["vendorteliphoneNo1"].ToString(),
+                    Vendor_Email_ID = dr["vendorEmail"].ToString(),
+
+
+                });
+
+            }
+            return Json(objVendor, JsonRequestBehavior.AllowGet);
+        }
         #endregion
     }
 }
