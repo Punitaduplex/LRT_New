@@ -21,8 +21,26 @@ namespace LRT_MVC_Project.Models
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Vendor_Email_ID { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public int Vendor_Id { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string currency_code { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string currency_symbol { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
 
-        
+
+
+        public string Billingaddress { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string ShippingAddress { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string WebsiteLink { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Facebooklink { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string TwiterLink { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
         public int Vendor_Invitation_Id { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         
@@ -345,7 +363,21 @@ namespace LRT_MVC_Project.Models
             da.Fill(ds);
             return ds;
         }
+        public DataSet GetVendorListed_View_Popup(Vendor objlistedvendor)
+        {
+            string strcon = ConfigurationManager.ConnectionStrings["myConStr"].ConnectionString;
+            MySqlConnection con = new MySqlConnection(strcon);
+            MySqlCommand cmd = new MySqlCommand("proc_get_v_vendorlisted_Dtls_View ", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@vendor_Id", objlistedvendor.Vendor_Id);
+            
 
+
+            DataSet ds = new DataSet();
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            da.Fill(ds);
+            return ds;
+        }
 
         //----------------------------------pending-------------------------------------------
         public DataSet GetpendingVendorListed_dtls_BySearch(Vendor objlistedvendor)

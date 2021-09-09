@@ -1405,6 +1405,7 @@ namespace LRT_MVC_Project.Controllers
             {
                 objVendor.Add(new Vendor
                 {
+                    Vendor_Id = Convert.ToInt32((dr["vendorid"])),
                     Vendor_Name = (dr["vendorfirstName"].ToString()),
                     Vendor_Company_Name = dr["companyName"].ToString(),
 
@@ -1638,6 +1639,7 @@ namespace LRT_MVC_Project.Controllers
             {
                 objVendor.Add(new Vendor
                 {
+                    Vendor_Id = Convert.ToInt32((dr["vendorid"])),
                     Vendor_Name = (dr["vendorfirstName"].ToString()),
                     Vendor_Company_Name = dr["companyName"].ToString(),
 
@@ -1709,7 +1711,27 @@ namespace LRT_MVC_Project.Controllers
             return Json(objVendorlist);
         }
 
-
+        [HttpPost]
+        public JsonResult ListedVendordetailsForPopup(Vendor objlistedvendor)
+        {
+            Vendor vendor = new Vendor();
+            DataSet ds = vendor.GetVendorListed_View_Popup(objlistedvendor);
+            foreach (DataRow dr in ds.Tables[0].Rows)
+            {
+                vendor.Vendor_Id = Convert.ToInt32(ds.Tables[0].Rows[0]["vendorId"]);
+                vendor.Vendor_Name = ds.Tables[0].Rows[0]["vendorfirstName"].ToString();
+                vendor.ShippingAddress =ds.Tables[0].Rows[0]["ShippingAddress"].ToString();
+                vendor.Billingaddress =ds.Tables[0].Rows[0]["BillingAddress"].ToString();
+                vendor.WebsiteLink =ds.Tables[0].Rows[0]["websiteLink"].ToString();
+                vendor.Facebooklink =ds.Tables[0].Rows[0]["facebookLink"].ToString();
+                vendor.TwiterLink = ds.Tables[0].Rows[0]["twitterlink"].ToString();
+                vendor.Vendor_Contact_Person = ds.Tables[0].Rows[0]["vendorteliphoneNo1"].ToString();
+                vendor.currency_code = ds.Tables[0].Rows[0]["currencyCode"].ToString();
+                vendor.currency_symbol = ds.Tables[0].Rows[0]["currencysymbol"].ToString();
+ 
+            }
+            return Json(vendor, JsonRequestBehavior.AllowGet);
+        }
 
         //--------------------------------pending----------------------------------
 
