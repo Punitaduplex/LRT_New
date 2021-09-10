@@ -10,7 +10,25 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+<style>
+    .select2-container .select2-selection--single {
+        box-sizing: border-box !important;
+        cursor: pointer !important;
+        display: block !important;
+        height: 40px !important;
+        user-select: none !important;
+        -webkit-user-select: none;
+        margin-top: 10px !important;
+    }
 
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 26px !important;
+        position: absolute !important;
+        top: 15px !important;
+        right: 1px !important;
+        width: 20px !important;
+    }
+</style>
  
 <style>
     .hide_me {
@@ -49,7 +67,30 @@
     }
 </style>
  
+<script>
+    $(function () {
+        $('body').on('click', '#chkAll', function () {
+            var ListedvendorTable = $('#listedvendor').dataTable();
+            var rowselction = ListedvendorTable.$("input[name='listedVendor']", { "page": "all" });
 
+            if ($(this).is(':checked')) {
+                rowselction.each(function (index, elem) {
+                    var row = $(elem).closest("tr");
+                    row.find("td:eq(0)").find('input[type="checkbox"]').prop('checked', true);
+                });
+
+            }
+            else {
+                rowselction.each(function (index, elem) {
+                    var row = $(elem).closest("tr");
+                    row.find("td:eq(0)").find('input[type="checkbox"]').prop('checked', false);
+                });
+            }
+
+        })
+    });
+     
+</script>
 <script>
     $(document).on("click", "a.View", function () {
         
@@ -175,7 +216,7 @@
                 if (response.length > 0) {
                     for (var i = 0; i < response.length; i++) {
                         tr = $('<tr/>');
-                        tr.append("<td><input type='checkbox'  class='ace'/></td>");
+                        tr.append("<td><input type='checkbox' name='listedVendor' class='ace'/></td>");
                         tr.append("<td><label class='pos-rel'>" + response[i].Vendor_Name + "</label></td>");
                         tr.append("<td class='left_c'></td>");
                         tr.append("<td><label class='pos-rel'>" + response[i].Vendor_Company_Name + "</label></td>");
@@ -364,7 +405,7 @@
 
 <script>
     function GetVendorListeddata() {
-        $("#divtbl").append('<table id="listedvendor" class="table table-bordered  table-hover"><thead><tr><th><input type="checkbox" id="chkAll"</th><th class="left_c">Name</th><th class="left_c">AVL/SBL Number</th><th class="left_c">Company Name</th><th class="left_c">Email</th> <th class="left_c">Work Phone</th><th class="w155_i">Action</th><th style="display:none"></tr></thead> <tbody></tbody> </table>')
+        $("#divtbl").append('<table id="listedvendor" class="table table-bordered  table-hover"><thead><tr><th> <input type="checkbox" id="chkAll"</th><th class="left_c">Name</th><th class="left_c">AVL/SBL Number</th><th class="left_c">Company Name</th><th class="left_c">Email</th> <th class="left_c">Work Phone</th><th class="w155_i">Action</th><th style="display:none"></tr></thead> <tbody></tbody> </table>')
 
         $("#listedvendor > tbody").html("");
 
@@ -377,7 +418,8 @@
                 for (var i = 0; i < json.length; i++) {
                     tr = $('<tr/>');
                     //tr.append("<td><label class='pos-rel'>" + (i + 1) +  "</lable></td>");
-                    tr.append("<td><input type='checkbox'  class='ace'/></td>");
+                    
+                    tr.append("<td><input type='checkbox' name='listedVendor' class='ace'/></td>");
                     tr.append("<td class='left_c'>" + json[i].Vendor_Name + "</td>");
                     tr.append("<td class='left_c'></td>");
                     tr.append("<td class='left_c'>" + json[i].Vendor_Company_Name + "</td>");
