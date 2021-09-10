@@ -12,11 +12,11 @@ namespace LRT_MVC_Project.Models
 {
     public class Vendor
     {
+        //------------------------------------------------------------start View listedvendor-----------------------------------------------------------
         public string Vendor_Name { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Vendor_Company_Name { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
-
         public string Vendor_Contact_Person { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Vendor_Email_ID { get; set; }
@@ -27,9 +27,6 @@ namespace LRT_MVC_Project.Models
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string currency_symbol { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
-
-
-
         public string Billingaddress { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string ShippingAddress { get; set; }
@@ -38,15 +35,101 @@ namespace LRT_MVC_Project.Models
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Facebooklink { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
-
         public string TwiterLink { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
-        public int Vendor_Invitation_Id { get; set; }
+        //------------------------------------------------------------end View listedvendor-----------------------------------------------------------
+
+        //------------------------------------------------------------start View Full listedvendor-----------------------------------------------------------
+        public string Sortname { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string CompanyAddress { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Companycity { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string ComapnyState { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string CompanyCountry { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string companyPincode { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Telephone { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string faxnumber { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string Company_Telephone_number { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Company_Mobile_Number { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string GstNumber { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string sstNumber { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string PaymentTerm { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string work_sample_url { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         
+        public string Region { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Status { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string PrimaryContactPerson { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string PrimaryEmailAddress { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Telephonenumber { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string VendorCity { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string VendorCountry { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string VendorAddress { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string VendorPincode { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Alternatepersonname { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Alternemail { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Alternatepersonname2 { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string AlternateEmail2 { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string  altPincode { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string ContactNo1 { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Contactno2 { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string paypalEmail { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Banktype { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Bankname { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Swiftcode { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string postalcode { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Receivername { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string BankAddress { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Bankcity { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string BankState { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Bank_Country { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        
+        //------------------------------------------------------------End View listedvendor-----------------------------------------------------------
+        public int Vendor_Invitation_Id { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Vendor_Type { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
-      
         public string Approve_Status { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Access_Permission { get; set; }
@@ -371,6 +454,23 @@ namespace LRT_MVC_Project.Models
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@vendor_Id", objlistedvendor.Vendor_Id);
             
+
+
+            DataSet ds = new DataSet();
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            da.Fill(ds);
+            return ds;
+        }
+
+
+        public DataSet GetVendorListed_FullViewDtls_Popup(Vendor objlistedvendor)
+        {
+            string strcon = ConfigurationManager.ConnectionStrings["myConStr"].ConnectionString;
+            MySqlConnection con = new MySqlConnection(strcon);
+            MySqlCommand cmd = new MySqlCommand("proc_get_v_vendorlisted_fullDtls_View ", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@vendor_Id", objlistedvendor.Vendor_Id);
+
 
 
             DataSet ds = new DataSet();

@@ -1711,6 +1711,21 @@ namespace LRT_MVC_Project.Controllers
             return Json(objVendorlist);
         }
 
+
+        public ActionResult VendorViewList()
+        {
+            if (this.ControllerContext.HttpContext.Request.Cookies.AllKeys.Contains("userid"))
+            {
+                HttpCookie cookie1 = this.ControllerContext.HttpContext.Request.Cookies["username"];
+                Common.CommonSetting.name = cookie1.Value;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("LogIn", "User");
+            }
+        }
+        
         [HttpPost]
         public JsonResult ListedVendordetailsForPopup(Vendor objlistedvendor)
         {
@@ -1729,6 +1744,69 @@ namespace LRT_MVC_Project.Controllers
                 vendor.currency_code = ds.Tables[0].Rows[0]["currencyCode"].ToString();
                 vendor.currency_symbol = ds.Tables[0].Rows[0]["currencysymbol"].ToString();
  
+            }
+            return Json(vendor, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpPost]
+        public JsonResult GetVendorListed_FullViewDtls_Popup(Vendor objlistedvendor)
+        {
+            Vendor vendor = new Vendor();
+            DataSet ds = vendor.GetVendorListed_FullViewDtls_Popup(objlistedvendor);
+            foreach (DataRow dr in ds.Tables[0].Rows)
+            {
+                vendor.Vendor_Id = Convert.ToInt32(ds.Tables[0].Rows[0]["vendorId"]);
+                vendor.Vendor_Name = ds.Tables[0].Rows[0]["vendorfirstName"].ToString();
+                vendor.ShippingAddress = ds.Tables[0].Rows[0]["ShippingAddress"].ToString();
+                vendor.Billingaddress = ds.Tables[0].Rows[0]["BillingAddress"].ToString();
+                vendor.WebsiteLink = ds.Tables[0].Rows[0]["websiteLink"].ToString();
+                vendor.Facebooklink = ds.Tables[0].Rows[0]["facebookLink"].ToString();
+                vendor.TwiterLink = ds.Tables[0].Rows[0]["twitterlink"].ToString();
+                vendor.Vendor_Contact_Person = ds.Tables[0].Rows[0]["vendorteliphoneNo1"].ToString();
+                vendor.currency_code = ds.Tables[0].Rows[0]["currencyCode"].ToString();
+                vendor.currency_symbol = ds.Tables[0].Rows[0]["currencysymbol"].ToString();
+                //---------------------------------------------------------------------
+                vendor.Vendor_Company_Name = ds.Tables[0].Rows[0]["Companyname"].ToString();
+                vendor.Sortname = ds.Tables[0].Rows[0]["vendorSortName"].ToString();
+                vendor.CompanyAddress = ds.Tables[0].Rows[0]["companyAddress"].ToString();
+                vendor.Companycity = ds.Tables[0].Rows[0]["Companycityname"].ToString();
+                vendor.ComapnyState = ds.Tables[0].Rows[0]["CompanyState"].ToString();
+                vendor.CompanyCountry = ds.Tables[0].Rows[0]["CompanyCountry"].ToString();
+                vendor.companyPincode = ds.Tables[0].Rows[0]["companypinCode"].ToString();
+                vendor.faxnumber = ds.Tables[0].Rows[0]["companyFaxNo"].ToString();
+                vendor.Company_Telephone_number = ds.Tables[0].Rows[0]["companyTeliphone"].ToString();
+                vendor.Company_Mobile_Number = ds.Tables[0].Rows[0]["companyMobileNo"].ToString();
+                vendor.GstNumber = ds.Tables[0].Rows[0]["companyGST"].ToString();
+                vendor.sstNumber = ds.Tables[0].Rows[0]["companySST"].ToString();
+                vendor.PaymentTerm = ds.Tables[0].Rows[0]["paymentTermName"].ToString();
+                vendor.work_sample_url = ds.Tables[0].Rows[0]["companyWorksampleUrl"].ToString(); 
+                vendor.Region = ds.Tables[0].Rows[0]["companyRegion"].ToString();
+                vendor.Status = ds.Tables[0].Rows[0]["companyStatus"].ToString();
+                vendor.PrimaryContactPerson = ds.Tables[0].Rows[0]["primaryContect"].ToString();
+                vendor.PrimaryEmailAddress = ds.Tables[0].Rows[0]["vendorEmail"].ToString();
+                vendor.Vendor_Contact_Person = ds.Tables[0].Rows[0]["vendorteliphoneNo1"].ToString();
+                vendor.VendorCity = ds.Tables[0].Rows[0]["VendorCityName"].ToString();
+                vendor.VendorCountry = ds.Tables[0].Rows[0]["vendorcountryname"].ToString();
+                vendor.VendorAddress = ds.Tables[0].Rows[0]["vendoraddress"].ToString();
+                vendor.VendorPincode = ds.Tables[0].Rows[0]["vendorpinCode"].ToString();
+                vendor.Alternatepersonname = ds.Tables[0].Rows[0]["altvendorname1"].ToString();
+                vendor.AlternateEmail2 = ds.Tables[0].Rows[0]["altvendorEmail2"].ToString();
+                vendor.Alternatepersonname2 = ds.Tables[0].Rows[0]["altvendorname2"].ToString();
+                vendor.Banktype = ds.Tables[0].Rows[0]["bankdetailType"].ToString();
+                vendor.Bankname = ds.Tables[0].Rows[0]["bankname"].ToString();
+                vendor.Swiftcode = ds.Tables[0].Rows[0]["swiftCode"].ToString();
+                vendor.Receivername = ds.Tables[0].Rows[0]["reciverName"].ToString();
+                vendor.BankAddress = ds.Tables[0].Rows[0]["bankAddress"].ToString();
+                vendor.postalcode = ds.Tables[0].Rows[0]["postalCode"].ToString();
+                vendor.Bankcity = ds.Tables[0].Rows[0]["BankCityName"].ToString();
+                vendor.BankState = ds.Tables[0].Rows[0]["bankStatename"].ToString();
+                vendor.Bank_Country = ds.Tables[0].Rows[0]["bankcountryname"].ToString();
+                vendor.ContactNo1 = ds.Tables[0].Rows[0]["bankContactNo1"].ToString();
+                vendor.Contactno2 = ds.Tables[0].Rows[0]["bankContactNo2"].ToString();
+                vendor.paypalEmail = ds.Tables[0].Rows[0]["paypalemailId"].ToString();
+                 
+
             }
             return Json(vendor, JsonRequestBehavior.AllowGet);
         }
