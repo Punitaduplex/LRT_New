@@ -11,9 +11,91 @@ using System.Web;
 namespace LRT_MVC_Project.Models
 {
     public class Vendor
-    {
+    { 
         //------------------------------------------------------------start View listedvendor-----------------------------------------------------------
         public string Vendor_Name { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+         public string Registration_Status { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+         public string Registration_No { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+         public string Company_Alt_Mo_No  { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string Credit_limitType { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string from_currency { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string to_currency { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string from_currenct_amt { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string to_currenct_amt { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string Company_profile_type { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string company_profile_link { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string category_type { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string category_link { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+
+        public string company_work_url { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string Access_permission1{ get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string vendor_login_id1{ get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string vendor_login_pwd { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string user_id1{ get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string trans_date { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string Approved_user_id { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string Approved_date_time { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string last_update_date_time { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string Activate_date_time { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string activate_user_id { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+
+        public string request_status { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+
+        public string request_status_date_time { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string request_status_user_id { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string Credit_limit_Type { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Vendor_Company_Name { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]

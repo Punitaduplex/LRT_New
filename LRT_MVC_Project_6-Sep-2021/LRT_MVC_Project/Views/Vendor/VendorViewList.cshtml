@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "VendorViewList";
     Layout = "~/_LayoutVendor.cshtml";
 }
@@ -10,22 +9,21 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
- <script>
+<script>
     //$(document).on("click", "a.List", function () {
-     $(document).ready(function ( ) {
+    $(document).ready(function () {
         //var $row = $(this).closest("tr");    // Find the row
         //var $id = $row.find('td:eq(7)').text();
 
         //var objlistedvendor = {};
         //objlistedvendor.Vendor_Id = $id;
-         //$('#dialogViewList').modal('show');
+        //$('#dialogViewList').modal('show');
 
-         var baseUrl = (window.location).href;
-         var Id = baseUrl.substring(baseUrl.lastIndexOf('/') + 1);
+        var baseUrl = (window.location).href;
+        var Id = baseUrl.substring(baseUrl.lastIndexOf('/') + 1);
 
-         alert(Id);
-         var objlistedvendor = {};
-         objlistedvendor.Vendor_Id = Id;
+        var objlistedvendor = {};
+        objlistedvendor.Vendor_Id = Id;
         $.ajax({
             type: "POST",
             url: "/Vendor/GetVendorListed_FullViewDtls_Popup",
@@ -33,7 +31,7 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-
+              
 
                 if (response.Vendor_Company_Name == "") {
                     $("#lblcompanyname").text("NA");
@@ -267,6 +265,128 @@
                     $("#lblpaypalEmail").text("NA");
                 } else {
                     $("#lblpaypalEmail").text(response.paypalEmail);
+                }
+
+
+                if (response.Registration_Status == "") {
+                    $("#lblregistrationstatus").text("NA");
+                } else {
+                    $("#lblregistrationstatus").text(response.Registration_Status);
+                }
+                if (response.Registration_No == "") {
+                    $("#lblRegistrationno").text("NA");
+                } else {
+                    $("#lblRegistrationno").text(response.Registration_No);
+                }
+                if (response.Company_Alt_Mo_No == "") {
+                    $("#lblcompanyaltmono").text("NA");
+                } else {
+                    $("#lblcompanyaltmono").text(response.Company_Alt_Mo_No);
+                }
+                if (response.Credit_limit_Type == "") {
+                    $("#lblcreditlimit").text("NA");
+                } else {
+                    $("#lblcreditlimit").text(response.Credit_limit_Type);
+                }
+                if (response.from_currency == "") {
+                    $("#lblfromcurrency").text("NA");
+                } else {
+                    $("#lblfromcurrency").text(response.from_currency);
+                }
+                if (response.to_currency == "") {
+                    $("#lbltocurrency").text("NA");
+                } else {
+                    $("#lbltocurrency").text(response.to_currency);
+                }
+                if (response.from_currenct_amt == "") {
+                    $("#lblfromcurrencyamt").text("NA");
+                } else {
+                    $("#lblfromcurrencyamt").text(response.from_currenct_amt);
+                }
+                if (response.to_currenct_amt == "") {
+                    $("#lbltocurrencyamt").text("NA");
+                } else {
+                    $("#lbltocurrencyamt").text(response.to_currenct_amt);
+                }
+                if (response.Company_profile_type == "") {
+                    $("#lblcompanyprofiletype").text("NA");
+                } else {
+                    $("#lblcompanyprofiletype").text(response.Company_profile_type);
+                }
+                if (response.category_type == "") {
+                    $("#lblcategorytype").text("NA");
+                } else {
+                    $("#lblcategorytype").text(response.category_type);
+                }
+                if (response.work_sample_url == "") {
+                    $("#lblcompanyworkurl").text("NA");
+                } else {
+                    $("#lblcompanyworkurl").text(response.work_sample_url);
+                }
+                if (response.Access_permission1 == "") {
+                    $("#lblAccessPermission").text("NA");
+                } else {
+                    $("#lblAccessPermission").text(response.Access_permission1);
+                }
+                if (response.vendor_login_id1 == "") {
+                    $("#lblVendorLoginId").text("NA");
+                } else {
+                    $("#lblVendorLoginId").text(response.vendor_login_id1);
+                }
+                if (response.vendor_login_pwd == "") {
+                    $("#lblVendorLoginPassword").text("NA");
+                } else {
+                    $("#lblVendorLoginPassword").text(response.vendor_login_pwd);
+                }
+                if (response.user_id1 == "") {
+                    $("#lbluserid").text("NA");
+                } else {
+                    $("#lbluserid").text(response.user_id1);
+                }
+                if (response.trans_date == "") {
+                    $("#lbltransdate").text("NA");
+                } else {
+                    $("#lbltransdate").text(response.trans_date);
+                }
+                if (response.Approved_user_id == "") {
+                    $("#lblApprovedUserId").text("NA");
+                } else {
+                    $("#lblApprovedUserId").text(response.Approved_user_id);
+                }
+                if (response.Approved_date_time == "") {
+                    $("#lblApprovedDateTime").text("NA");
+                } else {
+                    $("#lblApprovedDateTime").text(response.Approved_date_time);
+                }
+                if (response.last_update_date_time == "") {
+                    $("#lblLastUpdateTimeDateTime").text("NA");
+                } else {
+                    $("#lblLastUpdateTimeDateTime").text(response.last_update_date_time);
+                }
+                if (response.Activate_date_time == "") {
+                    $("#lblActiveTimeDateTime").text("NA");
+                } else {
+                    $("#lblActiveTimeDateTime").text(response.Activate_date_time);
+                }
+                if (response.activate_user_id == "") {
+                    $("#lblActiveUserId").text("NA");
+                } else {
+                    $("#lblActiveUserId").text(response.activate_user_id);
+                }
+                if (response.request_status == "") {
+                    $("#lblRequestStatus").text("NA");
+                } else {
+                    $("#lblRequestStatus").text(response.request_status);
+                }
+                if (response.request_status_date_time == "") {
+                    $("#lblRequestStatusdatetime").text("NA");
+                } else {
+                    $("#lblRequestStatusdatetime").text(response.request_status_date_time);
+                }
+                if (response.request_status_user_id == "") {
+                    $("#lblRequestStatusUserId").text("NA");
+                } else {
+                    $("#lblRequestStatusUserId").text(response.request_status_user_id);
                 }
             },
             failure: function (response) {
@@ -538,6 +658,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <div class="row">
@@ -558,6 +679,173 @@
                                     </div>
                                     <div class="col-md-8">
                                         <p id="lblcompanyAddress"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Registration Status <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblregistrationstatus"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Registration No <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblRegistrationno"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Company Alt Mo No <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblcompanyaltmono"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Credit limit Type <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblcreditlimit"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> From Currency <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblfromcurrency"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> To Currency <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lbltocurrency"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> From Currency Amt <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblfromcurrencyamt"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> To Currency Amt <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lbltocurrencyamt"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Company Profile Type <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblcompanyprofiletype"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Company Profile Link <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p> <a href="#"> Company Profile Link </a> </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> CatelogType Type <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblcategorytype"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Category Link <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p> <a href="#"> Category Link </a> </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> ComPany Work Url  <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblcompanyworkurl">   </p>
                                     </div>
                                 </div>
                             </div>
@@ -744,222 +1032,222 @@
                             </div>
                         </div>
                         @*<div class="col-sm-4">
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label for=""> Machine <span>:</span> </label>
-                                </div>
-                                <div class="col-md-8">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label for=""> Machine <span>:</span> </label>
+                                        </div>
+                                        <div class="col-md-8">
 
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <div class="form-group">
 
-                            <table id="machin" class="table  table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            S.N
-                                        </th>
-                                        <th>Machine Name </th>
-                                        <th>Machine Function </th>
-                                        <th>Machine Capability </th>
-                                        <th> <span class="add_inf"> Addition Information </span></th>
+                                    <table id="machin" class="table  table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    S.N
+                                                </th>
+                                                <th>Machine Name </th>
+                                                <th>Machine Function </th>
+                                                <th>Machine Capability </th>
+                                                <th> <span class="add_inf"> Addition Information </span></th>
 
 
 
-                                    </tr>
-                                </thead>
+                                            </tr>
+                                        </thead>
 
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <label class="pos-rel">
-                                                1
-                                            </label>
-                                        </td>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        1
+                                                    </label>
+                                                </td>
 
-                                        <td>
-                                            <label class="pos-rel">
-                                                SAFAN
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="pos-rel">
-                                                LASER CUTTING
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="pos-rel">
-                                                Up to 3 meters
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="pos-rel">
-                                                This product is so good.
-                                            </label>
-                                        </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        SAFAN
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        LASER CUTTING
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        Up to 3 meters
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        This product is so good.
+                                                    </label>
+                                                </td>
 
 
 
 
 
 
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <label class="pos-rel">
-                                                2
-                                            </label>
-                                        </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        2
+                                                    </label>
+                                                </td>
 
-                                        <td>
-                                            <label class="pos-rel">
-                                                SAFAN
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="pos-rel">
-                                                LASER CUTTING
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="pos-rel">
-                                                Up to 3 meters
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="pos-rel">
-                                                This product is so good.
-                                            </label>
-                                        </td>
-
-
-
-
-
-
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <label class="pos-rel">
-                                                3
-                                            </label>
-                                        </td>
-
-                                        <td>
-                                            <label class="pos-rel">
-                                                SAFAN
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="pos-rel">
-                                                LASER CUTTING
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="pos-rel">
-                                                Up to 3 meters
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="pos-rel">
-                                                This product is so good.
-                                            </label>
-                                        </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        SAFAN
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        LASER CUTTING
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        Up to 3 meters
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        This product is so good.
+                                                    </label>
+                                                </td>
 
 
 
 
 
 
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <label class="pos-rel">
-                                                4
-                                            </label>
-                                        </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        3
+                                                    </label>
+                                                </td>
 
-                                        <td>
-                                            <label class="pos-rel">
-                                                SAFAN
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="pos-rel">
-                                                LASER CUTTING
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="pos-rel">
-                                                Up to 3 meters
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="pos-rel">
-                                                This product is so good.
-                                            </label>
-                                        </td>
-
-
-
-
-
-
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <label class="pos-rel">
-                                                5
-                                            </label>
-                                        </td>
-
-                                        <td>
-                                            <label class="pos-rel">
-                                                SAFAN
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="pos-rel">
-                                                LASER CUTTING
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="pos-rel">
-                                                Up to 3 meters
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="pos-rel">
-                                                This product is so good.
-                                            </label>
-                                        </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        SAFAN
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        LASER CUTTING
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        Up to 3 meters
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        This product is so good.
+                                                    </label>
+                                                </td>
 
 
 
 
 
 
-                                    </tr>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        4
+                                                    </label>
+                                                </td>
+
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        SAFAN
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        LASER CUTTING
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        Up to 3 meters
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        This product is so good.
+                                                    </label>
+                                                </td>
 
 
 
 
-                                </tbody>
-                            </table>
 
 
-                        </div>
-                    </div>*@
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        5
+                                                    </label>
+                                                </td>
+
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        SAFAN
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        LASER CUTTING
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        Up to 3 meters
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="pos-rel">
+                                                        This product is so good.
+                                                    </label>
+                                                </td>
+
+
+
+
+
+
+                                            </tr>
+
+
+
+
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </div>*@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label for=""> Primary Contact Person <span>:</span> </label>
+                                        <label for=""> PrimaryContactPerson <span>:</span> </label>
                                     </div>
                                     <div class="col-md-8">
                                         <p id="lblprimarycontactperson"> </p>
@@ -1010,7 +1298,7 @@
                                         <label for=""> City <span>:</span> </label>
                                     </div>
                                     <div class="col-md-8">
-                                        <p id="lblvendorcity"</p>
+                                        <p id="lblvendorcity"></p>
                                     </div>
                                 </div>
                             </div>
@@ -1022,7 +1310,7 @@
                                         <label for=""> Country <span>:</span> </label>
                                     </div>
                                     <div class="col-md-8">
-                                        <p id="lblvendorcountry">  </p>
+                                        <p id="lblvendorcountry"></p>
                                     </div>
                                 </div>
                             </div>
@@ -1034,23 +1322,13 @@
                                         <label for=""> Pin code <span>:</span> </label>
                                     </div>
                                     <div class="col-md-8">
-                                        <p id="lblvendorpincode">  </p>
+                                        <p id="lblvendorpincode"></p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label for=""> Alternate person name <span>:</span> </label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <p id="lblaltpersonname">  </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
+
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <div class="row">
@@ -1067,10 +1345,10 @@
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label for=""> Alternate Person Name 2 <span>:</span> </label>
+                                        <label for=""> Alt Person Name 2 <span>:</span> </label>
                                     </div>
                                     <div class="col-md-8">
-                                        <p id="lblaltprsonname2">  </p>
+                                        <p id="lblaltprsonname2"></p>
                                     </div>
                                 </div>
                             </div>
@@ -1083,7 +1361,7 @@
                                         <label for=""> Alternate Email 2 <span>:</span> </label>
                                     </div>
                                     <div class="col-md-8">
-                                        <p id="lblaltemail2"> </p>
+                                        <p id="lblaltemail2"></p>
                                     </div>
                                 </div>
                             </div>
@@ -1145,6 +1423,19 @@
                                     </div>
                                     <div class="col-md-8">
                                         <p> <a href="#"> Download form other form file </a> </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="">Account Number <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id=" ">  </p>
                                     </div>
                                 </div>
                             </div>
@@ -1306,7 +1597,184 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Access Permission <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblAccessPermission"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Vendor Login Id <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblVendorLoginId "></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Vendor Login Pwd <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblVendorLoginPassword"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> User Id <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lbluserid"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Trans Date <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lbltransdate"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Alternate person name <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblAltpersonname"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Approved User Id <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblApprovedUserId"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Approved Date Time<span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblApprovedDateTime"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Last Update  Date Time<span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblLastUpdateTimeDateTime"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Active Time Date Time<span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblActiveTimeDateTime"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Active User Id <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblActiveUserId"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Request Status <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblRequestStatus"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Request Status Date time <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblRequestStatusdatetime"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for=""> Request Status User Id <span>:</span> </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p id="lblRequestStatusUserId"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-sm-12 button_ar">
 
                             <button class="apr"> Aprrove</button> <button class="apr bg2"> Stand By</button> <button class="apr bg3"> Rejected</button>
@@ -1316,7 +1784,7 @@
                     </div>
                 </div>
             </div>
-             
+
         </div>
     </div>
 </div>

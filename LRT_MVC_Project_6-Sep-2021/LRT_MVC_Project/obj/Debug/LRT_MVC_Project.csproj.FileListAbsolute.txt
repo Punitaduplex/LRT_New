@@ -66,6 +66,5 @@ E:\Githubs project\LRT_Updated\LRT_New\LRT_MVC_Project_6-Sep-2021\LRT_MVC_Projec
 E:\Githubs project\LRT_Updated\LRT_New\LRT_MVC_Project_6-Sep-2021\LRT_MVC_Project\bin\System.Web.Webpages.Razor.xml
 E:\Githubs project\LRT_Updated\LRT_New\LRT_MVC_Project_6-Sep-2021\LRT_MVC_Project\bin\System.Web.Helpers.xml
 E:\Githubs project\LRT_Updated\LRT_New\LRT_MVC_Project_6-Sep-2021\LRT_MVC_Project\bin\System.Web.Mvc.xml
-E:\Githubs project\LRT_Updated\LRT_New\LRT_MVC_Project_6-Sep-2021\LRT_MVC_Project\obj\Debug\LRT_MVC_Project.csprojResolveAssemblyReference.cache
 E:\Githubs project\LRT_Updated\LRT_New\LRT_MVC_Project_6-Sep-2021\LRT_MVC_Project\obj\Debug\LRT_MVC_Project.dll
 E:\Githubs project\LRT_Updated\LRT_New\LRT_MVC_Project_6-Sep-2021\LRT_MVC_Project\obj\Debug\LRT_MVC_Project.pdb

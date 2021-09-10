@@ -1725,6 +1725,21 @@ namespace LRT_MVC_Project.Controllers
                 return RedirectToAction("LogIn", "User");
             }
         }
+
+
+        public ActionResult VendorView()
+        {
+            if (this.ControllerContext.HttpContext.Request.Cookies.AllKeys.Contains("userid"))
+            {
+                HttpCookie cookie1 = this.ControllerContext.HttpContext.Request.Cookies["username"];
+                Common.CommonSetting.name = cookie1.Value;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("LogIn", "User");
+            }
+        }
         
         [HttpPost]
         public JsonResult ListedVendordetailsForPopup(Vendor objlistedvendor)
@@ -1805,6 +1820,32 @@ namespace LRT_MVC_Project.Controllers
                 vendor.ContactNo1 = ds.Tables[0].Rows[0]["bankContactNo1"].ToString();
                 vendor.Contactno2 = ds.Tables[0].Rows[0]["bankContactNo2"].ToString();
                 vendor.paypalEmail = ds.Tables[0].Rows[0]["paypalemailId"].ToString();
+                vendor.Registration_Status = ds.Tables[0].Rows[0]["registrationStatus"].ToString();
+                vendor.Registration_No = ds.Tables[0].Rows[0]["companyregistrationNo"].ToString();
+                vendor.Company_Alt_Mo_No = ds.Tables[0].Rows[0]["companyalternanteNo"].ToString();
+                vendor.Credit_limit_Type = ds.Tables[0].Rows[0]["creditlimitType"].ToString();
+                vendor.from_currency = ds.Tables[0].Rows[0]["fromCurrency"].ToString();
+                vendor.to_currency = ds.Tables[0].Rows[0]["toCurrency"].ToString();
+                vendor.from_currenct_amt = ds.Tables[0].Rows[0]["fromcurrencyAmt"].ToString();
+                vendor.to_currenct_amt = ds.Tables[0].Rows[0]["tocurrencyAmt"].ToString();
+                vendor.Company_profile_type = ds.Tables[0].Rows[0]["companyprofileType"].ToString();
+                vendor.company_profile_link = ds.Tables[0].Rows[0]["companyprofileLink"].ToString();
+                vendor.category_type = ds.Tables[0].Rows[0]["catelogType"].ToString();
+                vendor.category_link = ds.Tables[0].Rows[0]["catelogLink"].ToString();
+
+                vendor.Access_permission1= ds.Tables[0].Rows[0]["accessPermission"].ToString();
+                vendor.vendor_login_id1= ds.Tables[0].Rows[0]["vendorloginId"].ToString();
+                vendor.vendor_login_pwd = ds.Tables[0].Rows[0]["vendorloginPwd"].ToString();
+                vendor.user_id1= ds.Tables[0].Rows[0]["userId"].ToString();
+                vendor.trans_date = ds.Tables[0].Rows[0]["transDate"].ToString();
+                vendor.Approved_user_id = ds.Tables[0].Rows[0]["approvedUserId"].ToString();
+                vendor.Approved_date_time = ds.Tables[0].Rows[0]["approvedDateTime"].ToString();
+                vendor.last_update_date_time = ds.Tables[0].Rows[0]["lastUpdateDateTime"].ToString();
+                vendor.Activate_date_time = ds.Tables[0].Rows[0]["activateDateTime"].ToString();
+                vendor.activate_user_id = ds.Tables[0].Rows[0]["activateUserId"].ToString();
+                vendor.request_status = ds.Tables[0].Rows[0]["requestStatus"].ToString();
+                vendor.request_status_date_time = ds.Tables[0].Rows[0]["requestStatusDatetime"].ToString();
+                vendor.request_status_user_id = ds.Tables[0].Rows[0]["requestStatusUserId"].ToString();
                  
 
             }
