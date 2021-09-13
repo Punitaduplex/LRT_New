@@ -1758,6 +1758,8 @@ namespace LRT_MVC_Project.Controllers
                 vendor.Vendor_Contact_Person = ds.Tables[0].Rows[0]["vendorteliphoneNo1"].ToString();
                 vendor.currency_code = ds.Tables[0].Rows[0]["currencyCode"].ToString();
                 vendor.currency_symbol = ds.Tables[0].Rows[0]["currencysymbol"].ToString();
+                vendor.Vendor_Address = ds.Tables[0].Rows[0]["ShippingAddress"].ToString();
+                
  
             }
             return Json(vendor, JsonRequestBehavior.AllowGet);

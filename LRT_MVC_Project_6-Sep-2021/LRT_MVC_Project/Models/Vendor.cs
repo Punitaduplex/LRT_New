@@ -20,7 +20,8 @@ namespace LRT_MVC_Project.Models
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string StandBy_Staus { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
-
+        public string Vendor_Address { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
 
 
 

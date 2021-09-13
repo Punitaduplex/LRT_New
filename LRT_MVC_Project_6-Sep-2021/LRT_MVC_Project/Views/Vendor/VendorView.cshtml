@@ -100,7 +100,12 @@
                 } else {
                     $("#lblcurrencysymbol").text(response.currency_symbol);
                 }
-
+                $("#lblVendorAddress").empty();
+                if (response.Vendor_Address == "") {
+                    $("#lblVendorAddress").text("NA");
+                } else {
+                    $("#lblVendorAddresss").text(response.Vendor_Address);
+                }
 
             },
             failure: function (response) {
@@ -569,7 +574,7 @@
                                     <div class="col-xs-12 col-sm-9">
 
                                         <h2 class="add_ara"> Address  </h2>
-                                        <h3 class="bill_add">Billing Address  <i class="fa fa-edit fl_right"></i> </h3>
+                                        <h3 class="bill_add">Company Address  <i class="fa fa-edit fl_right"></i> </h3>
                                         <div class="space-12"></div>
 
                                         <div class="profile-user-info profile-user-info-striped">
@@ -613,7 +618,7 @@
 
                                         </div>
 
-                                        <h3 class="bill_add">Shiping Address  <i class="fa fa-edit fl_right"></i> </h3>
+                                        <h3 class="bill_add">Bank Address  <i class="fa fa-edit fl_right"></i> </h3>
                                         <div class="space-12"></div>
 
                                         <div class="profile-user-info profile-user-info-striped">
@@ -655,44 +660,59 @@
 
 
                                         </div>
+                                        @*<p id="lblVendorAddresss">
+                                            <a href='#' class="add_add"> Additional Address 
 
-                                        <a href="#" class="add_add"> Add Additional Address <i class="fa fa-plus plus_sym"></i> </a>
+                                                <i class="fa fa-plus plus_sym">
 
-                                        <div class="hr dotted"></div>
+                                                </i>
+                                            </a>
+                                        </p>*@
+                                        <h3 class="add_add">Additional Address  <i class="fa fa-plus plus_sym"></i> </h3>
+                                        <div class="space-12"></div>
+                                        <p id="lblVendorAddresss">
+                                            @*<a href="#" class="add_add">
+                                                Additional Address
+                                                <i class="fa fa-plus plus_sym">
 
-                                        <div class="row">
-                                            <div class="col-sm-6 br_right">
-                                                <h4>Outstanding Recivables </h4>
+                                                </i>
+                                            </a>*@
+                                            </p>
+                                            <div class="hr dotted"></div>
+
+                                            <div class="row">
+                                                <div class="col-sm-6 br_right">
+                                                    <h4>Outstanding Recivables </h4>
 
 
-                                                <div class="credit ">
-                                                    <h3>Unused Credit: <span> NA </span> </h3>
-                                                    <h4>Payment due Period:  <span> NA </span> </h4>
+                                                    <div class="credit ">
+                                                        <h3>Unused Credit: <span> NA </span> </h3>
+                                                        <h4>Payment due Period:  <span> NA </span> </h4>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <h4>Outstanding Payables </h4>
-                                                <div class="credit">
-                                                    <h3>Unused Credit: <span> NA </span> </h3>
-                                                    <h4>Payment due Period: <span> NA </span> </h4>
+                                                <div class="col-sm-6">
+                                                    <h4>Outstanding Payables </h4>
+                                                    <div class="credit">
+                                                        <h3>Unused Credit: <span> NA </span> </h3>
+                                                        <h4>Payment due Period: <span> NA </span> </h4>
+                                                    </div>
                                                 </div>
+
                                             </div>
 
-                                        </div>
+                                            <div class="hr dotted"></div>
 
-                                        <div class="hr dotted"></div>
+                                            <div class="expences">
+                                                <h2 class="heading">Expences</h2>
+                                                <div class="">
+                                                    <canvas id="data_ui"></canvas>
+                                                </div>
 
-                                        <div class="expences">
-                                            <h2 class="heading">Expences</h2>
-                                            <div class="">
-                                                <canvas id="data_ui"></canvas>
                                             </div>
 
-                                        </div>
-
-                                        <div class="doen">
-                                            <h3 class="text-center"> <a href="#"> Download Vendor Report <i class="fa fa-cloud"></i> </a> </h3>
-                                        </div>
+                                            <div class="doen">
+                                                <h3 class="text-center"> <a href="#"> Download Vendor Report <i class="fa fa-cloud"></i> </a> </h3>
+                                            </div>
 
 
 
@@ -701,7 +721,7 @@
 
 
 
-                                    </div>
+</div>
                                 </div>
                             </div>
 
