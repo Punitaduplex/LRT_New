@@ -146,7 +146,7 @@
                 if (response.length > 0) {
                     for (var i = 0; i < response.length; i++) {
                         tr = $('<tr/>');
-                        tr.append("<td><input type='checkbox' name='PendingVendor' class='ace'/></td>");
+                        tr.append("<td><input type='checkbox' name='PendingVendor'  /></td>");
                         tr.append("<td><label class='pos-rel'>" + response[i].Vendor_Name + "</label></td>");
                         
                         tr.append("<td><label class='pos-rel'>" + response[i].Vendor_Company_Name + "</label></td>");
@@ -337,7 +337,7 @@
                 for (var i = 0; i < json.length; i++) {
                     tr = $('<tr/>');
                     //tr.append("<td><label class='pos-rel'>" + (i + 1) +  "</lable></td>");
-                    tr.append("<td><input type='checkbox' name='PendingVendor' class='ace'/></td>");
+                    tr.append("<td><input type='checkbox' name='PendingVendor' /></td>");
                     tr.append("<td class='left_c'>" + json[i].Vendor_Name + "</td>");
 
                     tr.append("<td class='left_c'>" + json[i].Vendor_Company_Name + "</td>");

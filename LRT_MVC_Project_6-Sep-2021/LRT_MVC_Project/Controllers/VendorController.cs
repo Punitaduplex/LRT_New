@@ -1852,8 +1852,63 @@ namespace LRT_MVC_Project.Controllers
             return Json(vendor, JsonRequestBehavior.AllowGet);
         }
 
-        //--------------------------------pending----------------------------------
 
+        [HttpPost]
+        public JsonResult MachineDetails(Vendor objVendor)
+
+        {
+             Vendor vendor = new Vendor();
+             List<Vendor> objVendorlist = new List<Vendor>();
+            try
+            {
+               
+                DataSet ds = vendor.GetVendorListed_Machine_Dtls_Popup(objVendor);
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        Vendor Vendor1 = new Vendor();
+                        Vendor1.Machine_Name = Convert.ToString(ds.Tables[0].Rows[i]["machineName"]);
+                        Vendor1.Machine_Function = Convert.ToString(ds.Tables[0].Rows[i]["machineFunction"]);
+                        Vendor1.Machine_Capability = Convert.ToString(ds.Tables[0].Rows[i]["machineCapability"]);
+                        objVendorlist.Add(Vendor1);
+                    }
+                }
+            }
+
+            catch (Exception ex) { }
+            return Json(objVendorlist);
+            }
+
+
+        [HttpPost]
+        public JsonResult UpdateVendorListAprrove(Vendor objVendor)
+        {
+            Vendor vendor = new Vendor();
+            string sms = "";
+            HttpCookie cookie = this.ControllerContext.HttpContext.Request.Cookies["userid"];
+            objVendor.User_Id = Convert.ToInt32(cookie.Value);
+            
+            try
+            {
+                  int i= vendor.updateVendorList_Aprrove(objVendor);
+                if(i==0)
+                {
+                    sms = "Status Change  Sucessfully";
+                }
+            }
+            
+            catch (Exception ex) { }
+            return Json(sms);
+        
+        }
+
+
+        
+        //--------------------------------pending----------------------------------
+       
+           
+           
         [HttpPost]
         public JsonResult SearchpendingListedVendor(Vendor objlistedvendor)
         {

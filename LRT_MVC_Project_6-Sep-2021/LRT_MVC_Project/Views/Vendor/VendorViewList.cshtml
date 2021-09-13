@@ -9,6 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+
 <script>
     //$(document).on("click", "a.List", function () {
     $(document).ready(function () {
@@ -398,8 +399,162 @@
         });
     });
 </script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnMachinedtls").click(function (e) {
+            var baseUrl = (window.location).href;
+            var Id = baseUrl.substring(baseUrl.lastIndexOf('/') + 1);
+            
+            Getdata(Id);
+           
+
+                    
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+       
+        $("#btnAprrove").click(function (e) {
+            var Statusvalue = $("#btnAprrove").val();
+            //alert(Statusvalue);
+            var baseUrl = (window.location).href;
+            var Id = baseUrl.substring(baseUrl.lastIndexOf('/') + 1);
+      
+            UpdateAprrovedata(Id, Statusvalue);
+       
+             });
+    });
+</script>
 
 
+<script type="text/javascript">
+    $(function () {
+
+        $("#btnReject_ed").click(function (e) {
+            var Statusvalue = $("#btnReject_ed").val();
+            var baseUrl = (window.location).href;
+            var Id = baseUrl.substring(baseUrl.lastIndexOf('/') + 1);
+
+            UpdateAprrovedata(Id, Statusvalue);
+
+        });
+    });
+</script>
+
+ 
+
+
+<script type="text/javascript">
+    $(function () {
+
+        $("#btnStand_by").click(function (e) {
+            var Statusvalue = $("#btnStand_by").val();
+            var baseUrl = (window.location).href;
+            var Id = baseUrl.substring(baseUrl.lastIndexOf('/') + 1);
+
+            UpdateAprrovedata(Id, Statusvalue);
+            
+
+        });
+    });
+</script>
+
+<script>
+    function UpdateAprrovedata(id, Statusvalue) {
+
+        var objVendor = {};
+
+        objVendor.Vendor_Id = id;
+        objVendor.request_status = Statusvalue;
+        $.ajax({
+            
+            type: "POST",
+            url: "/Vendor/UpdateVendorListAprrove",
+            data: '{objVendor: ' + JSON.stringify(objVendor) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+
+            success: function (response) {
+
+                $(".dataTables_wrapper").remove();
+                swal(response);
+                
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "/assets/js/jquery.dataTables.min.js";
+                document.getElementsByTagName("body")[0].appendChild(script);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+
+
+
+<script>
+    function Getdata(id) {
+        $("#divtbl").append('<table id="listedvendorMachine" class="table table-bordered  table-hover"><thead><tr><th class="left_c">S.No</th> <th class="left_c">Machine Name</th> <th class="left_c">Machine Function</th> <th class="left_c">Machine Capability</th> <th class="left_c">Additional Information</th></tr></thead> <tbody></tbody> </table>')
+
+        $("#listedvendorMachine > tbody").html("");
+        var objVendor = {};
+
+        objVendor.Vendor_Id = id;
+
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/MachineDetails",
+            data: '{objVendor: ' + JSON.stringify(objVendor) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                 //alert(response.length);
+                 if (response.length > 0) {
+                    for (var i = 0; i < response.length; i++) {
+                        tr = $('<tr/>');
+                        tr.append("<td><label class='pos-rel'>" + (i + 1) + "</lable></td>");
+                        
+
+                        tr.append("<td class='left_c'>" + response[i].Machine_Name + "</td>");
+                      
+
+                        tr.append("<td class='left_c'>" + response[i].Machine_Function + "</td>");
+                       
+                        
+                        tr.append("<td class='left_c'>" + response[i].Machine_Capability + "</td>");
+                       
+                        tr.append("<td class='left_c'></td>");
+                        
+                    }
+                    $('#listedvendorMachine').append(tr);
+
+                    $("#dialogdiv").modal("show");
+                }
+                 else
+                 {
+                     $('#divtbl').empty();
+                 }
+            },
+            failure: function (response) {
+                alert(response.responseText);
+              
+            },
+            error: function (response) {
+                alert(response.responseText);
+               
+            }
+        });
+    };
+</script>
+
+ 
 <div id="sidebar" class="sidebar responsive ace-save-state top-padding">
     <script type="text/javascript">
         try { ace.settings.loadState('sidebar') } catch (e) { }
@@ -1777,7 +1932,10 @@
                         </div>
                         <div class="col-sm-12 button_ar">
 
-                            <button class="apr"> Aprrove</button> <button class="apr bg2"> Stand By</button> <button class="apr bg3"> Rejected</button>
+                            <button class="apr bg" id="btnAprrove" value="Aprrove"> Aprrove</button>
+                            <button class="apr bg2" id="btnStand_by" value="Stand By"> Stand By</button>
+                            <button class="apr bg3" id="btnReject_ed" value="Rejected"> Rejected</button>
+                            <button class="apr bg2" id="btnMachinedtls"> Machine</button>
                         </div>
 
 
@@ -1788,3 +1946,48 @@
         </div>
     </div>
 </div>
+@*-------------------------------------------------popup for view start -------------------------------------*@
+<div id="dialogdiv" class="modal fade" style="margin-top:0px!important;overflow:auto!important">
+    <div class="modal-dialog modal-lg modal-dialog-centered " style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
+        <div class="modal-content" style="width:100% !important">
+            <div class="modal-header">
+                <a href="#" class="close" data-dismiss="modal">x</a>
+
+                 
+                <div class="col-sm-4">
+            <div class="form-group">
+                <div class="row">
+                    <div>
+                        <h3 > Machine Details  </h3>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group">
+
+               <div id="divtbl"></div>
+
+
+            </div>
+        </div>
+            </div>
+            <div class="modal-body">
+                <div class="model_data">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#listedvendorMachine').DataTable({
+
+
+        colReorder: true,
+        destroy: true
+
+    });
+</script>
+@*-------------------------------------------popup for view  end-------------------------------------------------------------*@

@@ -66,7 +66,8 @@
         z-index: 99999;
     }
 </style>
- 
+  
+
 <script>
     $(function () {
         $('body').on('click', '#chkAll', function () {
@@ -156,7 +157,7 @@
                         tr.append("<td><label class='pos-rel'>" + response[i].Vendor_Company_Name + "</label></td>");
                         tr.append("<td><label class='pos-rel'>" + response[i].Vendor_Email_ID + "</label></td>");
                         tr.append("<td><label class='pos-rel'>" + response[i].Vendor_Contact_Person + "</label></td>");
-                        tr.append("<td class='lst_td w155_i'><ul class='list_main'><li ><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip'><i class='ace-icon fa fa-pencil bigger-120 edit_c' data-rel='tooltip' title='Edit'></i></a><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='List'><i class='menu-icon fa fa-eye bigger-120 green'></i></a><a  href='javascript:void(0);' class='List tooltip-error comn_inline red' data-rel='tooltip' title='List'><i class='menu-icon fa fa-eye bigger-120 red '></i></a></li></ul></td>");
+                        tr.append("<td class='lst_td w155_i'><ul class='list_main'><li ><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip'><i class='ace-icon fa fa-pencil bigger-120 edit_c' data-rel='tooltip' title='Edit'></i></a><a  href='javascript:void(0);' class='delete tooltip-error comn_inline red' data-rel='tooltip' title='List'><i class='menu-icon fa fa-eye bigger-120 green'></i></a><a  href='javascript:void(0);' class='List tooltip-error comn_inline red' data-rel='tooltip' title='List'><i class='menu-icon fa fa-clock-o bigger-120 Red '></i></a></li></ul></td>");
                         tr.append("<td class='hide_me'>" + response[i].Vendor_Id + "</td>");
                         $('#listedvendor').append(tr);
                     }
@@ -353,14 +354,14 @@
                     tr = $('<tr/>');
                     //tr.append("<td><label class='pos-rel'>" + (i + 1) +  "</lable></td>");
                     
-                    tr.append("<td><input type='checkbox' name='listedVendor' class='ace'/></td>");
+                    tr.append("<td><input type='checkbox' name='listedVendor'/></td>");
                     tr.append("<td class='left_c'>" + json[i].Vendor_Name + "</td>");
                     tr.append("<td class='left_c'></td>");
                     tr.append("<td class='left_c'>" + json[i].Vendor_Company_Name + "</td>");
                     tr.append("<td class='left_c'>" + json[i].Vendor_Email_ID + "</td>");
                     tr.append("<td class='left_c'>" + json[i].Vendor_Contact_Person + "</td>");
 
-                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li ><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip'><i class='ace-icon fa fa-pencil bigger-120 edit_c' data-rel='tooltip' title='Edit'></i></a><a  href='javascript:void(0);' class='View tooltip-error comn_inline red' data-rel='tooltip' title='View'><i class='menu-icon fa fa-eye bigger-120 green'></i></a><a  href='javascript:void(0);' class='List tooltip-error comn_inline red' data-rel='tooltip' title='List'><i class='menu-icon fa fa-eye bigger-120 red '></i></a></li></ul></td>");
+                    tr.append("<td class='lst_td w155_i'><ul class='list_main'><li ><a href='javascript:void(0);'  id='myAnc' class='remove tooltip-error comn_inline blu' data-rel='tooltip'><i class='ace-icon fa fa-pencil bigger-120 edit_c' data-rel='tooltip' title='Edit'></i></a><a  href='javascript:void(0);' class='View tooltip-error comn_inline red' data-rel='tooltip' title='View'><i class='menu-icon fa fa-eye bigger-120 green'></i></a><a  href='javascript:void(0);' class='List tooltip-error comn_inline red' data-rel='tooltip' title='List'><i class='menu-icon fa fa-clock-o bigger-120 Red '></i></a></li></ul></td>");
                     tr.append("<td class='hide_me'>" + json[i].Vendor_Id + "</td>");
                     $('#listedvendor').append(tr);
 
@@ -700,26 +701,6 @@
 </div>
 </div>
  
- 
-@*-------------------------------------------------popup for view start -------------------------------------*@
-<div id="dialogdiv" class="modal fade" style="margin-top:0px!important;overflow:auto!important">
-    <div class="modal-dialog modal-lg modal-dialog-centered " style=" display: flex !important; width: 1007px !important;margin-top:0px!important;}">
-        <div class="modal-content" style="width:100% !important">
-            <div class="modal-header">
-                <a href="#" class="close" data-dismiss="modal">x</a>
-         
-                <h3 class="modal-title">Listed Vendor View</h3>
-
-            </div>
-            <div class="modal-body">
-                <div class="model_data">
-                   
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@*-------------------------------------------popup for view  end-------------------------------------------------------------*@
 
 @*-------------------------------------------------popup for List start -------------------------------------*@
 

@@ -5,7 +5,7 @@
 }
 
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.css">
-
+<link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 @*<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
@@ -261,7 +261,7 @@
                 </div><!-- /.ace-settings-box -->
             </div><!-- /.ace-settings-container -->
 
-            <div class="page-header">
+            @*<div class="page-header">
                 <h1>
                     Listed vendor View
                     <small>
@@ -269,7 +269,9 @@
 
                     </small>
                 </h1>
-            </div><!-- /.page-header -->
+            </div>*@
+            
+            <!-- /.page-header -->
 
             <div class="page-content">
                 <div class="ace-settings-container" id="ace-settings-container">
@@ -347,7 +349,7 @@
                     </div><!-- /.ace-settings-box -->
                 </div><!-- /.ace-settings-container -->
 
-                <div class="page-header">
+                @*<div class="page-header">
                     <h1>
                         Vendor List
                         <small>
@@ -355,7 +357,8 @@
 
                         </small>
                     </h1>
-                </div><!-- /.page-header -->
+                </div>*@
+                <!-- /.page-header -->
 
 
 
@@ -428,13 +431,13 @@
                     </div><!-- /.ace-settings-container -->
 
                     <div class="page-header">
-                        <h1>
-                            View Listed Vendor
-                            <!-- <small>
-                    <i class="ace-icon fa fa-angle-double-right"></i>
-                    3 styles with inline editable feature
-                </small> -->
-                        </h1>
+                        <h3>
+                            Profile Page
+                            <small>
+                                <i class="ace-icon fa fa-angle-double-right"></i>
+
+                            </small>
+                        </h3>
                     </div><!-- /.page-header -->
 
                     <div class="row">
@@ -463,8 +466,10 @@
                                                         <i class="ace-icon fa fa-circle light-green"></i>
                                                         &nbsp;
 
-                                                        <p id="lblVendorName"> <span class="white"></span>  </p>
-                                                        @*<span class="white">Mr Deepanshu</span>*@
+                                                        @*<p id="lblVendorName" class="white"> </p>*@
+                                                        
+                                                            <span id="lblVendorName" class="white" >
+                                                            </span> 
                                                     </a>
 
                                                     <ul class="align-left dropdown-menu dropdown-caret dropdown-lighter">
@@ -509,9 +514,9 @@
                                     </a> -->
                                                 <a href="#" class="btn btn-link">
                                                     <i>
-                                                        <label id="lblcurrencysymbol" class="CurrencySymbol"></label>
+                                                        <label id="lblcurrencysymbol"></label>
                                                     </i>
-                                                    <span class="CurrencyCode">Currency Code:</span>  <label id="lblcurrencycode" class="v_currencycode"></label>
+                                                    <span class="CurrencyCode">Currency Code:</span>  <label id="lblcurrencycode"></label>
                                                 </a>
 
                                                 <a href="#" class="btn btn-link">

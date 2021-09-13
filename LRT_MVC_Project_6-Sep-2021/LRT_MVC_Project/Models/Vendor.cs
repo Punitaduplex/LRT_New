@@ -13,6 +13,19 @@ namespace LRT_MVC_Project.Models
     public class Vendor
     { 
         //------------------------------------------------------------start View listedvendor-----------------------------------------------------------
+
+        public string Aprrove { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Rejected_Status { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string StandBy_Staus { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+
+
+
+
+
         public string Vendor_Name { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
          public string Registration_Status { get; set; }
@@ -208,6 +221,18 @@ namespace LRT_MVC_Project.Models
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         
         //------------------------------------------------------------End View listedvendor-----------------------------------------------------------
+
+
+        //------------------------------------------------------------start Machine Details-----------------------------------------------------------
+
+        public string Machine_Name { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Machine_Function { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Machine_Capability { get; set; }
+        
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        //------------------------------------------------------------End Machine Details-----------------------------------------------------------
         public int Vendor_Invitation_Id { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Vendor_Type { get; set; }
@@ -561,6 +586,61 @@ namespace LRT_MVC_Project.Models
             return ds;
         }
 
+
+        public DataSet GetVendorListed_Machine_Dtls_Popup(Vendor objVendor)
+        {
+            string strcon = ConfigurationManager.ConnectionStrings["myConStr"].ConnectionString;
+            MySqlConnection con = new MySqlConnection(strcon);
+            MySqlCommand cmd = new MySqlCommand("proc_get_v_vendorlisted_Machine_Dtls_View ", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@vendor_Id", objVendor.Vendor_Id);
+
+
+
+            DataSet ds = new DataSet();
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            da.Fill(ds);
+            return ds;
+        }
+
+
+
+        public int updateVendorList_Aprrove(Vendor objVendor)
+        {
+            int i = 0;
+            string strcon = ConfigurationManager.ConnectionStrings["myConStr"].ConnectionString;
+            MySqlConnection con = new MySqlConnection(strcon);
+            MySqlCommand cmd = new MySqlCommand("proc_Aprrove_by_v_vendor_Request_Status", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@v_Status", objVendor.request_status);
+            cmd.Parameters.AddWithValue("@vendor_id", objVendor.Vendor_Id );
+            cmd.Parameters.AddWithValue("@User_Id", objVendor.User_Id);
+            cmd.Parameters.Add(new MySqlParameter("@error1", MySqlDbType.Int32));
+            cmd.Parameters["@error1"].Direction = ParameterDirection.Output;
+
+            con.Open();
+            try
+            {
+                cmd.ExecuteNonQuery();
+                i = Convert.ToInt32(cmd.Parameters["@error1"].Value);
+            }
+            catch (Exception ex)
+            {
+                i = 1;
+            }
+            finally
+            {
+                con.Close();
+                con.Dispose();
+                con = null;
+                cmd.Dispose();
+                cmd = null;
+            }
+            return i;
+        }
+
+
+         
         //----------------------------------pending-------------------------------------------
         public DataSet GetpendingVendorListed_dtls_BySearch(Vendor objlistedvendor)
         {
