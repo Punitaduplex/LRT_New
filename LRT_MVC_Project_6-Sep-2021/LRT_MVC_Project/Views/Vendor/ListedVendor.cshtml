@@ -435,15 +435,9 @@
     $(document).on("click", "a.remove", function () {
         var $row = $(this).closest("tr");    // Find the row
 
-        var $id = $row.find('td:eq(0)').text();
-        //alert($id);
-        var $Vendor_Name = $row.find('td:eq(1)').text();
-        var $Vendor_Company_Name = $row.find('td:eq(2)').text();
-        var $Vendor_Contact_Person = $row.find('td:eq(3)').text();
-        var $Vendor_Email_ID = $row.find('td:eq(4)').text();
-        //pass page path fill this value($contactpersonname,Vendor_Email_ID,$Vendor_Company_Name,$Vendor_Name)
-        $("#hdlistedvendor").val($id);
-
+        var $id = $row.find('td:eq(7)').text();
+        
+        window.location.replace("/Vendor/VendorMaster/" + $id);
     });
 </script>
 

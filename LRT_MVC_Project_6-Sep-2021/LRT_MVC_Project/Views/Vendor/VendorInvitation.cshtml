@@ -477,6 +477,35 @@
             }
         });
     }
+  
+    //function GetVendorType() {
+    //    $("#divcheck1").empty();
+    //    $("#divcheck").empty();
+       
+    //    $.ajax({
+    //        type: "get",
+    //        url: "/Vendor/VendorTypeDetails",
+    //        data: '{}',
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        success: function (response) {
+    //            // alert(response.length);
+    //            for (var i = 0; i < response.length; i++) {
+    //                $("#divcheck").append(' <label class="inline" ><input name="form-field-checkbox" type="checkbox" class="ace input-lg" id="lblcheck' + i + '" value=' + response[i].Vendor_Type_Id + '><b class="lbl bigger-100 font_13"> ' + response[i].Vendor_Type + ' </b></label>');
+    //                $("#divcheck1").append(' <label class="inline" ><input name="form-field-checkbox1" type="checkbox" class="ace input-lg" id="lblupcheck' + i + '" value=' + response[i].Vendor_Type_Id + '><b class="lbl bigger-100 font_13"> ' + response[i].Vendor_Type + ' </b></label>');
+                   
+    //            }
+
+    //        },
+    //        failure: function (response) {
+    //            alert(response.responseText);
+    //        },
+    //        error: function (response) {
+    //            alert(response.responseText);
+    //        }
+    //    });
+    //}
+
 </script>
 
 @*------------------------------------edit data-------------------------------------------*@
@@ -698,7 +727,7 @@
                 </li>
 
                 <li>
-                    <a href="/Vendor/Dashboard">Vendor Master</a>
+                    <a href="/Vendor/Index">Vendor Master</a>
                 </li>
                 <li class="active">Vendor Invitation</li>
             </ul>

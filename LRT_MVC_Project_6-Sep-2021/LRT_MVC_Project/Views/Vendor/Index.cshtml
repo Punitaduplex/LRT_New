@@ -220,7 +220,7 @@ margin: auto;
                 </li>
 
                 <li>
-                    <a href="#">Vendor Master</a>
+                    <a href="/Vendor/Index">Vendor Master</a>
                 </li>
                 <li class="active">Dashboard</li>
             </ul><!-- /.breadcrumb -->
@@ -234,17 +234,66 @@ margin: auto;
                 </form>
             </div>*@
         </div>
+
+        <style>
+          .tb_td  .nav-tabs > li {
+    float: left;
+    margin-bottom: 8px;
+}
+          #myChart_bar {
+    height: 487px !important;
+    width: 487px !important;
+    display: block;
+    margin: auto;
+}
+        </style>
+
         <div class="page-content1">
+
+            <div class="tabbable tb_td">
+                <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" >
+                    <li class="">
+                        <a href="/Vendor/VendorInvitation" aria-expanded="true">
+                            <i class="fa fa-user"></i> Invite Vendor
+                        </a>
+                    </li>
+
+                    <li class="">
+                        <a href="/Vendor/VendorMaster" aria-expanded="false">
+                            <i class="fa fa-edit"></i> Self Register
+                        </a>
+                    </li>
+
+                    <li class="">
+                        <a href="/Vendor/ListedVendor" aria-expanded="false">
+                            <img src="./assets/images/listed.png" alt=""> Listed Vendor
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="/Vendor/PendingVendor" aria-expanded="false">
+                            <img src="./assets/images/pending_form.png" alt=""> Pending Form
+                        </a>
+                    </li>
+
+                    <li class="">
+                        <a href="/Vendor/SetVendorPermission" aria-expanded="false">
+                            <img src="./assets/images/user_permission.png" alt=""> Vendor Permission
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+
+            <br />
+
 
 
             <div class="page-header">
-                <h1>
-                   Dashboard
-                    <small>
-                        <i class="ace-icon fa fa-angle-double-right"></i>
-
-                    </small>
-                </h1>
+                <div class="page-header">
+                    <h3 class="item_hedin">
+                        dashboard
+                    </h3>
+                </div>
             </div><!-- /.page-header -->
 
 
@@ -259,44 +308,7 @@ margin: auto;
                                     Mode of Registration
                                 </h5>
 
-                                <div class="widget-toolbar no-border">
-                                    <div class="inline dropdown-hover">
-                                        <button class="btn btn-minier btn-primary">
-                                            This Week
-                                            <i class="ace-icon fa fa-angle-down icon-on-right bigger-110"></i>
-                                        </button>
-
-                                        <ul class="dropdown-menu dropdown-menu-right dropdown-125 dropdown-lighter dropdown-close dropdown-caret">
-                                            <li class="active">
-                                                <a href="#" class="blue">
-                                                    <i class="ace-icon fa fa-caret-right bigger-110">&nbsp;</i>
-                                                    This Week
-                                                </a>
-                                            </li>
-
-                                            <li>
-                                                <a href="#">
-                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
-                                                    Last Week
-                                                </a>
-                                            </li>
-
-                                            <li>
-                                                <a href="#">
-                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
-                                                    This Month
-                                                </a>
-                                            </li>
-
-                                            <li>
-                                                <a href="#">
-                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
-                                                    Last Month
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                            
                             </div>
 
                             <div class="widget-body">
@@ -321,50 +333,12 @@ margin: auto;
                                     Vendor Type Stats
                                 </h5>
 
-                                <div class="widget-toolbar no-border">
-                                    <div class="inline dropdown-hover">
-                                        <button class="btn btn-minier btn-primary">
-                                            This Week
-                                            <i class="ace-icon fa fa-angle-down icon-on-right bigger-110"></i>
-                                        </button>
-
-                                        <ul class="dropdown-menu dropdown-menu-right dropdown-125 dropdown-lighter dropdown-close dropdown-caret">
-                                            <li class="active">
-                                                <a href="#" class="blue">
-                                                    <i class="ace-icon fa fa-caret-right bigger-110">&nbsp;</i>
-                                                    This Week
-                                                </a>
-                                            </li>
-
-                                            <li>
-                                                <a href="#">
-                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
-                                                    Last Week
-                                                </a>
-                                            </li>
-
-                                            <li>
-                                                <a href="#">
-                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
-                                                    This Month
-                                                </a>
-                                            </li>
-
-                                            <li>
-                                                <a href="#">
-                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
-                                                    Last Month
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="widget-body">
                                 <div class="widget-main">
                                     <div class="container">
-                                        <canvas id="densityChart" width="600" height="400"></canvas>
+                                        <canvas id="densityChart" width="600" height="400" chart-click="ctrl.onClick"></canvas>
                                     </div>
 
 
@@ -382,44 +356,7 @@ margin: auto;
                                     Vendor Presence Chart
                                 </h5>
 
-                                <div class="widget-toolbar no-border">
-                                    <div class="inline dropdown-hover">
-                                        <button class="btn btn-minier btn-primary">
-                                            This Week
-                                            <i class="ace-icon fa fa-angle-down icon-on-right bigger-110"></i>
-                                        </button>
-
-                                        <ul class="dropdown-menu dropdown-menu-right dropdown-125 dropdown-lighter dropdown-close dropdown-caret">
-                                            <li class="active">
-                                                <a href="#" class="blue">
-                                                    <i class="ace-icon fa fa-caret-right bigger-110">&nbsp;</i>
-                                                    This Week
-                                                </a>
-                                            </li>
-
-                                            <li>
-                                                <a href="#">
-                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
-                                                    Last Week
-                                                </a>
-                                            </li>
-
-                                            <li>
-                                                <a href="#">
-                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
-                                                    This Month
-                                                </a>
-                                            </li>
-
-                                            <li>
-                                                <a href="#">
-                                                    <i class="ace-icon fa fa-caret-right bigger-110 invisible">&nbsp;</i>
-                                                    Last Month
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                               
                             </div>
 
                             <div class="widget-body">
@@ -434,6 +371,7 @@ margin: auto;
 
                                 </div><!-- /.widget-main -->
                             </div><!-- /.widget-body -->
+                          
                         </div><!-- /.widget-box -->
                     </div><!-- /.col -->
                 </div>
@@ -445,7 +383,6 @@ margin: auto;
 
     </div>
 </div>
-
 
 
 
@@ -476,20 +413,51 @@ margin: auto;
 
     $(document).ready(function () {
         Circularchar();
-        Barchart();
-        mapchar();
+       Barchart();
+       //ctrl.onClick = function (_points, _event, barClicked) {
+       //    if (barClicked) {
+       //        var associatedLabel = barClicked._model.datasetLabel;
+       //        console.log("Label of the bar you clicked is " + associatedLabel);
+       //    }
+       //}
     });
 </script>
+<script>
+   
+    //$(document).ready(
+    //             function () {
+    //                 var ctx = document.getElementById("myChart_bar").getContext("2d");
+    //                 var myNewChart = new Chart(ctx).Pie(data);
+    //                 alert("toolTip Clicked!");
+    //                 $("#myChart_bar").click(
+    //                     function (evt) {
+    //                         var activePoints = myNewChart.getSegmentsAtEvent(evt);
+    //                         var url = "http://example.com/?label=" + activePoints[0].label + "&value=" + activePoints[0].value;
+    //                         alert(url);
+    //                     }
+    //                 );
+    //             }
+    //         );
+    
+    //$(document).on("click", '#myChart_bar', function (e) {
 
+    //        alert("toolTip Clicked!");
+    //        var ctx = document.getElementById("myChart_bar").getContext("2d");
+    //        var myNewChart = new Chart(ctx).Pie(data);
+    //    //var activePoints = ctx.getElementsAtEvent(e);
+    //        alert("toolTip Clicked!");
+    //});
+</script>
 <script type="text/javascript">
-
+    var myChart1 = document.getElementById('myChart_bar');
     function Circularchar() {
-        let myChart = document.getElementById('myChart_bar').getContext('2d');
+        
+        let myChart = myChart1.getContext('2d');
         var sub_array = [];
         var super_array = [];
         var sub_array1 = [];
         var super_array1 = [];
-        $.getJSON("/Vendor1/VendorStatuschart",
+        $.getJSON("/Vendor/VendorRegistrationStatuschart",
             function (json) {
 
                 for (var i = 0; i < json.length; i++) {
@@ -502,18 +470,13 @@ margin: auto;
 
 
 
-                new Chart(myChart_bar, {
+                var doughnutData = new Chart(myChart_bar, {
                     type: 'pie',
                     data: {
                         labels:
-
-                            sub_array
-
-                         ,
-
-
+                            sub_array ,
                         datasets: [{
-                            label: 'Population',
+                            label: 'Registration Type',
                             data:
 
 
@@ -540,11 +503,20 @@ margin: auto;
                         plugins: {
                             title: {
                                 display: true,
-                                text: 'Mode of Registration',
+                                text: '',
                                 fontSize: 35,
                                 color: '#000',
                             }
-                        },
+                        }
+                        , onClick: function (c, i) {
+                            e = i[0];
+                           // console.log(e.index)
+                            var x_value = this.data.labels[e.index];
+                           // var y_value = this.data.datasets[0].data[e.index];
+                           // alert(x_value);
+                            window.location.replace("/Vendor/ListedVendor/" + x_value);
+                        }
+                        ,
                         animations: {
                             tension: {
                                 duration: 1000,
@@ -558,77 +530,177 @@ margin: auto;
                     },
                 });
 
+                //myChart1.onclick = function (evt) {
+                //    alert();
+                //    var activePoints = doughnutData.getElementsAtEvent(evt);
+                //    alert(activePoints[0]);
+                //    if (activePoints[0]) {
+                //        var chartData = activePoints[0]['_chart'].config.data;
+                //        var idx = activePoints[0]['_index'];
 
+                //        var label = chartData.labels[idx];
+                //        var value = chartData.datasets[0].data[idx];
+
+                //        var url = "http://example.com/?label=" + label + "&value=" + value;
+                //        console.log(url);
+                //        alert(url);
+                //    }
+                //};
+           
             });
-
+       
     }
+   
 </script>
- 
-@*<script type="text/javascript">
 
+
+
+ 
+<script type="text/javascript">
     function Barchart() {
         let densityCanvas = document.getElementById('densityChart').getContext('2d');
         var dataPoints = [];
-        $.getJSON("/Vendor/VendorStatuschart",
-            function (json) {
-                // alert(json.length);
-                for (var i = 0; i < json.length; i++) {
-                    dataPoints.push(json[i].Label1,json[i].Count,);
-                    //alert(json[i].Label1);
+        var densityData = [];
+        var gravityData = [];
+        var gravityData1 = [];
+        var data2 = [];
+        var Count1 = 0;
+        $.getJSON("/Vendor/VendorCompanyStatuschart",
 
-
-
-                    var densityData = {
-                        label: json[0].Label1,
-                        data: [7, 3, 4, 3, 6, 7, 1, 8],
-                        backgroundColor: '#7c9cd6',
-                        borderWidth: 0,
-                        yAxisID: "y-axis-density"
-                    };
-
-                    var gravityData = {
-                        label: json[1].Label1,
-                        data: [3.7, 8.9, 9.8, 3.7, 23.1, 9.0, 8.7, 11.0],
-                        backgroundColor: '#f2a46e',
-                        borderWidth: 0,
-                        yAxisID: "y-axis-gravity"
-                    };
-                    var gravityData1 = {
-                        label: json[2].Label1,
-                        data: [1.7, 2.9, 4.8, 4.7, 3.1, 5.0, 5.7, 1.0],
-                        backgroundColor: '#c0c0c0',
-                        borderWidth: 0,
-                        yAxisID: "y-axis-gravity"
-                    };
-
-                    var planetData = {
-                        labels: ["Vendor Type 1", "Vendor Type 2", "Vendor Type 3", "Vendor Type 4", "Vendor Type 5", "Vendor Type 6", "Vendor Type 7", "Vendor Type 8"],
-                        datasets: [densityData, gravityData, gravityData1]
-                    };
-
-                    var chartOptions = {
-                        scales: {
-                            xAxes: [{
-                                barPercentage: 1,
-                                categoryPercentage: 0.6
-                            }],
-                            yAxes: [{
-                                id: "y-axis-density"
-                            }, {
-                                id: "y-axis-gravity"
-                            }]
-                        }
-                    };
-
-                    var barChart1 = new Chart(densityCanvas, {
-                        type: 'bar',
-                        data: planetData,
-                        options: chartOptions
-                    });
+            function (data) {
+                // alert(data);
+                var name = [];
+                var marks = [];
+                var marks1 = [];
+                var marks2 = [];
+                var data1 = '';
+             
+               
+                for (var i in data) {
+                  
+                  
+                    var datap = (data[i].Label2);
+                   
+                    if (name.includes(datap)) {
+                       // name.push(data[i].Label2);
+                       // alert("1->" + datap)
+                       // alert("1->" + data[i].Label1)
+                       
+                      }
+                 else {
+                        name.push(data[i].Label2);
+                        //alert("2->" + datap)
+                       // alert("2->" + data[i].Label1)
+                      
+                        Count1 = Count1 + 1
+                       
+                    } 
                 }
-            });
+               
+                for (var i1 = 0; i1 < name.length; i1++) {
+                    var data1 = name[i1];
+                   
+                    for (var i in data) {
+                        var data2 = data[i].Label2;
+                        if (data1 == data2) {
+                            if (data[i].Label1 == 'Blacklisted') {
+                                marks.push(data[i].Count);
+                                // marks1.push(0);
+                            }
+                            
+                        }
+                       
+                    }
+                 
+                    for (var i in data) {
+                        var data2 = data[i].Label2;
+                        if (data1 == data2) {
+                           
+                            if (data[i].Label1 == 'Active') {
+                                marks1.push(data[i].Count);
+                            }
+                           
+                        }
+                      
+                    }
+                   
+                    for (var i in data) {
+                        var data2 = data[i].Label2;
+                        if (data1 == data2) {
+                           
+                           
+                            if (data[i].Label1 == 'Stand By') {
+                                marks2.push(data[i].Count);
+                            }
+                        }
+                       
+                    }
+                    if (marks.length < (i1 + 1)) {
+                        marks.push(0);
+                    }
+                    if (marks1.length < (i1 + 1)) {
+                        marks1.push(0);
+                    }
+                    if (marks2.length < (i1 + 1)) {
+                        marks2.push(0);
+                    }
+                    //alert("i1->" + (i1 + 1))
+                    //alert("marks->" + marks.length)
+                    //alert("marks1->" + marks1.length)
+                    //alert("marks2->" + marks2.length)
+                   }
+               
+                
+                var chartdata = {
+                    labels: name,
+                    datasets: [
+						{
+						    label: 'Blacklisted',
+						    backgroundColor: '##c0c0c0',
+						    data:  marks
+						},
+                    {
+                        label: 'Active',
+                        backgroundColor: '#7c9cd6',
+                        data:  marks1
+                    },
+                    {
+                        label: 'Stand By',
+                        backgroundColor: '#f2a46e',
+                        data:marks2
+                    }
+                    ] 
+                };
 
-    }
+               var graphTarget = $("#densityChart");
+               canvas = document.getElementById('densityChart')
+              
+                var graph = new Chart(graphTarget, {
+                    type: 'bar',
+                    data: chartdata
+                  ,
+                        options: {
+                            onClick: function (evt, item) {
+                                window.location.replace("/Vendor/ListedVendor");
+                               // const idx = item.findIndex(evt.x)
+                //                const idx = chart.getElementAtEvent(event)[0]._index;
+                //console.log(data[idx]);
+            }
+                }
+                });
+                //document.getElementById("densityChart").indexofonclick = function (evt) {
+                //    alert(evt);
+                //    var activePoints = graph.Tooltip;
+                //    alert(activePoints);
+                //    //var firstPoint = activePoints[0];
+                //    //alert(firstPoint._index);
+                //    //var label = graph.data.labels[firstPoint._index];
+                //    //var value = graph.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
+                //    //alert(label + ": " + value);
+                //};
+                
+            });
+    } 
 </script>
 
 <script type="text/javascript">
@@ -688,4 +760,4 @@ margin: auto;
             });
     }
 
-</script>*@
+</script>

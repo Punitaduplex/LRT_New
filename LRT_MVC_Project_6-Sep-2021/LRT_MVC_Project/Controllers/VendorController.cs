@@ -1749,18 +1749,26 @@ namespace LRT_MVC_Project.Controllers
             foreach (DataRow dr in ds.Tables[0].Rows)
             {
                 vendor.Vendor_Id = Convert.ToInt32(ds.Tables[0].Rows[0]["vendorId"]);
-                vendor.Vendor_Name = ds.Tables[0].Rows[0]["vendorfirstName"].ToString();
-                vendor.ShippingAddress =ds.Tables[0].Rows[0]["ShippingAddress"].ToString();
-                vendor.Billingaddress =ds.Tables[0].Rows[0]["BillingAddress"].ToString();
+
+                vendor.Company_name = ds.Tables[0].Rows[0]["companyName"].ToString();
+                vendor.CompanyAddress = ds.Tables[0].Rows[0]["companyAddress"].ToString();
+                vendor.Company_Telephone_number = ds.Tables[0].Rows[0]["companyTeliphone"].ToString();
+
+                vendor.Bankname = ds.Tables[0].Rows[0]["bankName"].ToString();
+                vendor.Bank_Address = ds.Tables[0].Rows[0]["bankAddress"].ToString();
+                vendor.Bank_Phoneno = ds.Tables[0].Rows[0]["bankContactNo1"].ToString();
+
                 vendor.WebsiteLink =ds.Tables[0].Rows[0]["websiteLink"].ToString();
                 vendor.Facebooklink =ds.Tables[0].Rows[0]["facebookLink"].ToString();
                 vendor.TwiterLink = ds.Tables[0].Rows[0]["twitterlink"].ToString();
-                vendor.Vendor_Contact_Person = ds.Tables[0].Rows[0]["vendorteliphoneNo1"].ToString();
+                
                 vendor.currency_code = ds.Tables[0].Rows[0]["currencyCode"].ToString();
                 vendor.currency_symbol = ds.Tables[0].Rows[0]["currencysymbol"].ToString();
-                vendor.Vendor_Address = ds.Tables[0].Rows[0]["ShippingAddress"].ToString();
-                
- 
+               
+                vendor.VendorAddress = ds.Tables[0].Rows[0]["vendorAddress"].ToString();
+                vendor.Vendor_Name = ds.Tables[0].Rows[0]["vendorfirstName"].ToString();
+
+                vendor.Vendor_Contact_Person = ds.Tables[0].Rows[0]["vendorteliphoneNo1"].ToString();
             }
             return Json(vendor, JsonRequestBehavior.AllowGet);
         }
@@ -1775,7 +1783,7 @@ namespace LRT_MVC_Project.Controllers
             {
                 vendor.Vendor_Id = Convert.ToInt32(ds.Tables[0].Rows[0]["vendorId"]);
                 vendor.Vendor_Name = ds.Tables[0].Rows[0]["vendorfirstName"].ToString();
-                vendor.ShippingAddress = ds.Tables[0].Rows[0]["ShippingAddress"].ToString();
+                 
                 vendor.Billingaddress = ds.Tables[0].Rows[0]["BillingAddress"].ToString();
                 vendor.WebsiteLink = ds.Tables[0].Rows[0]["websiteLink"].ToString();
                 vendor.Facebooklink = ds.Tables[0].Rows[0]["facebookLink"].ToString();
@@ -1905,8 +1913,88 @@ namespace LRT_MVC_Project.Controllers
         
         }
 
+        [HttpPost]
+        public JsonResult Upadtevendorcompanyprofile(Vendor objvendor)
+        {
+            string sms = "";
+            try
+            {
+                Vendor vendor = new Vendor();
+                HttpCookie cookie = this.ControllerContext.HttpContext.Request.Cookies["userid"];
+                objvendor.User_Id = Convert.ToInt32(cookie.Value);
 
-        
+
+
+                int i = vendor.Upadtevendorcompanyprofile(objvendor);
+                    if (i == 0)
+                    {
+                        sms = "**Data updated successfully**";
+                    }
+                    else
+                    {
+                        sms = "**Data already exist**";
+                    }
+                }
+            
+            catch (Exception ex) { }
+            return Json(sms);
+        }
+
+
+        [HttpPost]
+        public JsonResult Upadtevendorprofile (Vendor objvendor)
+        {
+            string sms = "";
+            try
+            {
+                Vendor vendor = new Vendor();
+                HttpCookie cookie = this.ControllerContext.HttpContext.Request.Cookies["userid"];
+                objvendor.User_Id = Convert.ToInt32(cookie.Value);
+
+
+
+                int i = vendor.Upadtevendorprofile(objvendor);
+                if (i == 0)
+                {
+                    sms = "**Data updated successfully**";
+                }
+                else
+                {
+                    sms = "**Data already exist**";
+                }
+            }
+
+            catch (Exception ex) { }
+            return Json(sms);
+        }
+
+
+        [HttpPost]
+        public JsonResult UpadteBankprofile (Vendor objvendor)
+        {
+            string sms = "";
+            try
+            {
+                Vendor vendor = new Vendor();
+                HttpCookie cookie = this.ControllerContext.HttpContext.Request.Cookies["userid"];
+                objvendor.User_Id = Convert.ToInt32(cookie.Value);
+
+
+
+                int i = vendor.UpadteBankprofile(objvendor);
+                if (i == 0)
+                {
+                    sms = "**Data updated successfully**";
+                }
+                else
+                {
+                    sms = "**Data already exist**";
+                }
+            }
+
+            catch (Exception ex) { }
+            return Json(sms);
+        }
         //--------------------------------pending----------------------------------
        
            

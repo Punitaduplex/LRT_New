@@ -20,10 +20,11 @@ namespace LRT_MVC_Project.Models
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string StandBy_Staus { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
-        public string Vendor_Address { get; set; }
+        public string Bank_Address { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
-
-
+         public string Vendor_Address { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        
 
 
 
@@ -125,7 +126,7 @@ namespace LRT_MVC_Project.Models
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Billingaddress { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
-        public string ShippingAddress { get; set; }
+        public string Company_name { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string WebsiteLink { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
@@ -204,6 +205,8 @@ namespace LRT_MVC_Project.Models
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Banktype { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Bank_Phoneno { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Bankname { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Swiftcode { get; set; }
@@ -219,6 +222,9 @@ namespace LRT_MVC_Project.Models
         public string BankState { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Bank_Country { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+
+        public string Bank_Id { get; set; }
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         
         //------------------------------------------------------------End View listedvendor-----------------------------------------------------------
@@ -640,8 +646,117 @@ namespace LRT_MVC_Project.Models
             return i;
         }
 
+        public int Upadtevendorcompanyprofile(Vendor objvendor)
+        {
+            int i = 0;
+            string strcon = ConfigurationManager.ConnectionStrings["myConStr"].ConnectionString;
+            MySqlConnection con = new MySqlConnection(strcon);
+            MySqlCommand cmd = new MySqlCommand("proc_Upadte_by_vendor_company_profile", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Vendor_Id", objvendor.Vendor_Id);
+            cmd.Parameters.AddWithValue("@User_Id", objvendor.User_Id);
+            cmd.Parameters.AddWithValue("@company_Name", objvendor.Company_name);
+            cmd.Parameters.AddWithValue("@company_location", objvendor.CompanyAddress);
+            cmd.Parameters.AddWithValue("@company_Phoneno", objvendor.Company_Telephone_number);
+            
+            cmd.Parameters.Add(new MySqlParameter("@error1", MySqlDbType.Int32));
+            cmd.Parameters["@error1"].Direction = ParameterDirection.Output;
 
-         
+            con.Open();
+            try
+            {
+                cmd.ExecuteNonQuery();
+                i = Convert.ToInt32(cmd.Parameters["@error1"].Value);
+            }
+            catch (Exception ex)
+            {
+                i = 1;
+            }
+            finally
+            {
+                con.Close();
+                con.Dispose();
+                con = null;
+                cmd.Dispose();
+                cmd = null;
+            }
+            return i;
+        }
+
+
+        public int Upadtevendorprofile (Vendor objvendor)
+        {
+            int i = 0;
+            string strcon = ConfigurationManager.ConnectionStrings["myConStr"].ConnectionString;
+            MySqlConnection con = new MySqlConnection(strcon);
+            MySqlCommand cmd = new MySqlCommand("proc_Upadte_by_vendor_Vendor_profile", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Vendor_Id", objvendor.Vendor_Id);
+            cmd.Parameters.AddWithValue("@User_Id", objvendor.User_Id);
+            cmd.Parameters.AddWithValue("@vendor_Name", objvendor.Vendor_Name);
+            cmd.Parameters.AddWithValue("@vendor_location", objvendor.VendorAddress);
+            cmd.Parameters.AddWithValue("@vendor_Phoneno", objvendor.Vendor_Contact_Person);
+
+            cmd.Parameters.Add(new MySqlParameter("@error1", MySqlDbType.Int32));
+            cmd.Parameters["@error1"].Direction = ParameterDirection.Output;
+
+            con.Open();
+            try
+            {
+                cmd.ExecuteNonQuery();
+                i = Convert.ToInt32(cmd.Parameters["@error1"].Value);
+            }
+            catch (Exception ex)
+            {
+                i = 1;
+            }
+            finally
+            {
+                con.Close();
+                con.Dispose();
+                con = null;
+                cmd.Dispose();
+                cmd = null;
+            }
+            return i;
+        }
+
+        public int UpadteBankprofile(Vendor objvendor)
+        {
+            int i = 0;
+            string strcon = ConfigurationManager.ConnectionStrings["myConStr"].ConnectionString;
+            MySqlConnection con = new MySqlConnection(strcon);
+            MySqlCommand cmd = new MySqlCommand("proc_Upadte_by_Bank_company_profile", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Vendor_Id", objvendor.Vendor_Id);
+            cmd.Parameters.AddWithValue("@User_Id", objvendor.User_Id);
+            cmd.Parameters.AddWithValue("@Bank_Name", objvendor.Bank_Id);
+            cmd.Parameters.AddWithValue("@Bank_location", objvendor.Bank_Address);
+            cmd.Parameters.AddWithValue("@Bank_Phoneno", objvendor.Bank_Phoneno);
+
+            cmd.Parameters.Add(new MySqlParameter("@error1", MySqlDbType.Int32));
+            cmd.Parameters["@error1"].Direction = ParameterDirection.Output;
+
+            con.Open();
+            try
+            {
+                cmd.ExecuteNonQuery();
+                i = Convert.ToInt32(cmd.Parameters["@error1"].Value);
+            }
+            catch (Exception ex)
+            {
+                i = 1;
+            }
+            finally
+            {
+                con.Close();
+                con.Dispose();
+                con = null;
+                cmd.Dispose();
+                cmd = null;
+            }
+            return i;
+        }
         //----------------------------------pending-------------------------------------------
         public DataSet GetpendingVendorListed_dtls_BySearch(Vendor objlistedvendor)
         {

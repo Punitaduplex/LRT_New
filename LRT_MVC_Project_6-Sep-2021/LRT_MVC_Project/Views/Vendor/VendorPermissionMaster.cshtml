@@ -526,7 +526,7 @@
            
             objVendorPermission.Permission_Name = "";
             var oTable = $('#EmpInfopermission').dataTable();
-            var rowcollection = oTable.$("tbody>tr", { "page": "all" });
+            var rowcollection = oTable.$("tr", { "page": "all" });
 
             rowcollection.each(function (index, elem) {
                 var row = $(elem).closest("tr");

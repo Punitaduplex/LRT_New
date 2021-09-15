@@ -11,7 +11,66 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+<script>
+    $(document).on("click", "a.Edit", function () {
 
+        var baseUrl = (window.location).href;
+        var Id = baseUrl.substring(baseUrl.lastIndexOf('/') + 1);
+        
+        
+        var $companyname = $("#lblcompanyname").text();
+        var $companyaddress = $("#lblCompanyAddress").text();
+        var $companyphoneno = $("#lblcompanytelephoneno").text();
+         
+        $("#dialogupdateCompanyprofile").modal("show");
+        $("#txtcomapnyname").val($companyname);
+        $("#txtcompanylocation").val($companyaddress);
+        $("#txtcompanyphoneno").val($companyphoneno);
+      
+         
+        
+    });
+</script>
+<script>
+    $(document).on("click", "a.Edit2", function () {
+
+        var baseUrl = (window.location).href;
+        var Id = baseUrl.substring(baseUrl.lastIndexOf('/') + 1);
+
+
+        var $Bankname = $("#lblbankname").text();
+        var $Bankaddress = $("#lblbankaddress").text();
+        var $Bankphoneno = $("#lblbankphoneno").text();
+        GetBank();
+        $("#dialogupdateBankprofile").modal("show");
+       
+        $("#txtbankname").val($Bankname);
+        $("#txtbanklocation").val($Bankaddress);
+        $("#txtbankphoneno").val($Bankphoneno);
+        $("#dialogupdateBankprofile").modal("show");
+    });
+</script>
+
+
+<script>
+    $(document).on("click", "a.Edit3", function () {
+
+        var baseUrl = (window.location).href;
+        var Id = baseUrl.substring(baseUrl.lastIndexOf('/') + 1);
+
+        var $vendorname = $("#lblvendorname").text();
+        var $vendoraddress = $("#lblvendoraddress").text();
+        var $vendorphoneno = $("#lblvendorphoneno").text();
+        
+        $("#txtvendorname").val($vendorname);
+        $("#txtvendorlocation").val($vendoraddress);
+        $("#txtvendorphoneno").val($vendorphoneno);
+       
+        
+        $("#dialogupdateVendorprofile").modal("show");
+        
+    });
+</script>
 <script>
     $(document).ready(function () {
 
@@ -33,59 +92,14 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-
-                $("#lblcompanyname").empty();
+                $("#lblvendorname1").empty();
                 if (response.Vendor_Name == "") {
-                    $("#lblVendorName").text("NA");
+                    $("#lblvendorname1").text("NA");
                 } else {
-                    $("#lblVendorName").text(response.Vendor_Name);
-                }
-
-                $("#lblBillinguserName").empty();
-                if (response.Vendor_Name == "") {
-                    $("#lblBillinguserName").text("NA");
-                } else {
-                    $("#lblBillinguserName").text(response.Vendor_Name);
+                    $("#lblvendorname1").text(response.Vendor_Name);
                 }
 
 
-                $("#lblBillingAddress").empty();
-                if (response.Billingaddress == "") {
-                    $("#lblBillingAddress").text("NA");
-                } else {
-                    $("#lblBillingAddress").text(response.Billingaddress);
-                }
-                $("#lblbillingsidephoneno").empty();
-                if (response.Vendor_Contact_Person == "") {
-                    $("#lblbillingsidephoneno").text("NA");
-                } else {
-                    $("#lblbillingsidephoneno").text(response.Vendor_Contact_Person);
-                }
-
-
-
-
-
-                $("#lblShippinguserName").empty();
-                if (response.Vendor_Name == "") {
-                    $("#lblShippinguserName").text("NA");
-                } else {
-                    $("#lblShippinguserName").text(response.Vendor_Name);
-                }
-
-
-                $("#lblShippingAddress").empty();
-                if (response.Billingaddress == "") {
-                    $("#lblShippingAddress").text("NA");
-                } else {
-                    $("#lblShippingAddress").text(response.ShippingAddress);
-                }
-                $("#lblShippingsidephoneno").empty();
-                if (response.Vendor_Contact_Person == "") {
-                    $("#lblShippingsidephoneno").text("NA");
-                } else {
-                    $("#lblShippingsidephoneno").text(response.Vendor_Contact_Person);
-                }
 
                 $("#lblcurrencycode").empty();
                 if (response.currency_code == "") {
@@ -101,11 +115,96 @@
                     $("#lblcurrencysymbol").text(response.currency_symbol);
                 }
                 $("#lblVendorAddress").empty();
-                if (response.Vendor_Address == "") {
+                if (response.VendorAddress == "") {
                     $("#lblVendorAddress").text("NA");
                 } else {
-                    $("#lblVendorAddresss").text(response.Vendor_Address);
+                    $("#lblVendorAddresss").text(response.VendorAddress);
                 }
+
+
+
+
+                $("#lblcompanyname").empty();
+                if (response.Company_name == "") {
+                    $("#lblcompanyname").text("NA");
+                } else {
+                    $("#lblcompanyname").text(response.Company_name);
+                }
+
+
+
+                $("#lblCompanyAddress").empty();
+                if (response.CompanyAddress == "") {
+                    $("#lblCompanyAddress").text("NA");
+                } else {
+                    $("#lblCompanyAddress").text(response.CompanyAddress);
+                }
+
+
+                $("#lblcompanytelephoneno").empty();
+                if (response.Company_Telephone_number == "") {
+                    $("#lblcompanytelephoneno").text("NA");
+                } else {
+                    $("#lblcompanytelephoneno").text(response.Company_Telephone_number);
+                }
+
+
+               
+
+
+                $("#lblbankname").empty();
+                if (response.Bankname == "") {
+                    $("#lblbankname").text("NA");
+                } else {
+                    $("#lblbankname").text(response.Bankname);
+                }
+
+
+                $("#lblbankaddress").empty();
+                if (response.Bank_Address == "") {
+                    $("#lblbankaddress").text("NA");
+                } else {
+                    $("#lblbankaddress").text(response.Bank_Address);
+                }
+                
+
+
+                $("#lblbankphoneno").empty();
+                if (response.Bank_Phoneno == "") {
+                    $("#lblbankphoneno").text("NA");
+                } else {
+                    $("#lblbankphoneno").text(response.Bank_Phoneno);
+                }
+
+
+
+
+
+
+                $("#lblvendorname").empty();
+                if (response.Vendor_Name == "") {
+                    $("#lblvendorname").text("NA");
+                } else {
+                    $("#lblvendorname").text(response.Vendor_Name);
+                }
+
+
+
+                $("#lblvendoraddress").empty();
+                if (response.VendorAddress == "") {
+                    $("#lblvendoraddress").text("NA");
+                } else {
+                    $("#lblvendoraddress").text(response.VendorAddress);
+                }
+
+
+                $("#lblvendorphoneno").empty();
+                if (response.Vendor_Contact_Person == "") {
+                    $("#lblvendorphoneno").text("NA");
+                } else {
+                    $("#lblvendorphoneno").text(response.Vendor_Contact_Person);
+                }
+
 
             },
             failure: function (response) {
@@ -117,6 +216,217 @@
         });
     });
 </script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnupdatecompanyprofile").click(function () {
+
+            var objvendor = {};
+            objvendor.Company_name = $("#txtcomapnyname").val().toUpperCase();
+            objvendor.CompanyAddress = $("#txtcompanylocation").val().charAt(0).toUpperCase() + $("#txtcompanylocation").val().slice(1);
+            objvendor.Company_Telephone_number = $("#txtcompanyphoneno").val().charAt(0).toUpperCase() + $("#txtcompanyphoneno").val().slice(1);
+            var baseUrl = (window.location).href;
+            var Id = baseUrl.substring(baseUrl.lastIndexOf('/') + 1);
+            objvendor.vendor_id = Id;
+            alert(objvendor.Company_Telephone_number);
+            if (objvendor.Company_name == "" || objvendor.Company_name == null) {
+                swal("Please enter Company name.");
+
+                $("#txtcomapnyname").focus();
+                return;
+            }
+            if (objvendor.CompanyAddress == "" || objvendor.CompanyAddress == null) {
+                swal("Please enter Company address.");
+                $("#txtcompanylocation").focus();
+                return;
+            }
+            if (objvendor.Company_Telephone_number == "" || objvendor.Company_Telephone_number == null) {
+                swal("Please enter Company Phone no.");
+                $("#txtcompanyphoneno").focus();
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Vendor/Upadtevendorcompanyprofile ",
+                data: '{objvendor: ' + JSON.stringify(objvendor) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata1();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+<script type="text/javascript">
+    //$(function () {
+    //    //  alert();
+
+    //});
+    function GetBank() {
+        var ddlBank = $("#ddlbankname");
+
+        ddlBank.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+        $.ajax({
+            type: "POST",
+            url: "/Master/BankName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+
+                ddlBank.empty().append('<option selected="selected" value="0">Select Bank</option>');
+                $.each(response, function () {
+
+                    ddlBank.append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnupdatebprofile").click(function () {
+           
+            var objvendor = {};
+            //objvendor.Bankname = $("#txtbankname").val().toUpperCase();
+            objvendor.Bank_Id = $("#ddlbankname").val();
+            objvendor.Bank_Address = $("#txtbanklocation").val().charAt(0).toUpperCase() + $("#txtbanklocation").val().slice(1);
+            objvendor.Bank_Phoneno = $("#txtbankphoneno").val().charAt(0).toUpperCase() + $("#txtbankphoneno").val().slice(1);
+            var baseUrl = (window.location).href;
+            var Id = baseUrl.substring(baseUrl.lastIndexOf('/') + 1);
+            objvendor.vendor_id = Id;
+           
+            if (objvendor.Bank_Id == "" || objvendor.Bank_Id == null) {
+                swal("Please enter Bank name.");
+
+                $("#txtbankname").focus();
+                return;
+            }
+            if (objvendor.Bank_Address == "" || objvendor.Bank_Address == null) {
+                swal("Please enter Bank address.");
+                $("#txtbanklocation").focus();
+                return;
+            }
+            if (objvendor.Bank_Phoneno == "" || objvendor.Bank_Phoneno == null) {
+                swal("Please enter Bank Phone no.");
+                $("#txtbankphoneno").focus();
+                return;
+            }
+           
+            $.ajax({
+                type: "POST",
+                url: "/Vendor/UpadteBankprofile ",
+                data: '{objvendor: ' + JSON.stringify(objvendor) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata1();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+
+
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnupdatevprofile").click(function () {
+
+            var objvendor = {};
+            objvendor.Vendor_Name = $("#txtvendorname").val().toUpperCase();
+            objvendor.VendorAddress = $("#txtvendorlocation").val().charAt(0).toUpperCase() + $("#txtvendorlocation").val().slice(1);
+            objvendor.Vendor_Contact_Person = $("#txtvendorphoneno").val().charAt(0).toUpperCase() + $("#txtvendorphoneno").val().slice(1);
+            var baseUrl = (window.location).href;
+            var Id = baseUrl.substring(baseUrl.lastIndexOf('/') + 1);
+            objvendor.vendor_id = Id;
+            
+            if (objvendor.Vendor_Name == "" || objvendor.Vendor_Name == null) {
+                swal("Please enter Vendor name.");
+
+                $("#txtvendorname").focus();
+                return;
+            }
+            if (objvendor.VendorAddress == "" || objvendor.VendorAddress == null) {
+                swal("Please enter Vendor address.");
+                $("#txtvendorlocation").focus();
+                return;
+            }
+            if (objvendor.Vendor_Contact_Person == "" || objvendor.Vendor_Contact_Person == null) {
+                swal("Please enter Vendor Phone no.");
+                $("#txtvendorphoneno").focus();
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Vendor/Upadtevendorprofile ",
+                data: '{objvendor: ' + JSON.stringify(objvendor) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    Getdata();
+                    Resetdata1();
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "/assets/js/jquery.dataTables.min.js";
+                    document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+
 
 
 <div id="sidebar" class="sidebar responsive ace-save-state top-padding">
@@ -163,6 +473,9 @@
     </div>
     @*</a>*@
 </div>
+
+
+
 
 <div class="main-content">
     <input type="hidden" id="hdvendorregistrationid" />
@@ -473,8 +786,8 @@
 
                                                         @*<p id="lblVendorName" class="white"> </p>*@
                                                         
-                                                            <span id="lblVendorName" class="white" >
-                                                            </span> 
+                                                        <span id="lblvendorname" class="white">
+                                                        </span> 
                                                     </a>
 
                                                     <ul class="align-left dropdown-menu dropdown-caret dropdown-lighter">
@@ -573,43 +886,48 @@
 
                                     <div class="col-xs-12 col-sm-9">
 
-                                        <h2 class="add_ara"> Address  </h2>
-                                        <h3 class="bill_add">Company Address  <i class="fa fa-edit fl_right"></i> </h3>
+                                        @*<h2 class="add_ara"> Address  </h2>*@
+                                        <h3 class="bill_add">Company Detail 
+                                            <a href='javascript:void(0);' class='Edit' data-rel='tooltip' title='Edit'><i class='fa fa-edit fl_right'></i></a>
+                                        
+                                         @*<i class="fa fa-edit fl_right"></i>*@
+                                        
+                                         </h3>
                                         <div class="space-12"></div>
 
                                         <div class="profile-user-info profile-user-info-striped">
                                             <div class="profile-info-row">
-                                                <div class="profile-info-name"> Username </div>
+                                                <div class="profile-info-name">  Companyname </div>
 
                                                 <div class="profile-info-value">
 
-                                                    <span class="editable" id="username"><label id="lblBillinguserName"></label></span>
+                                                    <span class="editable" id="Companyname"><label id="lblcompanyname"></label></span>
                                                 </div>
                                             </div>
 
                                             <div class="profile-info-row">
-                                                <div class="profile-info-name"> Location </div>
+                                                <div class="profile-info-name"> CompanyLocation </div>
 
                                                 <div class="profile-info-value">
                                                     <i class="fa fa-map-marker light-orange bigger-110"></i>
 
-                                                    <span class="editable" id="city"><label id="lblBillingAddress"></label></span>
+                                                    <span class="editable" id="city"><label id="lblCompanyAddress"></label></span>
                                                 </div>
                                             </div>
-                                            <div class="profile-info-row">
+                                            @*<div class="profile-info-row">
                                                 <div class="profile-info-name"> Nearby </div>
 
                                                 <div class="profile-info-value">
                                                     <span class="editable" id="login">NA</span>
                                                 </div>
-                                            </div>
+                                            </div>*@
 
 
                                             <div class="profile-info-row">
-                                                <div class="profile-info-name"> Phone: </div>
+                                                <div class="profile-info-name"> CompanyPhone: </div>
 
                                                 <div class="profile-info-value">
-                                                    <span class="editable" id="signup"><label id="lblbillingsidephoneno"></label></span>
+                                                    <span class="editable" id="signup"><label id="lblcompanytelephoneno"></label></span>
                                                 </div>
                                             </div>
 
@@ -618,41 +936,45 @@
 
                                         </div>
 
-                                        <h3 class="bill_add">Bank Address  <i class="fa fa-edit fl_right"></i> </h3>
+                                        <h3 class="bill_add">Bank Detail 
+
+                                            <a href='javascript:void(0);' class='Edit2' data-rel='tooltip' title='Edit'><i class='fa fa-edit fl_right'></i></a>
+                                         @*<i class="fa fa-edit fl_right"></i>*@
+                                         </h3>
                                         <div class="space-12"></div>
 
                                         <div class="profile-user-info profile-user-info-striped">
                                             <div class="profile-info-row">
-                                                <div class="profile-info-name"> Username </div>
+                                                <div class="profile-info-name"> Bankname </div>
 
                                                 <div class="profile-info-value">
-                                                    <span class="editable" id="username"><label id="lblShippinguserName"></label></span>
+                                                    <span class="editable" id="Bankname"><label id="lblbankname"></label></span>
                                                 </div>
                                             </div>
 
                                             <div class="profile-info-row">
-                                                <div class="profile-info-name"> Location </div>
+                                                <div class="profile-info-name"> BankLocation </div>
 
                                                 <div class="profile-info-value">
                                                     <i class="fa fa-map-marker light-orange bigger-110"></i>
 
-                                                    <span class="editable" id="city"><label id="lblShippingAddress"></label></span>
+                                                    <span class="editable" id="city"><label id="lblbankaddress"></label></span>
                                                 </div>
                                             </div>
-                                            <div class="profile-info-row">
+                                            @*<div class="profile-info-row">
                                                 <div class="profile-info-name"> Nearby </div>
 
                                                 <div class="profile-info-value">
                                                     <span class="editable" id="login">NA</span>
                                                 </div>
-                                            </div>
+                                            </div>*@
 
 
                                             <div class="profile-info-row">
-                                                <div class="profile-info-name"> Phone: </div>
+                                                <div class="profile-info-name"> BankPhone: </div>
 
                                                 <div class="profile-info-value">
-                                                    <span class="editable" id="signup"><label id="lblShippingsidephoneno"></label></span>
+                                                    <span class="editable" id="signup"><label id="lblbankphoneno"></label></span>
                                                 </div>
                                             </div>
 
@@ -668,16 +990,53 @@
                                                 </i>
                                             </a>
                                         </p>*@
-                                        <h3 class="add_add">Additional Address  <i class="fa fa-plus plus_sym"></i> </h3>
-                                        <div class="space-12"></div>
-                                        <p id="lblVendorAddresss">
-                                            @*<a href="#" class="add_add">
-                                                Additional Address
-                                                <i class="fa fa-plus plus_sym">
+                                        <h3 class="bill_add">
+                                            Vendor Detail
 
-                                                </i>
-                                            </a>*@
-                                            </p>
+                                            <a href='javascript:void(0);' class='Edit3' data-rel='tooltip' title='Edit'><i class='fa fa-edit fl_right'></i></a>
+                                            @*<i class="fa fa-edit fl_right"></i>*@
+                                        </h3>
+                                        <div class="space-12"></div>
+
+                                        <div class="profile-user-info profile-user-info-striped">
+                                            <div class="profile-info-row">
+                                                <div class="profile-info-name"> Vendorname </div>
+
+                                                <div class="profile-info-value">
+                                                    <span class="editable" id="username"><label id="lblvendorname1"></label></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="profile-info-row">
+                                                <div class="profile-info-name"> VendorLocation </div>
+
+                                                <div class="profile-info-value">
+                                                    <i class="fa fa-map-marker light-orange bigger-110"></i>
+
+                                                    <span class="editable" id="city"><label id="lblvendoraddress"></label></span>
+                                                </div>
+                                            </div>
+                                            @*<div class="profile-info-row">
+                                                <div class="profile-info-name"> Nearby </div>
+
+                                                <div class="profile-info-value">
+                                                    <span class="editable" id="login">NA</span>
+                                                </div>
+                                            </div>*@
+
+
+                                            <div class="profile-info-row">
+                                                <div class="profile-info-name"> VendorPhone: </div>
+
+                                                <div class="profile-info-value">
+                                                    <span class="editable" id="signup"><label id="lblvendorphoneno"></label></span>
+                                                </div>
+                                            </div>
+
+
+
+
+                                        </div>
                                             <div class="hr dotted"></div>
 
                                             <div class="row">
@@ -737,3 +1096,172 @@
         </div>
     </div>
 </div>
+
+<input type="hidden" id="hdbankname" />
+
+@*-----------------------------------------------Update Company Profile update---------------------------------------------------------*@
+<div class="modal fade" id="dialogupdateCompanyprofile">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" class="close" data-dismiss="modal">×</a>
+                <h3 class="item_hedin">Update Company Profile </h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">Company Name  <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                    <div class="col-md-8">
+                        <input type="text" id="txtcomapnyname" style="text-transform:uppercase" placeholder="Company Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for country code" />
+
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-md-4">Company Location<span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                    <div class="col-md-8">
+                        <input type="text" id="txtcompanylocation" style="text-transform:capitalize" placeholder="Company Location" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for country name" />
+                    </div>
+                </div>
+
+
+
+
+
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-md-4">Company PhoneNo<span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                    <div class="col-md-8">
+                        <input type="text" id="txtcompanyphoneno" style="text-transform:capitalize" placeholder="Company PhoneNo" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for country name" />
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-9">
+                        <button class="btn btn-info" id="btnupdatecompanyprofile" type="button" data-toggle="tooltip" title="Button for update data">
+                            <i class="ace-icon fa fa-floppy-o"></i>
+                            Update
+                        </button>
+                        <button class="btn master-page-reset" id="btnresetupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*---------------------------------------------------------------------------------------------------------------------*@
+
+@*-----------------------------------------------Update Bank Profile update---------------------------------------------------------*@
+<div class="modal fade" id="dialogupdateBankprofile">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" class="close" data-dismiss="modal">×</a>
+                <h3 class="item_hedin">Update Bank Profile </h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">Bank Name  <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                    <div class="col-md-8">
+                        <select class="col-xs-10 col-sm-8" id="ddlbankname" data-toggle="tooltip" title="Select Bank name">
+                            <option>-Select Bank Name-</option>
+
+                        </select>
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-md-4">Bank Location<span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                    <div class="col-md-8">
+                        <input type="text" id="txtbanklocation" style="text-transform:capitalize" placeholder="Bank Location" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for country name" />
+                    </div>
+                </div>
+
+
+                
+
+
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-md-4">Bank PhoneNo<span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                    <div class="col-md-8">
+                        <input type="text" id="txtbankphoneno" style="text-transform:capitalize" placeholder="Bank PhoneNo" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for country name" />
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-9">
+                        <button class="btn btn-info" id="btnupdatebprofile" type="button" data-toggle="tooltip" title="Button for update data">
+                            <i class="ace-icon fa fa-floppy-o"></i>
+                            Update
+                        </button>
+                        <button class="btn master-page-reset" id="btnresetbupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*---------------------------------------------------------------------------------------------------------------------*@
+
+@*-----------------------------------------------Update Vendor Profile update---------------------------------------------------------*@
+<div class="modal fade" id="dialogupdateVendorprofile">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" class="close" data-dismiss="modal">×</a>
+                <h3 class="item_hedin">Update Vendor Profile </h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">Vendor Name  <span style="color:red;font-size:14px;">*</span><span>:</span></div>
+                    <div class="col-md-8">
+                        <input type="text" id="txtvendorname" style="text-transform:uppercase" placeholder="Vendor Name" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for country code" />
+
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-md-4">Vendor Location<span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                    <div class="col-md-8">
+                        <input type="text" id="txtvendorlocation" style="text-transform:capitalize" placeholder="Vendor Location" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for country name" />
+                    </div>
+                </div>
+
+
+
+
+
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-md-4">Vendor PhoneNo<span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                    <div class="col-md-8">
+                        <input type="text" id="txtvendorphoneno" style="text-transform:capitalize" placeholder="Vendor PhoneNo" class="col-xs-10 col-sm-8" data-toggle="tooltip" title="Field for country name" />
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-9">
+                        <button class="btn btn-info" id="btnupdatevprofile" type="button" data-toggle="tooltip" title="Button for update data">
+                            <i class="ace-icon fa fa-floppy-o"></i>
+                            Update
+                        </button>
+                        <button class="btn master-page-reset" id="btnresetvupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*---------------------------------------------------------------------------------------------------------------------*@

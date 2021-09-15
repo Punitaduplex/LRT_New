@@ -1,0 +1,638 @@
+﻿
+@{
+    ViewBag.Title = "SetVendorPermission";
+    Layout = "~/_LayoutVendor.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+@*<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+
+@*-------------------------------------------Vender Permission------------------------------------------------------------*@
+<script>
+    $(document).ready(function () {
+      
+        VendorName();
+        GetPermission();
+        @*-------------------------------------------Save Vendor permission------------------------------------------------------------*@
+        $("#btnsaveVendorpermission").click(function () {
+            // $("#ExcelDataLoader1").show();
+            var pwd = generatePassword(10);
+            var $company = $("#hdvendercompny").val();
+            var $person = $("#hdpvendername").val();
+            var $email = $("#hdpvenderemail").val();
+            var Useid = generateUserId(10, $company, $person);
+            var objVendorRegistation = {};
+            objVendorRegistation.Vendor_Id = $("#ddlvendor").val();
+            objVendorRegistation.Vendor_LogIn_Id = Useid;
+            objVendorRegistation.Vendor_LogIn_Password = pwd;
+            objVendorRegistation.Vendor_Company_Name = $company;
+            objVendorRegistation.Contact_Person = $person;
+            objVendorRegistation.Vendor_Email_ID = $email;
+
+            var view = "";
+            var permission = "";
+            var Pid = "";
+            var oTable = $('#vendor_per').dataTable();
+            var rowcollection = oTable.$("input[name='permission']:checked", { "page": "all" });
+            //  alert(rowcollection.length);
+            //  return;
+            rowcollection.each(function (index, elem) {
+                //if ($(this).is(':checked')) {
+                //    alert();
+
+                //}
+                var row = $(elem).closest("tr");
+                var perstr = row.find("td:eq(1)").text();
+                var viewstr = row.find("td:eq(2)").find('input[type="checkbox"]:checked').val();
+
+                var ids = row.find("td:eq(3)").text();
+
+                if (Pid == "") {
+                    Pid = ids;
+                    permission = perstr;
+                }
+                else {
+                    Pid = Pid + ',' + ids;
+                    permission = permission + ',' + perstr;
+                }
+
+
+                //---------------------------------------------------
+                if (view == "") {
+                    if (viewstr == null) {
+                        view = "0";
+                    }
+                    else {
+                        view = "1";
+                    }
+                }
+                else {
+                    if (viewstr == null) {
+                        view = view + ',' + "0";
+                    }
+                    else {
+                        view = view + ',' + "1";
+                    }
+                }
+
+            });
+            objVendorRegistation.Permission_Id_Str = Pid;
+            objVendorRegistation.Permission_Name = permission;
+            objVendorRegistation.Is_View_Str = view;
+            if (objVendorRegistation.Vendor_Id == "0" || objVendorRegistation.Vendor_Id == null) {
+                swal("Please select vendor");
+                $("#ddlvendor").focus();
+                return;
+
+            }
+            if (objVendorRegistation.Permission_Id_Str == "" || objVendorRegistation.Vendor_Id == null) {
+                swal("Please select permission");
+               
+                return;
+
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Vendor/AddActionPermission",
+                data: '{objVendorRegistation: ' + JSON.stringify(objVendorRegistation) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    //$(".dataTables_length").remove();
+                    //$(".dataTables_filter").remove();
+                    //$(".dataTables_info").remove();
+                    //$(".dataTables_paginate").remove();
+                    $(".dataTables_wrapper").remove();
+                    swal(response);
+                    var id = $("#hdpvenderid").val();
+                    VendorName();
+                    GetPermission();
+                  //  ResetdataInvitation();
+                    //clearCheckbox();
+                    // $("#ExcelDataLoader").hide();
+
+
+                    //var script = document.createElement("script");
+                    //script.type = "text/javascript";
+                    //script.src = "/assets/js/jquery.dataTables.min.js";
+                    //document.getElementsByTagName("body")[0].appendChild(script);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+  
+    })
+</script>
+<script type="text/javascript">
+    var input = document.getElementById("#txtcompanyname");
+    input.onkeypress = function (evt) {
+        // alert();
+        evt = evt || window.event;
+        var charCode = evt.which || evt.keyCode;
+        var charStr = String.fromCharCode(charCode);
+        if (/\d/.test(charStr)) {
+            return false;
+        }
+    };
+</script>
+@*-------------------------------------------Fill Vendor------------------------------------------------------------*@
+<script type="text/javascript">
+    function VendorName() {
+        //  alert();
+        var ddlvendor = $("#ddlvendor");
+
+        ddlvendor.empty().append('<option selected="selected" value="0" disabled="disabled">Loading.....</option>');
+
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/VendorName",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                ddlvendor.empty().append('<option selected="selected" value="0">Select Vendor</option>');
+
+                $.each(response, function () {
+                    ddlvendor.append($("<option></option>").val(this['Value']).html(this['Text']));
+
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+</script>
+<script>
+    $(function () {
+        $('#ddlvendor').on("change", function (e) {
+            var id = $("#ddlvendor").val();
+            clearCheckbox();
+            GetVendorPermisionAccVendorId(id);
+            GetVendorDetailForPassworAndUserId(id);
+
+        });
+    });
+</script>
+<script>
+    function clearCheckbox() {
+        var oTable = $('#vendor_per').dataTable();
+        var rowcollection = oTable.$("input[name='permission']", { "page": "all" });
+
+        rowcollection.each(function (index, elem) {
+            var row = $(elem).closest("tr");
+            row.find("td:eq(2)").find('input[type="checkbox"]').prop('checked', false);
+
+        });
+
+    }
+</script>
+<script>
+    function GetVendorPermisionAccVendorId(vendorId) {
+
+        var objVendorRegistation = {};
+        objVendorRegistation.Vendor_Id = vendorId;
+        // alert(objVendorRegistation.Vendor_Id)
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/ActionPermissionAccVendorId",
+            data: '{objVendorRegistation: ' + JSON.stringify(objVendorRegistation) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //  alert(response.length)
+                var oTable = $('#vendor_per').dataTable();
+                var rowcollection = oTable.$("input[name='permission']", { "page": "all" });
+
+                rowcollection.each(function (index, elem) {
+                    var row = $(elem).closest("tr");
+                    var ids = row.find("td:eq(3)").text();
+
+                    // alert(ids);
+                    for (var i = 0; i < response.length; i++) {
+                        var subid = response[i].Permission_Id;
+                        if (ids == subid) {
+                            row.find("td:eq(2)").find('input[type="checkbox"]').prop('checked', true);
+
+                        }
+                    }
+
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+
+</script>
+
+<script>
+    function GetPermission() {
+        $("#tblper").append(' <table id="vendor_per" class="table table-bordered table-hover" style="width:100%"><thead><tr><th>S. No</th><th>Permission</th><th>View <input type="checkbox" id="chkAllView" /></th><th style="display:none;"></th></tr></thead><tbody></tbody> </table>')
+        // var objVendorRegistation = {};
+        // objVendorRegistation.Vendor_Id = vendorId;
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/ActionPermission",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $("#vendor_per > tbody").html("");
+                for (var i = 0; i < response.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td >" + (i + 1) + "</td>");
+
+                    tr.append("<td> <label class='pos-rel'>" + response[i].Permission_Name + "</label></td>");
+                    //if (response[i].Is_View == 1) {
+                    //    tr.append("<td class='lst_td'><input type='checkbox' name='permission' checked='checked'/></td>");
+                    //}
+                    //else {
+                    tr.append("<td><input type='checkbox' name='permission' class='ace'/></td>");
+                    // }
+
+                    tr.append("<td style='display:none'>" + response[i].Permission_Id + "</td>");
+
+                    $('#vendor_per').append(tr);
+                }
+                $('#vendor_per').DataTable();
+                //  $('#dialogdivpermission').modal('show');
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+
+</script>
+<script>
+    function GetVendorDetailForPassworAndUserId(vendorId) {
+
+        var objVendorRegistation = {};
+        objVendorRegistation.Vendor_Id = vendorId;
+        $.ajax({
+            type: "POST",
+            url: "/Vendor/VendorDetailForGenratepwd",
+            data: '{objVendorRegistation: ' + JSON.stringify(objVendorRegistation) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $("#hdpvenderid").val(vendorId);
+                // alert(response.Vendor_Company_Name);
+                $("#hdvendercompny").val(response.Vendor_Company_Name);
+                $("#hdpvendername").val(response.Vendor_Name);
+                $("#hdpvenderemail").val(response.Vendor_Email_ID);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+
+</script>
+
+<script>
+    function generatePassword(passwordLength) {
+        var numberChars = "0123456789";
+        var upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        var lowerChars = "abcdefghijklmnopqrstuvwxyz";
+        var allChars = numberChars + upperChars + lowerChars;
+        var randPasswordArray = Array(passwordLength);
+        randPasswordArray[0] = numberChars;
+        randPasswordArray[1] = upperChars;
+        randPasswordArray[2] = lowerChars;
+        randPasswordArray = randPasswordArray.fill(allChars, 3);
+        return shuffleArray(randPasswordArray.map(function (x) { return x[Math.floor(Math.random() * x.length)] })).join('');
+    }
+
+    function shuffleArray(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+        return array;
+    }
+</script>
+<script>
+    function generateUserId(UseridLength, companyname, ContactPerson) {
+        var numberChars = "0123456789";
+        var upperChars = ContactPerson.split(" ").join("");
+        var lowerChars = companyname.split(" ").join("");
+        var allChars = upperChars + numberChars + lowerChars;
+
+        var randPasswordArray = Array(UseridLength);
+        randPasswordArray[0] = numberChars;
+        randPasswordArray[1] = lowerChars;
+        randPasswordArray[2] = upperChars;
+        randPasswordArray = randPasswordArray.fill(allChars, 3);
+        //alert(randPasswordArray);
+        var uid = shuffleArray(randPasswordArray.map(function (x) { return x[Math.floor(Math.random() * x.length)] })).join('');
+
+        return (uid);
+    }
+
+    function shuffleArray(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+
+        return array;
+    }
+</script>
+<style>
+    .col-sm_new-2 {
+        width: 10.666%;
+    }
+</style>
+<script>
+    $(function () {
+        $('body').on('click', '#chkAllView', function () {
+            var oTable = $('#vendor_per').dataTable();
+            var rowcollection = oTable.$("input[name='permission']", { "page": "all" });
+
+            if ($(this).is(':checked')) {
+                rowcollection.each(function (index, elem) {
+                    var row = $(elem).closest("tr");
+                    row.find("td:eq(2)").find('input[type="checkbox"]').prop('checked', true);
+                });
+
+            }
+            else {
+                rowcollection.each(function (index, elem) {
+                    var row = $(elem).closest("tr");
+                    row.find("td:eq(2)").find('input[type="checkbox"]').prop('checked', false);
+                });
+            }
+
+        })
+    });
+    //$(function () {
+    //    $('body').on('click', '#chkAllView', function () {
+    //        var oTable = $('#EmpInfopermission').dataTable();
+    //        var rowcollection = oTable.$("input[name='permission']", { "page": "all" });
+
+    //        if ($(this).is(':checked')) {
+    //            rowcollection.each(function (index, elem) {
+    //                var row = $(elem).closest("tr");
+    //                row.find("td:eq(2)").find('input[type="checkbox"]').prop('checked', true);
+    //            });
+
+    //        }
+    //        else {
+    //            rowcollection.each(function (index, elem) {
+    //                var row = $(elem).closest("tr");
+    //                row.find("td:eq(2)").find('input[type="checkbox"]').prop('checked', false);
+    //            });
+    //        }
+
+    //    })
+    //});
+
+</script>
+
+@*-------------------------------------------Vender Permission End------------------------------------------------------------*@
+
+<script type="text/javascript">
+    try { ace.settings.loadState('main-container') } catch (e) { }
+</script>
+<style>
+    .btn-info1 {
+        width: 97px !important;
+        padding: 1px 7px !important;
+    }
+</style>
+<div id="sidebar" class="sidebar responsive ace-save-state top-padding">
+    <script type="text/javascript">
+        try { ace.settings.loadState('sidebar') } catch (e) { }
+    </script>
+
+    <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+            <button class="btn btn-success">
+                <i class="ace-icon fa fa-signal"></i>
+            </button>
+
+            <button class="btn btn-info">
+                <i class="ace-icon fa fa-pencil"></i>
+            </button>
+
+            <button class="btn btn-warning">
+                <i class="ace-icon fa fa-users"></i>
+            </button>
+
+            <button class="btn btn-danger">
+                <i class="ace-icon fa fa-cogs"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+            <span class="btn btn-success"></span>
+
+            <span class="btn btn-info"></span>
+
+            <span class="btn btn-warning"></span>
+
+            <span class="btn btn-danger"></span>
+        </div>
+    </div><!-- /.sidebar-shortcuts -->
+    @{ Html.RenderAction("SideMenu", "Master");}
+
+    @*<a href='javascript:void(0);' class='collapse'>click*@
+    <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+        <a href='javascript:void(0);' class='collapse1'>
+            <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+        </a>
+    </div>
+    @*</a>*@
+</div>
+<div class="main-content">
+    <div class="main-content-inner top-padding">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#">Vendor</a>
+                </li>
+
+                <li>
+                    <a href="/Vendor/Index">Vendor Master</a>
+                </li>
+                <li class="active">Vendor Invitation</li>
+            </ul>
+        </div>
+
+        @*-----------------------------------------------update invitation---------------------------------------------------------*@
+        <div class="modal fade" id="dialogdivupdateinvitation">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <a href="#" class="close" data-dismiss="modal">×</a>
+                        <h3 class="item_hedin">Update Invitation</h3>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-3">Company Name   <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                            <div class="col-md-9">
+                                <input type="text" id="txtupcompanyname" style="text-transform:capitalize" onkeypress="return ((event.keyCode >= 65 && event.keyCode <= 90 || event.keyCode == 32) || (event.keyCode >= 97 && event.keyCode <= 122 || event.keyCode == 32))" placeholder="Company Name" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for company name" />
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-3">Contact Person   <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                            <div class="col-md-9">
+                                <input type="text" id="txtupcontactperson" style="text-transform:capitalize" onkeypress="return ((event.keyCode >= 65 && event.keyCode <= 90 || event.keyCode == 32) || (event.keyCode >= 97 && event.keyCode <= 122 || event.keyCode == 32))" placeholder="Contact Person" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for contact person" />
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-3">Email Id   <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                            <div class="col-md-9">
+                                <input type="text" id="txtupemailid" placeholder="Email Id" style="text-transform:lowercase !important" class="col-xs-10 col-sm-9" data-toggle="tooltip" title="Field for email id" />
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-3">Vendor Type  <span style="color:red;font-size:14px;">*</span><span> : </span></div>
+                            <div class="col-md-9">
+                                <div class="checkboxlist" id="divcheck1">
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-9">
+                                <button class="btn btn-info" id="btnupdateinvitation" type="button" data-toggle="tooltip" title="Button for update data">
+                                    <i class="ace-icon fa fa-floppy-o"></i>
+                                    Update
+                                </button>
+                                <button class="btn master-page-reset" id="btnresetupdate" type="reset" data-toggle="tooltip" title="Button for reset data">
+                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*---------------------------------------------------------------------------------------------------------------------*@
+        <div class="page-content1">
+            <div class="page-header">
+                <h3 class="item_hedin">
+                    Vendor Permission
+                </h3>
+            </div><!-- /.page-header -->
+            <div class="row m_botm ven_frm">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right"
+                               for="form-field-1">Vendor<span>*</span></label>
+
+                        <div class="col-sm-9">
+                            <select name="" id="ddlvendor" class="form-control">
+                                <option value="">Select Vendor</option>
+                                @*<option value="">Uttar Pradesh</option>
+                            <option value=""> Bihar </option>*@
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tblper"></div>
+
+
+                <div class="col-md-12">
+                    <input type="hidden" id="hdpvenderid" />
+                    <input type="hidden" id="hdvendercompny" />
+                    <input type="hidden" id="hdpvendername" />
+                    <input type="hidden" id="hdpvenderemail" />
+                    <input type="hidden" id="hdpvenderloginid" />
+                    <input type="hidden" id="hdpvenderloginpwd" />
+                    <div class="clearfix form-actions">
+                        <div class=" col-md-12 text-center">
+                            <button class="btn btn-info " type="button" id="btnsaveVendorpermission">
+                                <i class="ace-icon fa fa-check bigger-110"></i>
+                                Submit
+                            </button>
+
+                            &nbsp; &nbsp; &nbsp;
+                            <button class="btn" type="reset" id="btnresetPermission">
+                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+@*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>
+@*<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/cr-1.5.4/rr-1.2.8/datatables.min.js"></script>*@
+<link href="~/assets/css/colReorder.dataTables.css" rel="stylesheet" />
+<link href="~/assets/css/responsive.dataTables.css" rel="stylesheet" />
+<script src="~/assets/js/dataTables.colReorder.js"></script>
+<script src="~/assets/js/dataTables.responsive.js"></script>
+
+<link href="~/assets/css/rowReorder.dataTables.min.css" rel="stylesheet" />
+
+
+<script>
+
+    $(document).ready(function () {
+        // GetData1();
+        //$('#pending_from').dataTable({
+        //    colReorder: {
+        //        order: [4, 3, 2, 1, 0, ]
+        //    }
+        //});
+        $('#vendor_per').dataTable({
+            colReorder: {
+                order: [0, 1, 2, 3, 4]
+            }
+        });
+    });
+
+
+
+</script>
