@@ -645,7 +645,9 @@
     <Compile Include="Models\UserSession.cs" />
     <Compile Include="Models\Valuation.cs" />
     <Compile Include="Models\ValuationMethod.cs" />
-    <Compile Include="Models\Vendor.cs" />
+    <Compile Include="Models\Vendor.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Models\VendorCategory.cs" />
     <Compile Include="Models\VendorPermission.cs" />
     <Compile Include="Models\VendorSubType.cs" />
