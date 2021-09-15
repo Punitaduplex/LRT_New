@@ -389,6 +389,51 @@
                 } else {
                     $("#lblRequestStatusUserId").text(response.request_status_user_id);
                 }
+
+                if (response.Form24 != "" || response.Form24 != null) {
+                    var link = $("<a>");
+                    link.attr("href", response.Form24);
+                    link.attr("title", "Form24");
+                    link.text("Download Form24 file");
+                    $("#lblform24").append(link);
+                }
+                else {
+                    $("#lblform48").text("No file");
+                }
+
+                if (response.Form48 != "" || response.Form48 != null) {
+                    var link = $("<a>");
+                    link.attr("href", response.Form48);
+                    link.attr("title", "Form48");
+                    link.text("Download Form48 file");
+                    $("#lblform48").append(link);
+                }
+                else {
+                    $("#lblform48").text("No file");
+                }
+                
+
+                if (response.Form9 != "" || response.Form9 != null) {
+                    var link = $("<a>");
+                    link.attr("href", response.Form9);
+                    link.attr("title", "Form9");
+                    link.text("Download Form9 file");
+                    $("#lblform9").append(link);
+                }
+                else {
+                    $("#lblform9").text("No file");
+                }
+
+                if (response.NDAFormUrl != "" || response.NDAFormUrl != null) {
+                    var link = $("<a>");
+                    link.attr("href", response.NDAFormUrl);
+                    link.attr("title", "NDA Form");
+                    link.text("Download NDA Form file");
+                    $("#lblndaform").append(link);
+                }
+                else {
+                    $("#lblndaform").text("No file");
+                }
             },
             failure: function (response) {
                 alert(response.responseText);
@@ -1541,7 +1586,7 @@
                                         <label for=""> Form 48 <span>:</span> </label>
                                     </div>
                                     <div class="col-md-8">
-                                        <p><a href="#"> Download form 48 file </a> </p>
+                                        <p id="lblform48">   </p>
                                     </div>
                                 </div>
                             </div>
@@ -1553,7 +1598,7 @@
                                         <label for=""> Form 24 <span>:</span> </label>
                                     </div>
                                     <div class="col-md-8">
-                                        <p> <a href="#"> Download form 24 file </a> </p>
+                                        <p id="lblform24"> </p>
                                     </div>
                                 </div>
                             </div>
@@ -1565,7 +1610,7 @@
                                         <label for=""> Form 9 <span>:</span> </label>
                                     </div>
                                     <div class="col-md-8">
-                                        <p> <a href="#"> Download form 9 file </a> </p>
+                                        <p id="lblform9">   </p>
                                     </div>
                                 </div>
                             </div>
@@ -1747,7 +1792,7 @@
                                         <label for=""> NDA Form<span>:</span> </label>
                                     </div>
                                     <div class="col-md-8">
-                                        <p>  <a href="#"> Download NDA Form </a>  </p>
+                                        <p id="lblndaform"></p>
                                     </div>
                                 </div>
                             </div>
@@ -1950,7 +1995,7 @@
 
                             <button class="apr bg" id="btnAprrove" value="Aprrove"> Aprrove</button>
                             <button class="apr bg2" id="btnStand_by" value="Stand By"> Stand By</button>
-                            <button class="apr bg3" id="btnReject_ed" value="Rejected"> Rejected</button>
+                            <button class="apr bg3" id="btnReject_ed" value="Rejected"> Reject</button>
                             
                         </div>
 

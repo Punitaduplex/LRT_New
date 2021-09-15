@@ -26,6 +26,14 @@ namespace LRT_MVC_Project.Models
         [DisplayFormat(ConvertEmptyStringToNull = false)]
 
 
+        public string Form24 { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Form48 { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Form9 { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string NDAFormUrl { get; set; }
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
 
 
         public string Vendor_Name { get; set; }
@@ -611,6 +619,22 @@ namespace LRT_MVC_Project.Models
         }
 
 
+        public DataSet proc_get_V_Vendor_Send_Notification_Status(Vendor objVendor)
+        {
+            string strcon = ConfigurationManager.ConnectionStrings["myConStr"].ConnectionString;
+            MySqlConnection con = new MySqlConnection(strcon);
+            MySqlCommand cmd = new MySqlCommand("proc_get_V_Vendor_Send_Notification_Status ", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@vendor_Id", objVendor.Vendor_Id);
+
+
+
+            DataSet ds = new DataSet();
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            da.Fill(ds);
+            return ds;
+        }
+
 
         public int updateVendorList_Aprrove(Vendor objVendor)
         {
@@ -726,7 +750,7 @@ namespace LRT_MVC_Project.Models
             int i = 0;
             string strcon = ConfigurationManager.ConnectionStrings["myConStr"].ConnectionString;
             MySqlConnection con = new MySqlConnection(strcon);
-            MySqlCommand cmd = new MySqlCommand("proc_Upadte_by_Bank_company_profile", con);
+            MySqlCommand cmd = new MySqlCommand("proc_Upadte_by_Vendor_Bank_profile", con);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Vendor_Id", objvendor.Vendor_Id);
             cmd.Parameters.AddWithValue("@User_Id", objvendor.User_Id);

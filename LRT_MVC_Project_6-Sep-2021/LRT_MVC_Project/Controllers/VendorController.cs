@@ -608,8 +608,8 @@ namespace LRT_MVC_Project.Controllers
                             vendor1.Vendor_Type_Id = c.Vendor_Type_Id;
                             vendor.InsertVendorInvitationDetail(vendor1);
                         }
-                       
-                        //MailConst.senderMailForInvitation(objVendor.Vendor_Email_ID.Trim(), objVendor.Vendor_Company_Name.Trim(), objVendor.Vendor_Contact_Person);
+
+                        MailNotification.senderMailForInvitation(objVendor.Vendor_Email_ID.Trim(), objVendor.Vendor_Company_Name.Trim(), objVendor.Vendor_Contact_Person);
 
                         sms = "**Data inserted successfully**";
                     }
@@ -1246,7 +1246,7 @@ namespace LRT_MVC_Project.Controllers
                         machine.Machine_Addition = machineAddition[j].ToString();
                         machine.InsertVendorRegistationMachine(machine);
                     }
-                        //MailConst.senderMailForRegistration(objVendorRegistation.Vendor_Email_ID, objVendorRegistation.Vendor_Company_Name, objVendorRegistation.Contact_Person);
+                        MailNotification.senderMailForRegistration(objVendorRegistation.Vendor_Email_ID, objVendorRegistation.Vendor_Company_Name, objVendorRegistation.Contact_Person);
                         // SendEmailToVendorForRegistration(objVendorRegistation.Vendor_Email_ID, objVendorRegistation.Vendor_Company_Name, objVendorRegistation.Contact_Person);
                         sms = s1[1] + ",**save sucessfully**";
                 }
@@ -1843,6 +1843,11 @@ namespace LRT_MVC_Project.Controllers
                 vendor.category_type = ds.Tables[0].Rows[0]["catelogType"].ToString();
                 vendor.category_link = ds.Tables[0].Rows[0]["catelogLink"].ToString();
 
+                vendor.Form24 = ds.Tables[0].Rows[0]["form24"].ToString();
+                vendor.Form48 = ds.Tables[0].Rows[0]["form48"].ToString();
+                vendor.Form9 = ds.Tables[0].Rows[0]["form9"].ToString();
+                vendor.NDAFormUrl = ds.Tables[0].Rows[0]["ndaformUrl"].ToString();
+
                 vendor.Access_permission1= ds.Tables[0].Rows[0]["accessPermission"].ToString();
                 vendor.vendor_login_id1= ds.Tables[0].Rows[0]["vendorloginId"].ToString();
                 vendor.vendor_login_pwd = ds.Tables[0].Rows[0]["vendorloginPwd"].ToString();
@@ -1901,10 +1906,31 @@ namespace LRT_MVC_Project.Controllers
             
             try
             {
-                  int i= vendor.updateVendorList_Aprrove(objVendor);
+                int i= vendor.updateVendorList_Aprrove(objVendor);
+               
                 if(i==0)
                 {
-                    sms = "Status Change  Sucessfully";
+
+                    DataSet ds = vendor.proc_get_V_Vendor_Send_Notification_Status(objVendor);
+
+
+                    vendor.Vendor_Email_ID = Convert.ToString(ds.Tables[0].Rows[i]["vendorEmail"]);
+                    vendor.Vendor_Contact_Person = Convert.ToString(ds.Tables[0].Rows[i]["companyName"]);
+                    vendor.Vendor_Company_Name = Convert.ToString(ds.Tables[0].Rows[i]["vendorteliphoneNo1"]);
+                    MailNotification.senderMailForVenderStatus(vendor.Vendor_Email_ID, vendor.Vendor_Company_Name, vendor.Vendor_Contact_Person,objVendor.request_status );
+                    if (objVendor.request_status == "Aprrove")
+                    {
+                        sms = "Status Aprrove  Sucessfully";
+                    }
+                    if (objVendor.request_status == "Stand By")
+                    {
+                        sms = "Stand By Status Sucessfully  ";
+                    }
+
+                    if (objVendor.request_status == "Rejected")
+                    {
+                        sms = "Rejected Status Sucessfully  ";
+                    }
                 }
             }
             
@@ -1922,12 +1948,12 @@ namespace LRT_MVC_Project.Controllers
                 Vendor vendor = new Vendor();
                 HttpCookie cookie = this.ControllerContext.HttpContext.Request.Cookies["userid"];
                 objvendor.User_Id = Convert.ToInt32(cookie.Value);
-
-
-
+                 
                 int i = vendor.Upadtevendorcompanyprofile(objvendor);
+                
                     if (i == 0)
                     {
+
                         sms = "**Data updated successfully**";
                     }
                     else

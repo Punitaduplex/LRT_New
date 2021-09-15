@@ -624,6 +624,7 @@
     <Compile Include="Models\ItemType.cs" />
     <Compile Include="Models\Language.cs" />
     <Compile Include="Models\MailConst.cs" />
+    <Compile Include="Models\MailNotification.cs" />
     <Compile Include="Models\ManageItem.cs" />
     <Compile Include="Models\MaterialCategory.cs" />
     <Compile Include="Models\Menu.cs" />
